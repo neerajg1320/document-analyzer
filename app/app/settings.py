@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',  # This is required for Token model
     'core',
     'user',
+    'extractor',
 ]
 
 MIDDLEWARE = [
