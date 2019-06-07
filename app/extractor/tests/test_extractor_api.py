@@ -1,0 +1,125 @@
+from django.contrib.auth import get_user_model
+from django.urls import reverse
+from django.test import TestCase
+
+from rest_framework import status
+from rest_framework.test import APIClient
+
+from core.models import Extractor
+
+from extractor.serializers import ExtractorSerializer
+
+EXTRACTOR_URL = reverse('extractor:extractor-list')
+
+
+# Used for extractor testing
+def basic_user(email="basic@abc.com", password="Basic123"):
+    user = get_user_model().objects.create_user(email, password)
+    user.is_staff = False
+    return user
+
+
+def staff_user(email="staff@abc.com", password="Staff123"):
+    user = get_user_model().objects.create_user(email, password)
+    user.is_staff = True
+    return user
+
+
+sample_regex_str = r"""(?#
+)(?P<trade_date>\d{2}\/\d{2}\/\d{2})(?:\s){1,2}(?#
+)(?P<setl_date>\d{2}\/\d{2}\/\d{2})(?:\s){1,2}(?#
+)(?P<mkt>[\w]+)(?:\s){1,2}(?#
+)(?P<cap>[\w]+)(?:\s){1,2}(?#
+)(?:(?P<symbol>[\w]+)(?:\s){1,2}(?#
+))?(?# symbol/cusip is only for EQ
+)(?P<trade_type>[\w]+)(?:\s){1,2}(?#
+)(?P<trade_qty>[,.\-\d]+)(?:\s){1,2}(?#
+)(?P<trade_rate>[\$,.\-\d]+)(?:\s){1,2}(?#
+)(?P<acct_type>[\w]+)(?:\s){1,2}(?#
+)(?P<marker_principal>PRINCIPAL)(?:\s){1,2}(?#
+)(?P<principal>[\$,.\-\d]+)(?:\s){1,2}(?#
+)(?:(?P<option>(?#
+    )(?P<opt_type>CALL|PUT) (?#
+    )(?P<opt_name>[\w]+) (?#
+    )(?P<expiry_date>\d{2}\/\d{2}\/\d{2}) (?#
+    )(?P<strike_price>[\$,.\-\d]+))(?#
+)(?:\s){1,2})?(?#
+)(?P<scrip_commission_fee>(?:.|\s)*?)(?:\s){1,2}(?#
+)(?P<marker_net_amount>NET AMOUNT)(?:\s){1,2}(?#
+)(?P<net_amount>[\$,.\-\d]+)(?:\s){1,2}(?#
+)(?#
+)"""
+
+reference_str = "https://regex101.com/r/IOOXNI/1"
+
+
+def sample_extractor(user, **params):
+    """ Create and return a sample extractor """
+    defaults = {
+        'title': 'Sample Extractor',
+        'institute_name': 'Etrade',
+        'document_type': 'ContractNote',
+        'regex_parser': sample_regex_str,
+        'reference': reference_str,
+    }
+    defaults.update(params)
+
+    return Extractor.objects.create(user=user, **defaults)
+
+
+class PublicExtractorsApiTests(TestCase):
+    """ Test the publicly available Extractor API """
+
+    def setUp(self):
+        self.client = APIClient()
+
+    def test_auth_required(self):
+        """ Test that login is required for retirieving tags """
+        res = self.client.get(EXTRACTOR_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class PrivateExtractorsApiTests(TestCase):
+    """ Test the authenticated user Extractor API """
+
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            'test@abc.com',
+            'Test123',
+        )
+        self.client = APIClient()
+        self.client.force_authenticate(self.user)
+
+    def test_retrieve_extractors(self):
+        """ Test retrieving a list of extractors """
+        sample_extractor(user=self.user)
+        sample_extractor(user=self.user)
+
+        res = self.client.get(EXTRACTOR_URL)
+
+        extractors = Extractor.objects.all().order_by('-id')
+        serializer = ExtractorSerializer(extractors, many=True)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, serializer.data)
+
+    def test_extractors_limited_to_authenticated_user(self):
+        """" Test that extractors for authenticated user only are retrieved """
+        user2 = get_user_model().objects.create_user(
+            'second@abc.com',
+            'Second123'
+        )
+        sample_extractor(user=user2)
+        sample_extractor(user=user2)
+        sample_extractor(user=self.user)
+        sample_extractor(user=self.user)
+
+        res = self.client.get(EXTRACTOR_URL)
+
+        extractors = Extractor.objects.filter(user=self.user)
+        serializer = ExtractorSerializer(extractors, many=True)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), 2)
+        self.assertEqual(res.data, serializer.data)

@@ -6,6 +6,7 @@ from extractor import views
 
 router = DefaultRouter()
 router.register('tags', views.TagViewSet)
+router.register('extractors', views.ExtractorViewSet)
 
 app_name = 'extractor'
 
