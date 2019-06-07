@@ -7,7 +7,8 @@ from rest_framework.test import APIClient
 
 from core.models import Extractor
 
-from extractor.serializers import ExtractorSerializer
+from extractor.serializers import ExtractorSerializer, \
+    ExtractorDetailSerializer
 
 EXTRACTOR_URL = reverse('extractor:extractor-list')
 
@@ -67,6 +68,13 @@ def sample_extractor(user, **params):
     return Extractor.objects.create(user=user, **defaults)
 
 
+# List: /api/docminer/extractors/
+# Detail: /api/docminer/extractors/<id>/
+def extractor_detail_url(extractor_id):
+    """ Return recipe details URL """
+    return reverse('extractor:extractor-detail', args=[extractor_id])
+
+
 class PublicExtractorsApiTests(TestCase):
     """ Test the publicly available Extractor API """
 
@@ -122,4 +130,14 @@ class PrivateExtractorsApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data), 2)
+        self.assertEqual(res.data, serializer.data)
+
+    def test_view_extractor_detail(self):
+        """ Test viewing a extractor detail """
+        extractor = sample_extractor(user=self.user)
+
+        url = extractor_detail_url(extractor.id)
+        res = self.client.get(url)
+
+        serializer = ExtractorDetailSerializer(extractor)
         self.assertEqual(res.data, serializer.data)

@@ -7,26 +7,6 @@ from core.models import Tag, Extractor
 from extractor import serializers
 
 
-# class TagViewSet(viewsets.GenericViewSet,
-#                  mixins.ListModelMixin,
-#                  mixins.CreateModelMixin):
-#     """ Manage tags in the database """
-#
-#     authentication_classes = (TokenAuthentication,)
-#     permission_classes = (IsAuthenticated,)
-#
-#     queryset = Tag.objects.all()
-#     serializer_class = serializers.TagSerializer
-#
-#     def get_queryset(self):
-#         """ Return objects for current user only """
-#         return self.queryset.filter(user=self.request.user).order_by('-name')
-#
-#     def perform_create(self, serializer):
-#         """ Create a new tag """
-#         serializer.save(user=self.request.user)
-
-
 class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
                             mixins.ListModelMixin,
                             mixins.CreateModelMixin):
@@ -60,7 +40,6 @@ class TagViewSet(BaseRecipeAttrViewSet):
 class ExtractorViewSet(viewsets.ModelViewSet):
     """ Manage extractors in database """
     queryset = Extractor.objects.all()
-    serializer_class = serializers.ExtractorSerializer
 
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -68,3 +47,17 @@ class ExtractorViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """ Return objects for current user only """
         return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        """ Create a new extractor """
+        serializer.save(user=self.request.user)
+
+    def get_serializer_class(self):
+        """ Return appropriate serializer class """
+        if self.action == 'retrieve' \
+                or self.action == 'update' \
+                or self.action == 'create':
+            return serializers.ExtractorDetailSerializer
+
+        # return self.serializer_class
+        return serializers.ExtractorSerializer
