@@ -141,3 +141,67 @@ class PrivateExtractorsApiTests(TestCase):
 
         serializer = ExtractorDetailSerializer(extractor)
         self.assertEqual(res.data, serializer.data)
+
+    def test_create_extractor(self):
+        """ Test creating extractor """
+        payload = {
+            'title': 'Sample Extractor',
+            'institute_name': 'Big Institute',
+            'document_type': 'Ledger Statement',
+            'regex_parser': sample_regex_str,
+            'reference': reference_str
+        }
+        res = self.client.post(EXTRACTOR_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        extractor = Extractor.objects.get(id=res.data['id'])
+
+        for key in payload.keys():
+            self.assertEqual(payload[key], getattr(extractor, key))
+
+    def test_create_extractor_invalid(self):
+        """ Test creating extractor: should fail with missing regex_parser """
+        payload = {
+            'title': 'Sample Extractor',
+            'institute_name': 'Big Institute',
+            'document_type': 'Ledger Statement',
+            'reference': reference_str
+        }
+        res = self.client.post(EXTRACTOR_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_partial_update_extractor(self):
+        """ Test updating a extractor with patch """
+        extractor = sample_extractor(user=self.user)
+
+        payload = {
+            'title': 'Modified Extractor',
+            'institute_name': 'Optionshouse'
+        }
+
+        res = self.client.patch(extractor_detail_url(extractor.id), payload)
+
+        extractor.refresh_from_db()
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(extractor.title, payload['title'])
+        self.assertEqual(extractor.institute_name, payload['institute_name'])
+
+    def disabled_test_partial_update_extractor_invalid(self):
+        """ Test updating a extractor with patch
+            We should not allow blank regex
+            We should not alllow a malformed regex
+        """
+        extractor = sample_extractor(user=self.user)
+
+        payload = {
+            'title': 'Modified Extractor',
+            'regex_parser': ''
+        }
+
+        res = self.client.patch(extractor_detail_url(extractor.id), payload)
+
+        extractor.refresh_from_db()
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

@@ -50,6 +50,13 @@ class ExtractorViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         """ Create a new extractor """
+        # TBD: Here we should perform is_staff check
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        """ Create a new extractor """
+        # TBD: Here we should perform is_staff check
+        # print(serializer.validated_data)
         serializer.save(user=self.request.user)
 
     def get_serializer_class(self):
