@@ -107,8 +107,10 @@ from rest_framework import renderers
 from rest_framework.response import Response
 from rest_framework import generics
 
-from extractor.text_routines import create_highlighted_text, create_transactions_from_text
+from extractor.text_routines import create_highlighted_text, \
+    create_transactions_from_text_tuples_str, create_transactions_dict_array_from_text
 
+import json
 
 class DocumentHighlight(generics.GenericAPIView):
     queryset = Document.objects.all()
@@ -130,10 +132,21 @@ class DocumentTransactions(generics.GenericAPIView):
         document = self.get_object()
         # unconditionally enabled temporarily
         if document.transactions is None or document.transactions == "" or True:
-            document.transactions = create_transactions_from_text(document.institute_name,
-                                                                  document.document_type,
-                                                                  document.text,
-                                                                  )
+            # Lookup for the parser(extractor)
+            #   based on institure name (e.g. HDFC) and document type (e.g. Savings Statement)
+            extractors = Extractor.objects.filter(institute_name__iexact=document.institute_name,
+                                                  document_type__iexact=document.document_type)
+            if not extractors:
+                raise Exception("Extractor not found")
+
+            transaction_regex_str = extractors[0].regex_parser
+
+            # The following will send the table header first and then table rows as values
+            # document.transactions = create_transactions_from_text_tuples_str(transaction_regex_str, document.text)
+
+            # The following will send the data in json format
+            document.transactions = json.dumps(create_transactions_dict_array_from_text(transaction_regex_str, document.text), indent=4)
+            
             super(Document, document).save()
 
         highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
