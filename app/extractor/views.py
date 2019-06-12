@@ -107,7 +107,7 @@ from rest_framework import renderers
 from rest_framework.response import Response
 from rest_framework import generics
 
-from extractor.text_routines import create_highlighted_text
+from extractor.text_routines import create_highlighted_text, create_transactions_from_text
 
 
 class DocumentHighlight(generics.GenericAPIView):
@@ -120,3 +120,21 @@ class DocumentHighlight(generics.GenericAPIView):
             document.highlighted = create_highlighted_text(document.text, title=document.title)
             super(Document, document).save()
         return Response(document.highlighted)
+
+
+class DocumentTransactions(generics.GenericAPIView):
+    queryset = Document.objects.all()
+    renderer_classes = (renderers.StaticHTMLRenderer,)
+
+    def get(self, request, *args, **kwargs):
+        document = self.get_object()
+        # unconditionally enabled temporarily
+        if document.transactions is None or document.transactions == "" or True:
+            document.transactions = create_transactions_from_text(document.institute_name,
+                                                                  document.document_type,
+                                                                  document.text,
+                                                                  )
+            super(Document, document).save()
+
+        highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
+        return Response(highlighted_text)

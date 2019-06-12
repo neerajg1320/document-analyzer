@@ -74,8 +74,6 @@ class Extractor(models.Model):
         return self.title
 
 
-
-
 class Document(models.Model):
     """ Extractor object """
     title = models.CharField(max_length=255)
@@ -89,14 +87,8 @@ class Document(models.Model):
     document_type = models.CharField(max_length=255, blank=False)
     text = models.TextField()
     highlighted = models.TextField(default="")
+    transactions = models.TextField(default="")
 
     def __str__(self):
         return self.title
 
-    def save(self, *args, **kwargs):
-        """
-        Use the `pygments` library to create a highlighted HTML
-        representation of the code snippet.
-        """
-        # self.highlighted = create_highlighted_text(self.text, title=self.title)
-        super(Document, self).save(*args, **kwargs)
