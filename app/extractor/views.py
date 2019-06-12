@@ -1,12 +1,17 @@
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, renderers
+from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
 
 from core.models import Tag, Extractor, Document
 
 from extractor import serializers
 
+from extractor.text_routines import create_highlighted_text, \
+    create_transactions_from_text_tuples_str, create_transactions_dict_array_from_text
 
+import json
 class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
                             mixins.ListModelMixin,
                             mixins.CreateModelMixin):
@@ -102,33 +107,16 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # return self.serializer_class
         return serializers.DocumentListSerializer
 
-
-from rest_framework import renderers
-from rest_framework.response import Response
-from rest_framework import generics
-
-from extractor.text_routines import create_highlighted_text, \
-    create_transactions_from_text_tuples_str, create_transactions_dict_array_from_text
-
-import json
-
-class DocumentHighlight(generics.GenericAPIView):
-    queryset = Document.objects.all()
-    renderer_classes = (renderers.StaticHTMLRenderer,)
-
-    def get(self, request, *args, **kwargs):
+    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
+    def highlight(self, request, *args, **kwargs):
         document = self.get_object()
         if document.highlighted is None or document.highlighted == "":
             document.highlighted = create_highlighted_text(document.text, title=document.title)
             super(Document, document).save()
         return Response(document.highlighted)
 
-
-class DocumentTransactions(generics.GenericAPIView):
-    queryset = Document.objects.all()
-    renderer_classes = (renderers.StaticHTMLRenderer,)
-
-    def get(self, request, *args, **kwargs):
+    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
+    def transactions(self, request, *args, **kwargs):
         document = self.get_object()
         # unconditionally enabled temporarily
         if document.transactions is None or document.transactions == "" or True:
@@ -142,13 +130,42 @@ class DocumentTransactions(generics.GenericAPIView):
             transaction_regex_str = extractors[0].regex_parser
 
             # The following will send the table header first and then table rows as values
-            # document.transactions = create_transactions_from_text_tuples_str(transaction_regex_str, document.text)
-
-            # The following will send the data in json format
-            document.transactions = json.dumps(create_transactions_dict_array_from_text(transaction_regex_str, document.text), indent=4)
+            document.transactions = create_transactions_from_text_tuples_str(transaction_regex_str, document.text)
 
             super(Document, document).save()
 
-        highlighted_text = document.transactions
-        # highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
+        highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
         return Response(highlighted_text)
+
+    @action(detail=True, renderer_classes=[renderers.JSONRenderer])
+    def transactions_json(self, request, *args, **kwargs):
+        document = self.get_object()
+        # unconditionally enabled temporarily
+        if document.transactions is None or document.transactions == "" or True:
+            print("Creating transactions from document.text")
+            # Lookup for the parser(extractor)
+            #   based on institure name (e.g. HDFC) and document type (e.g. Savings Statement)
+            extractors = Extractor.objects.filter(institute_name__iexact=document.institute_name,
+                                                  document_type__iexact=document.document_type)
+            if not extractors:
+                raise Exception("Extractor not found")
+
+            transaction_regex_str = extractors[0].regex_parser
+
+            # The following will send the table header first and then table rows as values
+            # document.transactions = create_transactions_from_text_tuples_str(transaction_regex_str, document.text)
+
+            # The following will send the data in json format
+            transactions_array = create_transactions_dict_array_from_text(transaction_regex_str, document.text)
+            document.transactions = json.dumps(transactions_array)
+
+            super(Document, document).save()
+        else:
+            print("Loading transaction from document.transactions")
+            transactions_array = json.loads(document.transactions)
+
+        # highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
+        return Response(transactions_array)
+
+
+
