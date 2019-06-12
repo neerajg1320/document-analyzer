@@ -107,10 +107,16 @@ from rest_framework import renderers
 from rest_framework.response import Response
 from rest_framework import generics
 
+from extractor.text_routines import create_highlighted_text
+
+
 class DocumentHighlight(generics.GenericAPIView):
     queryset = Document.objects.all()
     renderer_classes = (renderers.StaticHTMLRenderer,)
 
     def get(self, request, *args, **kwargs):
         document = self.get_object()
+        if document.highlighted is None or document.highlighted == "":
+            document.highlighted = create_highlighted_text(document.text, title=document.title)
+            super(Document, document).save()
         return Response(document.highlighted)

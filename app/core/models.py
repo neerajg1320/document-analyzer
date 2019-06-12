@@ -74,9 +74,6 @@ class Extractor(models.Model):
         return self.title
 
 
-from pygments.lexers import get_lexer_by_name
-from pygments.formatters.html import HtmlFormatter
-from pygments import highlight
 
 
 class Document(models.Model):
@@ -101,14 +98,5 @@ class Document(models.Model):
         Use the `pygments` library to create a highlighted HTML
         representation of the code snippet.
         """
-
-        print("Creating highlighted text using pygments for document: " + self.title)
-        lexer = get_lexer_by_name('text')
-        # linenos = 'table' if self.linenos else False
-        linenos = False
-        options = {'title': self.title} if self.title else {}
-        self.style = 'friendly'
-        formatter = HtmlFormatter(style=self.style, linenos=linenos,
-                                  full=True, **options)
-        self.highlighted = highlight(self.text, lexer, formatter)
+        # self.highlighted = create_highlighted_text(self.text, title=self.title)
         super(Document, self).save(*args, **kwargs)
