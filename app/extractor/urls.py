@@ -13,5 +13,5 @@ app_name = 'extractor'
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('documents/<int:pk>/highlight/', views.DocumentHighlight.as_view()),
+    path('documents/<int:pk>/highlight/', views.DocumentHighlight.as_view(), name='snippet-highlight'),
 ]
