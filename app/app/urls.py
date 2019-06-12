@@ -26,3 +26,9 @@ urlpatterns = [
     path('api/user/', include('user.urls')),
     path('api/docminer/', include('extractor.urls')),
 ]
+
+
+# To add the login prompt
+urlpatterns += [
+    path('api-auth/', include('rest_framework.urls')),
+]

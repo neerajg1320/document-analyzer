@@ -5,6 +5,9 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
 from django.conf import settings
 
 
+
+
+
 class UserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **extra_fields):
@@ -71,6 +74,11 @@ class Extractor(models.Model):
         return self.title
 
 
+from pygments.lexers import get_lexer_by_name
+from pygments.formatters.html import HtmlFormatter
+from pygments import highlight
+
+
 class Document(models.Model):
     """ Extractor object """
     title = models.CharField(max_length=255)
@@ -83,6 +91,24 @@ class Document(models.Model):
     institute_name = models.CharField(max_length=255, blank=False)
     document_type = models.CharField(max_length=255, blank=False)
     text = models.TextField()
+    highlighted = models.TextField(default="")
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        """
+        Use the `pygments` library to create a highlighted HTML
+        representation of the code snippet.
+        """
+
+        print("Creating highlighted text using pygments for document: " + self.title)
+        lexer = get_lexer_by_name('text')
+        # linenos = 'table' if self.linenos else False
+        linenos = False
+        options = {'title': self.title} if self.title else {}
+        self.style = 'friendly'
+        formatter = HtmlFormatter(style=self.style, linenos=linenos,
+                                  full=True, **options)
+        self.highlighted = highlight(self.text, lexer, formatter)
+        super(Document, self).save(*args, **kwargs)

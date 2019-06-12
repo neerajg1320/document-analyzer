@@ -7,7 +7,7 @@ from rest_framework.test import APIClient
 
 from core.models import Extractor
 
-from extractor.serializers import ExtractorSerializer, \
+from extractor.serializers import ExtractorListSerializer, \
     ExtractorDetailSerializer
 
 EXTRACTOR_URL = reverse('extractor:extractor-list')
@@ -107,7 +107,7 @@ class PrivateExtractorsApiTests(TestCase):
         res = self.client.get(EXTRACTOR_URL)
 
         extractors = Extractor.objects.all().order_by('-id')
-        serializer = ExtractorSerializer(extractors, many=True)
+        serializer = ExtractorListSerializer(extractors, many=True)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
@@ -126,7 +126,7 @@ class PrivateExtractorsApiTests(TestCase):
         res = self.client.get(EXTRACTOR_URL)
 
         extractors = Extractor.objects.filter(user=self.user)
-        serializer = ExtractorSerializer(extractors, many=True)
+        serializer = ExtractorListSerializer(extractors, many=True)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data), 2)

@@ -12,5 +12,6 @@ router.register('documents', views.DocumentViewSet)
 app_name = 'extractor'
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('documents/<int:pk>/highlight/', views.DocumentHighlight.as_view()),
 ]

@@ -101,3 +101,16 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         # return self.serializer_class
         return serializers.DocumentListSerializer
+
+
+from rest_framework import renderers
+from rest_framework.response import Response
+from rest_framework import generics
+
+class DocumentHighlight(generics.GenericAPIView):
+    queryset = Document.objects.all()
+    renderer_classes = (renderers.StaticHTMLRenderer,)
+
+    def get(self, request, *args, **kwargs):
+        document = self.get_object()
+        return Response(document.highlighted)
