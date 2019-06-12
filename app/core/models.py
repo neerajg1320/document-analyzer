@@ -69,3 +69,20 @@ class Extractor(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Document(models.Model):
+    """ Extractor object """
+    title = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        # We could have user User below, but using settings is a better way
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+
+    institute_name = models.CharField(max_length=255, blank=False)
+    document_type = models.CharField(max_length=255, blank=False)
+    text = models.TextField()
+
+    def __str__(self):
+        return self.title

@@ -2,7 +2,7 @@ from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from core.models import Tag, Extractor
+from core.models import Tag, Extractor, Document
 
 from extractor import serializers
 
@@ -67,4 +67,37 @@ class ExtractorViewSet(viewsets.ModelViewSet):
             return serializers.ExtractorDetailSerializer
 
         # return self.serializer_class
-        return serializers.ExtractorSerializer
+        return serializers.ExtractorListSerializer
+
+
+class DocumentViewSet(viewsets.ModelViewSet):
+    """ Manage documents in database """
+    queryset = Document.objects.all()
+
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        """ Return objects for current user only """
+        return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        """ Create a new document """
+        # TBD: Here we should perform is_staff check
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        """ Create a new document """
+        # TBD: Here we should perform is_staff check
+        # print(serializer.validated_data)
+        serializer.save(user=self.request.user)
+
+    def get_serializer_class(self):
+        """ Return appropriate serializer class """
+        if self.action == 'retrieve' \
+                or self.action == 'update' \
+                or self.action == 'create':
+            return serializers.DocumentDetailSerializer
+
+        # return self.serializer_class
+        return serializers.DocumentListSerializer

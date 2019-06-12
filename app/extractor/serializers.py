@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core.models import Tag, Extractor
+from core.models import Tag, Extractor, Document
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -13,7 +13,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 # The ExtractorSerializer does not show regex_parser.
-class ExtractorSerializer(serializers.ModelSerializer):
+class ExtractorListSerializer(serializers.ModelSerializer):
     """ Serializer for Extractor objects """
 
     class Meta:
@@ -31,4 +31,24 @@ class ExtractorDetailSerializer(serializers.ModelSerializer):
         model = Extractor
         fields = ('id', 'title', 'institute_name', 'document_type',
                   'regex_parser', 'reference')
+        read_only_fields = ('id',)
+
+
+# The DocumentSerializer does not show regex_parser.
+class DocumentListSerializer(serializers.ModelSerializer):
+    """ Serializer for Document objects """
+
+    class Meta:
+        model = Document
+        fields = ('id', 'title', 'institute_name', 'document_type')
+        read_only_fields = ('id',)
+
+
+# The DocumentDetailSerializer shows regex_parser as well.
+class DocumentDetailSerializer(serializers.ModelSerializer):
+    """ Serializer for Document objects """
+
+    class Meta:
+        model = Document
+        fields = ('id', 'title', 'institute_name', 'document_type', 'text')
         read_only_fields = ('id',)
