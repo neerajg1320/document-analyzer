@@ -146,8 +146,9 @@ class DocumentTransactions(generics.GenericAPIView):
 
             # The following will send the data in json format
             document.transactions = json.dumps(create_transactions_dict_array_from_text(transaction_regex_str, document.text), indent=4)
-            
+
             super(Document, document).save()
 
-        highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
+        highlighted_text = document.transactions
+        # highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
         return Response(highlighted_text)

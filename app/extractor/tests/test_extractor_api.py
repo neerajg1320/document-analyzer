@@ -327,7 +327,7 @@ class PrivateExtractorsApiTests(TestCase):
         document.refresh_from_db()
         self.assertEqual(res.data, document.highlighted)
 
-    def test_text_mining(self):
+    def test_text_mining_tuples_str(self):
         """ Test mining of transactions from text using a regex """
 
         extractor = sample_extractor(user=self.user)
