@@ -1,0 +1,126 @@
+// Some sample data
+var tabledata = [
+    {id:1, name:"Oli Bob", age:"12", col:"red", dob:""},
+    {id:2, name:"Mary May", age:"1", col:"blue", dob:"14/05/1982"},
+    {id:3, name:"Christine Lobowski", age:"42", col:"green", dob:"22/05/1982"},
+    {id:4, name:"Brendon Philips", age:"125", col:"orange", dob:"01/08/1980"},
+    {id:5, name:"Margret Marmajuke", age:"16", col:"yellow", dob:"31/01/1999"},
+];
+
+// Sample Credit card transactions mined from HDFC Credit Card Statement
+var credit_card_data = [
+    {
+        "date": "28/10/2018",
+        "description": "59,340.00",
+        "amount": "2,970.00",
+        "type": null
+    },
+    {
+        "date": "08/09/2018",
+        "description": "RELIANCE JIO INFOCOMM LMUMBAI",
+        "amount": "449.00",
+        "type": null
+    },
+    {
+        "date": "08/09/2018",
+        "description": "CAFE COFFEE DAY KORAMANGAL",
+        "amount": "231.00",
+        "type": null
+    },
+    {
+        "date": "09/09/2018",
+        "description": "Global Value - Cash Back (Ref# ST182530073000010196711)",
+        "amount": "20.93",
+        "type": "Cr"
+    },
+    {
+        "date": "10/09/2018",
+        "description": "AMAZON SELLER SERVICES MUMBAI",
+        "amount": "24,345.00",
+        "type": null
+    },
+    {
+        "date": "16/09/2018",
+        "description": "DNH*GODADDY.COM 480-505-88",
+        "amount": "796.32",
+        "type": null
+    },
+    {
+        "date": "19/09/2018",
+        "description": "Spay 1137820223 Airtel Mob TXHC6158",
+        "amount": "594.72",
+        "type": null
+    },
+    {
+        "date": "23/09/2018",
+        "description": "QUIKR INDIA PVT. LTD. HTTP://WWW",
+        "amount": "49.00",
+        "type": null
+    },
+    {
+        "date": "23/09/2018",
+        "description": "QUIKR INDIA PVT. LTD. HTTP://WWW",
+        "amount": "49.00",
+        "type": null
+    },
+    {
+        "date": "24/09/2018",
+        "description": "HDFC ERGO GENERAL INSURMUMBAI",
+        "amount": "20,698.00",
+        "type": null
+    },
+    {
+        "date": "28/09/2018",
+        "description": "NETBANKING TRANSFER (Ref# 00000000000928009170905)",
+        "amount": "23,816.00",
+        "type": "Cr"
+    },
+    {
+        "date": "28/09/2018",
+        "description": "NETBANKING TRANSFER (Ref# 00000000000928009718182)",
+        "amount": "18,632.00",
+        "type": "Cr"
+    },
+    {
+        "date": "02/10/2018",
+        "description": "THE PARK ON CANDOLIM BECALANGUTE",
+        "amount": "6,499.00",
+        "type": null
+    },
+    {
+        "date": "02/10/2018",
+        "description": "THE PARK GOA CALANGUTE",
+        "amount": "1,536.00",
+        "type": null
+    },
+    {
+        "date": "05/10/2018",
+        "description": "DNH*GODADDY.COM 480-505-88",
+        "amount": "1,883.84",
+        "type": null
+    },
+    {
+        "date": "06/10/2018",
+        "description": "DNH*GODADDY.COM 480-505-88",
+        "amount": "796.32",
+        "type": null
+    },
+    {
+        "date": "06/10/2018",
+        "description": "Spay 1134401858 Airtel Mob TXHC6219",
+        "amount": "604.16",
+        "type": null
+    },
+    {
+        "date": "07/10/2018",
+        "description": "PVR LIMITED BANGALORE",
+        "amount": "630.00",
+        "type": null
+    },
+    {
+        "date": "07/10/2018",
+        "description": "PVR LIMITED BANGALORE",
+        "amount": "200.00",
+        "type": null
+    }
+]
