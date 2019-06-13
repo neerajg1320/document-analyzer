@@ -4,16 +4,14 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.4.2/css/tabulator.min.css" rel="stylesheet">
 </head>
 <body>
-
-<div>
-    <input id="input_document_id" type="text" name="document_id" value="5"/>
-    <button id="btn_download">Download</button>
+<div id="document-info">
+    <div id="document-input">
+        <input id="input_document_id" type="text" name="document_id" value="5"/>
+        <button id="btn_download">Download</button>
+    </div>
+    <div id="document-transactions-table"></div>
+    <div id="document-text"></div>
 </div>
-
-<div id="document-transactions-table"></div>
-
-<div id="document-text"></div>
-
 <!-- jquery is required for tabulator.js -->
 <script   src="http://code.jquery.com/jquery-3.3.1.min.js"   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="   crossorigin="anonymous"></script>
 <script   src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"   integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="   crossorigin="anonymous"></script>
