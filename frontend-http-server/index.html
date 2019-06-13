@@ -5,14 +5,14 @@
 </head>
 <body>
 
-<div id="document-text"></div>
-
 <div>
-    <input id="input_document_id" type="text" name="document_id" value="1"/>
+    <input id="input_document_id" type="text" name="document_id" value="5"/>
     <button id="btn_download">Download</button>
 </div>
 
-<div id="transactions-table"></div>
+<div id="document-transactions-table"></div>
+
+<div id="document-text"></div>
 
 <!-- jquery is required for tabulator.js -->
 <script   src="http://code.jquery.com/jquery-3.3.1.min.js"   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="   crossorigin="anonymous"></script>
@@ -29,6 +29,7 @@
     i) Fetch document transactions using API
     ii) Display transactions received as json array in a table format using tabulator
 -->
+<link rel="stylesheet" href="style.css">
 <script type="text/javascript" src="sample_json_data.js"></script>
 <script type="text/javascript" src="main.js"></script>
 </body>

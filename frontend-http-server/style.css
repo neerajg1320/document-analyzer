@@ -1,0 +1,7 @@
+div#document-text {
+    white-space: pre-wrap;
+    padding: 20px;
+    border:  1px dashed #000;
+    height: 400px;
+    overflow: auto;
+}
