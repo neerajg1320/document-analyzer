@@ -80,5 +80,4 @@ $(document).ready(function() {
     download_document_using_input(g_tabulator_table, g_user_auth_token);
 });
 
-// http://localhost:8000/api/docminer/documents/22/highlight/
 
