@@ -50,5 +50,11 @@ class DocumentDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Document
-        fields = ('id', 'title', 'institute_name', 'document_type', 'text', 'highlighted', 'transactions')
+        # NG: 2019-06-13 3:34pm
+        # We will not provide highlight and transactions by default.
+        # This will keep our API clean and also can potentially help us in accounting.
+        # But we need to watch out for any side effects.
+        #
+        # fields = ('id', 'title', 'institute_name', 'document_type', 'text', 'highlighted', 'transactions')
+        fields = ('id', 'title', 'institute_name', 'document_type', 'text',)
         read_only_fields = ('id', 'highlighted',)
