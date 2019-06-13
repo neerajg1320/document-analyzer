@@ -4,8 +4,8 @@ let g_tabulator_table = new Tabulator("#document-transactions-table", {
     layout:"fitColumns", //fit columns to width of table (optional)
     autoColumns:true,
 
-    rowClick:function(e, row){ //trigger an alert message when the row is clicked
-        alert("Row " + row + " Clicked!!!!");
+    rowClick: function(e, row){ //trigger an alert message when the row is clicked
+        alert('Row index ' + row.getPosition() + ' clicked');
     },
 });
 
@@ -75,6 +75,9 @@ $("#btn_download").click(function() {
     // set_sample_transactions(g_tabulator_table);
 });
 
+$("#btn_load_file").click(function() {
+    g_tabulator_table.setDataFromLocalFile(".json");
+});
 
 $(document).ready(function() {
     download_document_using_input(g_tabulator_table, g_user_auth_token);
