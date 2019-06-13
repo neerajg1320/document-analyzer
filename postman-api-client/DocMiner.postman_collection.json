@@ -1,0 +1,718 @@
+{
+	"info": {
+		"_postman_id": "ce08392d-1009-4abb-9774-7d7f68cdaeac",
+		"name": "DocMiner",
+		"description": "The API calls for DocMiner project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"alice@abc.com\",\n\t\"password\": \"Alice123\",\n\t\"name\": \"Alice\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/user/create/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user",
+						"create",
+						""
+					]
+				},
+				"description": "Create a user"
+			},
+			"response": []
+		},
+		{
+			"name": "Login User [User Token Create]",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"alice@abc.com\",\n\t\"password\": \"Alice123\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/user/token/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user",
+						"token",
+						""
+					]
+				},
+				"description": "The login user operation is analogous to a create token operation"
+			},
+			"response": []
+		},
+		{
+			"name": "User Me [No Authorization Header]",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/user/me/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user",
+						"me",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Me [Authorization: Alice's Token]",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c0d4c344a2b7ff194aedc7d7b1e952da181cb849",
+						"description": "Alice's Authentication Token",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/user/me/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user",
+						"me",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tag: Get List",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5",
+						"description": "Alice's Authentication Token",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/tags/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"tags",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tag: Create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5",
+						"description": "Alice's Authentication Token",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Short\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/tags/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"tags",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Extractor: Get List",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5",
+						"description": "Alice's Authentication Token",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/extractors/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"extractors",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Extractor: Get By Id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5",
+						"description": "Alice's Authentication Token",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/extractors/4/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"extractors",
+						"4",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Extractor: Create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5",
+						"description": "Alice's Authentication Token",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 3,\n    \"title\": \"New Doc\",\n    \"institute_name\": \"Etrade-Optionshouse-2\",\n    \"document_type\": \"Statement\",\n    \"regex_parser\": \"(?P<acct_type>[,\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<trade_type>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<trade_date>\\\\d{2}\\\\/\\\\d{2}\\\\/\\\\d{2})(?:\\\\s){1,2}(?# )(?P<setl_date>\\\\d{2}\\\\/\\\\d{2}\\\\/\\\\d{2})(?:\\\\s){1,2}(?# )(?P<trade_qty>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?:(?P<symbol>[\\\\w]+)(?:\\\\s){1,2})?(?# )(?# symbol is present only in EQ\\\\n\\\" )(?P<trade_rate>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<principal>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<commission>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<trans_fee>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<addl_fee>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<tag_number>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<net_amount>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<trade_num>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<mkt>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<cap>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<marker1>Desc:)(?:\\\\s){1,2}(?# )(?:(?P<option>(?#     )(?P<opt_type>CALL|PUT) (?#     )(?P<opt_name>\\\\w+) (?#     )(?P<expiry_date>\\\\d{2}\\\\/\\\\d{2}\\\\/\\\\d{2}) (?#     )(?P<strike_price>[,.\\\\-\\\\d]+)(?#     )(?# ))(?:\\\\s){1,2})?(?# section is only for options\\\\n\\\" )(?P<scrip_name>.+)(?# )(?P<marker2>Interest\\\\/STTax:)(?:\\\\s){1,2}(?# )(?P<interest_tax>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<marker3>CUSIP:)(?:\\\\s){1,2}(?# )(?P<cusip_number>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<marker4>Currency:)(?:\\\\s){1,2}(?# )(?P<currency>[\\\\w]+)(?:\\\\s){1,2}\",\n    \"reference\": \"\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/extractors/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"extractors",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Extractor: Modify",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"description": "Alice's Authentication Token",
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Modified Again\",\n    \"institute_name\": \"Etrade-Optionshouse-2\",\n    \"document_type\": \"Statement\",\n    \"regex_parser\": \"(\\\\w*)\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/extractors/1/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"extractors",
+						"1",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Extractor: Delete",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5",
+						"description": "Alice's Authentication Token",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/extractors/4/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"extractors",
+						"4",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Document: Get List",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"description": "Alice's Authentication Token",
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/documents/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"documents",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Document: Get By Id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"description": "Alice's Authentication Token",
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/documents/21/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"documents",
+						"21",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Document: Create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"description": "Alice's Authentication Token",
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Erade Statement\",\n    \"institute_name\": \"Etrade\",\n    \"document_type\": \"Contract Note\",\n    \"text\": \"18 SNAP INC COMMISSION $23.50\\r\\nOPEN CONTRACT OPT REG FEE $1.67\\r\\nNET AMOUNT $6,725.17\\r\\n02/22/18 02/23/18 3 4 BUY 100 $.70 Margin PRINCIPAL $7,000.00\\r\\nCALL SNAP 03/16/18 19 SNAP INC COMMISSION $23.50\\r\\nOPEN CONTRACT OPT REG FEE $1.67\\r\\nNET AMOUNT $7,025.17\\r\\n02/22/18 02/23/18 3 1 SELL 100 $.38 Margin PRINCIPAL $3,800.00\\r\\nCALL SNAP 03/16/18 19 SNAP INC COMMISSION $23.50\\r\\nCLOSING CONTRACT FINRA TAF\\r\\nOPT REG FEE\\r\\nFEE\\r\\n$0.20\\r\\n1.67\\r\\n0.09\\r\\nNET AMOUNT $3,774.54\\r\\n02/22/18 02/23/18 3 1 SELL 100 $.40 Margin PRINCIPAL $4,000.00\\r\\nCALL SNAP 03/16/18 20 SNAP INC COMMISSION $23.50\\r\\nCLOSING CONTRACT FINRA TAF\\r\\nOPT REG FEE\\r\\nFEE\\r\\n$0.20\\r\\n1.67\\r\\n0.10\\r\\nNET AMOUNT $3,974.53\\r\\n\\f237 33936 PBA 1 31014 1 of 1 C EDLV AFPEDLV 22/02/18 23:52 001\\r\\nNEERAJ GUPTA\\r\\n39632 POTRERO DR\\r\\nNEWARK CA 94560-5612\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/documents/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"documents",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Document: Modify",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"description": "Alice's Authentication Token",
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Erade Statement Modified\",\n    \"institute_name\": \"Etrade\",\n    \"document_type\": \"Contract Note\",\n    \"text\": \"18 SNAP INC COMMISSION $23.50\\r\\nOPEN CONTRACT OPT REG FEE $1.67\\r\\nNET AMOUNT $6,725.17\\r\\n02/22/18 02/23/18 3 4 BUY 100 $.70 Margin PRINCIPAL $7,000.00\\r\\nCALL SNAP 03/16/18 19 SNAP INC COMMISSION $23.50\\r\\nOPEN CONTRACT OPT REG FEE $1.67\\r\\nNET AMOUNT $7,025.17\\r\\n02/22/18 02/23/18 3 1 SELL 100 $.38 Margin PRINCIPAL $3,800.00\\r\\nCALL SNAP 03/16/18 19 SNAP INC COMMISSION $23.50\\r\\nCLOSING CONTRACT FINRA TAF\\r\\nOPT REG FEE\\r\\nFEE\\r\\n$0.20\\r\\n1.67\\r\\n0.09\\r\\nNET AMOUNT $3,774.54\\r\\n02/22/18 02/23/18 3 1 SELL 100 $.40 Margin PRINCIPAL $4,000.00\\r\\nCALL SNAP 03/16/18 20 SNAP INC COMMISSION $23.50\\r\\nCLOSING CONTRACT FINRA TAF\\r\\nOPT REG FEE\\r\\nFEE\\r\\n$0.20\\r\\n1.67\\r\\n0.10\\r\\nNET AMOUNT $3,974.53\\r\\n\\f237 33936 PBA 1 31014 1 of 1 C EDLV AFPEDLV 22/02/18 23:52 001\\r\\nNEERAJ GUPTA\\r\\n39632 POTRERO DR\\r\\nNEWARK CA 94560-5612\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/documents/4/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"documents",
+						"4",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Document: Modify Partial",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"description": "Alice's Authentication Token",
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"document_type\": \"ContractNote\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/documents/21/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"documents",
+						"21",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Document: Delete",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"description": "Alice's Authentication Token",
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/documents/4/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"documents",
+						"4",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Document: Transactions (Json)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"description": "Alice's Authentication Token",
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/documents/21/transactions/json/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"documents",
+						"21",
+						"transactions",
+						"json",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Document: Transactions (Html)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"description": "Alice's Authentication Token",
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/documents/17/transactions/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"documents",
+						"17",
+						"transactions",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
