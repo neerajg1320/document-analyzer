@@ -22,3 +22,17 @@ docker-compose run --rm app sh -c "python manage.py createsuperuser"
 # In case of database inconsistency
 docker-compose run --rm app sh -c "python manage.py makemigrations"
 
+
+
+# Python migrations reset
+# https://simpleisbetterthancomplex.com/tutorial/2016/07/26/how-to-reset-migrations.html
+python manage.py showmigrations
+
+find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+find . -path "*/migrations/*.pyc"  -delete   
+#
+python manage.py migrate --fake core zero
+python manage.py makemigrations
+
+#If the database already exists
+python manage.py migrate --fake
