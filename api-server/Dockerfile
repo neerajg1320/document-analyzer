@@ -11,9 +11,12 @@ RUN apk add --update --no-cache --virtual .tmp-build-deps \
         gcc libc-dev linux-headers postgresql-dev musl-dev \
         zlib zlib-dev
 
-# For pdftotext application
+# For python pdftotext library
 RUN apk add --update g++
 RUN apk add --update poppler-dev
+
+# Needed if we want command pdftotext to be available
+RUN apk add --update poppler-utils
 
 RUN pip install -r /requirements.txt
 RUN apk del .tmp-build-deps
