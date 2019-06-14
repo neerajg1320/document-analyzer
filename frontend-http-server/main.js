@@ -11,7 +11,7 @@ let g_tabulator_table = new Tabulator("#document-transactions-table", {
 
 let g_document_text_box = $("#document-text")
 
-let g_user_auth_token = '864556deab19c0b84c28d1a56b20c2c3808c9099';
+let g_user_auth_token = '307e60bcf5f1930b39a6ce5bc87b171ed0451323';
 
 
 // These functions should have no knowledge of elements extractions
