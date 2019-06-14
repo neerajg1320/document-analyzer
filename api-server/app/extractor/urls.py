@@ -24,6 +24,10 @@ document_transactions_json = views.DocumentViewSet.as_view({
     'get': 'transactions_json'
 }, renderer_classes=[renderers.JSONRenderer])
 
+file_textify = views.FileViewSet.as_view({
+    'get': 'textify'
+}, renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
+
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -32,5 +36,5 @@ urlpatterns = [
     path('documents/<int:pk>/transactions/', document_transactions, name='document-transactions'),
     path('documents/<int:pk>/transactions/json/', document_transactions_json, name='document-transactions-json'),
 
-    # path('files/upload/', views.FileViewSet.as_view(), name='file-upload'),
+    path('files/<int:pk>/textify/', file_textify, name='file-textify'),
 ]

@@ -10,6 +10,8 @@ from extractor import serializers
 
 from extractor.text_routines import create_highlighted_text, \
     create_transactions_from_text_tuples_str, create_transactions_dict_array_from_text
+from extractor.pdf_routines import pdftotext_read_pdf
+
 
 import json
 class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
@@ -190,3 +192,14 @@ class FileViewSet(viewsets.ModelViewSet):
     #         return Response(file_serializer.data, status=status.HTTP_201_CREATED)
     #     else:
     #         return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
+    def textify(self, request, *args, **kwargs):
+        file = self.get_object()
+        file.text = "Sample Text"
+        if file.text is None or file.text == "":
+            # document.highlighted = create_highlighted_text(document.text, title=document.title)
+            file.text = pdftotext_read_pdf(file.file)
+            super(File, file).save()
+
+        return Response(file.text)
