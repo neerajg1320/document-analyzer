@@ -173,7 +173,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
 from rest_framework.response import Response
 from django.conf import settings
 import os
-from extractor.pdf_routines import read_pdf, is_encrypted_pdf, decrypt_pdf, pdftotext_read_pdf \
+from extractor.pdf_routines import read_pdf, is_encrypted_pdf, decrypt_pdf, \
+    pdftotext_read_pdf
 
 
 
@@ -222,8 +223,6 @@ class FileViewSet(viewsets.ModelViewSet):
                 decrypted_file_path = os.path.join(settings.MEDIA_ROOT, decrypted_file_name)
                 decrypt_pdf(file_path, decrypted_file_path, file.password)
                 file_path = decrypted_file_path
-
-            #file.text = read_pdf(file_path, file.password)
 
             file.text = pdftotext_read_pdf(file_path, file.password)
             super(File, file).save()

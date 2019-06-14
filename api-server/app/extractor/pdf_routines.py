@@ -63,13 +63,18 @@ def read_pdf(file_name, password="password", flag_replace_newline=False):
 
     return all_page_text
 
+
+# NG: 2019-06-14 5:41pm
+# Need linux package poppler-utils to work
+# Tested the working of the same
+# Kept for possible future reference and inclusion.
+#
 #
 # import subprocess
-#
 # PDF_COMMAND = '/usr/bin/pdftotext'
-#
-#
 # def pdftotext_read_pdf_using_subprocess(file_path, password=None, flag_replace_newline=False):
+#     print("PDF: " + file_path)
+#
 #     if password is not None:
 #         command = [PDF_COMMAND, '-raw', file_path, '-upw', password, '-']
 #     else:
