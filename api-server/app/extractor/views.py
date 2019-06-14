@@ -174,7 +174,7 @@ from rest_framework.response import Response
 from django.conf import settings
 import os
 from extractor.pdf_routines import read_pdf, is_encrypted_pdf, decrypt_pdf, \
-    pdftotext_read_pdf
+    pdftotext_read_pdf, pdftotext_read_pdf_using_subprocess
 
 
 class FileViewSet(viewsets.ModelViewSet):
@@ -244,4 +244,5 @@ class FileViewSet(viewsets.ModelViewSet):
             decrypted_file_path = os.path.join(settings.MEDIA_ROOT, decrypted_file_name)
             decrypt_pdf(file_path, decrypted_file_path, file.password)
             file_path = decrypted_file_path
-        file.text = pdftotext_read_pdf(file_path, file.password)
+        # file.text = pdftotext_read_pdf(file_path, file.password)
+        file.text = pdftotext_read_pdf_using_subprocess(file_path, file.password)

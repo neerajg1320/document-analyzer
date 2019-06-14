@@ -70,23 +70,25 @@ def read_pdf(file_name, password="password", flag_replace_newline=False):
 # Kept for possible future reference and inclusion.
 #
 #
-# import subprocess
-# PDF_COMMAND = '/usr/bin/pdftotext'
-# def pdftotext_read_pdf_using_subprocess(file_path, password=None, flag_replace_newline=False):
-#     print("PDF: " + file_path)
-#
-#     if password is not None:
-#         command = [PDF_COMMAND, '-raw', file_path, '-upw', password, '-']
-#     else:
-#         command = [PDF_COMMAND, '-raw', file_path, '-']
-#
-#     ret_val = None
-#     try:
-#         ret_val = subprocess.check_output(command).decode('utf-8')
-#     except subprocess.CalledProcessError:
-#         print("Subprocess failed for command: %s" % command)
-#
-#     return ret_val
+import subprocess
+PDF_COMMAND = '/usr/bin/pdftotext'
+
+
+def pdftotext_read_pdf_using_subprocess(file_path, password=None, flag_replace_newline=False):
+    print("PDF: " + file_path)
+
+    if password is not None:
+        command = [PDF_COMMAND, '-raw', file_path, '-upw', password, '-']
+    else:
+        command = [PDF_COMMAND, '-raw', file_path, '-']
+
+    ret_val = None
+    try:
+        ret_val = subprocess.check_output(command).decode('utf-8')
+    except subprocess.CalledProcessError:
+        print("Subprocess failed for command: %s" % command)
+
+    return ret_val
 
 
 def pdftotext_read_pdf(file_path, password=None, flag_replace_newline=False):

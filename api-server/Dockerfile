@@ -16,7 +16,7 @@ RUN apk add --update g++
 RUN apk add --update poppler-dev
 
 # Needed if we want command pdftotext to be available
-# RUN apk add --update poppler-utils
+RUN apk add --update poppler-utils
 
 RUN pip install -r /requirements.txt
 RUN apk del .tmp-build-deps
