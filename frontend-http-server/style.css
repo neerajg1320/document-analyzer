@@ -2,7 +2,7 @@ div#document-info {
     margin: 20px;
 }
 
-div#document-input {
+div#document-input, div#file-input {
     margin: 20px;
     text-align: center;
 }

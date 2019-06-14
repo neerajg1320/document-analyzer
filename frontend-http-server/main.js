@@ -68,6 +68,29 @@ function download_document_using_input(tabulator_table, user_auth_token) {
     download_document_transactions(user_auth_token, document_id, tabulator_table, g_document_text_box)
 }
 
+function documentize_file(user_auth_token, file_id, result_elm) {
+    // http://localhost:8000/api/docminer/files/<document_id>/documentize/
+    let file_documentize_url = 'http://localhost:8000/api/docminer/files/' + file_id + '/documentize/';
+
+    $.ajax({
+        url: file_documentize_url,
+        headers : {
+            'Authorization' : 'Token ' + user_auth_token,
+        },
+        dataType: 'json',
+        success: function(response) {
+            result_elm.val(response.id);
+            $("#btn_download").click();
+        }
+    });
+}
+
+
+$("#btn_documentize").click(function() {
+    var file_id = $("#input_file_id").val();
+    input_document_elm = $("#input_document_id");
+    documentize_file(g_user_auth_token, file_id, input_document_elm);
+});
 
 $("#btn_download").click(function() {
     download_document_using_input(g_tabulator_table, g_user_auth_token);
@@ -77,6 +100,27 @@ $("#btn_download").click(function() {
 
 $("#btn_load_file").click(function() {
     g_tabulator_table.setDataFromLocalFile(".json");
+});
+
+
+$("#fileinfo").submit(function(e) {
+    var formData = new FormData($(this)[0]);
+
+    $.ajax({
+        url: $(this).attr('action'),
+        type: $(this).attr('method'),
+        data: formData,
+        headers: {'Authorization': 'Token ' + g_user_auth_token},
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function(response) {
+            alert('File upload successful (id = ' + response.id + ')');
+            $("#input_file_id").val(response.id);
+            $("#btn_documentize").click();
+        },
+    });
+    e.preventDefault();
 });
 
 $(document).ready(function() {
