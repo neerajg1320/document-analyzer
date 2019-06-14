@@ -224,7 +224,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5",
+						"value": "Token 864556deab19c0b84c28d1a56b20c2c3808c9099",
 						"description": "Alice's Authentication Token",
 						"type": "text"
 					}
@@ -260,7 +260,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5",
+						"value": "Token 864556deab19c0b84c28d1a56b20c2c3808c9099",
 						"description": "Alice's Authentication Token",
 						"type": "text"
 					}
@@ -270,7 +270,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/docminer/extractors/4/",
+					"raw": "http://localhost:8000/api/docminer/extractors/1/",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -280,7 +280,7 @@
 						"api",
 						"docminer",
 						"extractors",
-						"4",
+						"1",
 						""
 					]
 				}
@@ -288,7 +288,7 @@
 			"response": []
 		},
 		{
-			"name": "Extractor: Create",
+			"name": "Extractor: Create (Etrade-Optionshouse)",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -300,14 +300,92 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5",
+						"value": "Token 307e60bcf5f1930b39a6ce5bc87b171ed0451323",
 						"description": "Alice's Authentication Token",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"id\": 3,\n    \"title\": \"New Doc\",\n    \"institute_name\": \"Etrade-Optionshouse-2\",\n    \"document_type\": \"Statement\",\n    \"regex_parser\": \"(?P<acct_type>[,\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<trade_type>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<trade_date>\\\\d{2}\\\\/\\\\d{2}\\\\/\\\\d{2})(?:\\\\s){1,2}(?# )(?P<setl_date>\\\\d{2}\\\\/\\\\d{2}\\\\/\\\\d{2})(?:\\\\s){1,2}(?# )(?P<trade_qty>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?:(?P<symbol>[\\\\w]+)(?:\\\\s){1,2})?(?# )(?# symbol is present only in EQ\\\\n\\\" )(?P<trade_rate>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<principal>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<commission>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<trans_fee>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<addl_fee>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<tag_number>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<net_amount>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<trade_num>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<mkt>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<cap>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<marker1>Desc:)(?:\\\\s){1,2}(?# )(?:(?P<option>(?#     )(?P<opt_type>CALL|PUT) (?#     )(?P<opt_name>\\\\w+) (?#     )(?P<expiry_date>\\\\d{2}\\\\/\\\\d{2}\\\\/\\\\d{2}) (?#     )(?P<strike_price>[,.\\\\-\\\\d]+)(?#     )(?# ))(?:\\\\s){1,2})?(?# section is only for options\\\\n\\\" )(?P<scrip_name>.+)(?# )(?P<marker2>Interest\\\\/STTax:)(?:\\\\s){1,2}(?# )(?P<interest_tax>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<marker3>CUSIP:)(?:\\\\s){1,2}(?# )(?P<cusip_number>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<marker4>Currency:)(?:\\\\s){1,2}(?# )(?P<currency>[\\\\w]+)(?:\\\\s){1,2}\",\n    \"reference\": \"\"\n}"
+					"raw": "{\n    \"id\": 3,\n    \"title\": \"Etrade Optionshouse Statment Parser\",\n    \"institute_name\": \"Etrade-Optionshouse\",\n    \"document_type\": \"ContractNote\",\n    \"regex_parser\": \"(?P<acct_type>[,\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<trade_type>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<trade_date>\\\\d{2}\\\\/\\\\d{2}\\\\/\\\\d{2})(?:\\\\s){1,2}(?# )(?P<setl_date>\\\\d{2}\\\\/\\\\d{2}\\\\/\\\\d{2})(?:\\\\s){1,2}(?# )(?P<trade_qty>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?:(?P<symbol>[\\\\w]+)(?:\\\\s){1,2})?(?# )(?# symbol is present only in EQ\\\\n\\\" )(?P<trade_rate>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<principal>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<commission>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<trans_fee>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<addl_fee>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<tag_number>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<net_amount>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<trade_num>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<mkt>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<cap>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<marker1>Desc:)(?:\\\\s){1,2}(?# )(?:(?P<option>(?#     )(?P<opt_type>CALL|PUT) (?#     )(?P<opt_name>\\\\w+) (?#     )(?P<expiry_date>\\\\d{2}\\\\/\\\\d{2}\\\\/\\\\d{2}) (?#     )(?P<strike_price>[,.\\\\-\\\\d]+)(?#     )(?# ))(?:\\\\s){1,2})?(?# section is only for options\\\\n\\\" )(?P<scrip_name>.+)(?# )(?P<marker2>Interest\\\\/STTax:)(?:\\\\s){1,2}(?# )(?P<interest_tax>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<marker3>CUSIP:)(?:\\\\s){1,2}(?# )(?P<cusip_number>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<marker4>Currency:)(?:\\\\s){1,2}(?# )(?P<currency>[\\\\w]+)(?:\\\\s){1,2}\",\n    \"reference\": \"\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/extractors/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"extractors",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Extractor: Create (Etrade)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"description": "Alice's Authentication Token",
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token 307e60bcf5f1930b39a6ce5bc87b171ed0451323"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 3,\n    \"title\": \"Etrade Statment Parser\",\n    \"institute_name\": \"Etrade\",\n    \"document_type\": \"ContractNote\",\n    \"regex_parser\": \"(?P<trade_date>\\\\d{2}\\\\/\\\\d{2}\\\\/\\\\d{2})(?:\\\\s){1,2}(?# )(?P<setl_date>\\\\d{2}\\\\/\\\\d{2}\\\\/\\\\d{2})(?:\\\\s){1,2}(?# )(?P<mkt>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<cap>[\\\\w]+)(?:\\\\s){1,2}(?# )(?:(?P<symbol>[\\\\w]+)(?:\\\\s){1,2}(?# ))?(?# symbol/cusip is only for EQ )(?P<trade_type>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<trade_qty>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<trade_rate>[\\\\$,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<acct_type>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<marker_principal>PRINCIPAL)(?:\\\\s){1,2}(?# )(?P<principal>[\\\\$,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?:(?P<option>(?#     )(?P<opt_type>CALL|PUT) (?#     )(?P<opt_name>[\\\\w]+) (?#     )(?P<expiry_date>\\\\d{2}\\\\/\\\\d{2}\\\\/\\\\d{2}) (?#     )(?P<strike_price>[\\\\$,.\\\\-\\\\d]+))(?# )(?:\\\\s){1,2})?(?# )(?P<scrip_commission_fee>(?:.|\\\\s)*?)(?:\\\\s){1,2}(?# )(?P<marker_net_amount>NET AMOUNT)(?:\\\\s){1,2}(?# )(?P<net_amount>[\\\\$,.\\\\-\\\\d]+)(?:\\\\s){1,2}\",\n    \"reference\": \"\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/extractors/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"extractors",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Extractor: Create (HDFC Credit Card)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Token 307e60bcf5f1930b39a6ce5bc87b171ed0451323",
+						"description": "Alice's Authentication Token",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"HDFC Credit Card Statement Parse\",\n    \"institute_name\": \"HDFC\",\n    \"document_type\": \"CreditCardStatement\",\n    \"regex_parser\": \"(?P<acct_type>[,\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<trade_type>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<trade_date>\\\\d{2}\\\\/\\\\d{2}\\\\/\\\\d{2})(?:\\\\s){1,2}(?# )(?P<setl_date>\\\\d{2}\\\\/\\\\d{2}\\\\/\\\\d{2})(?:\\\\s){1,2}(?# )(?P<trade_qty>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?:(?P<symbol>[\\\\w]+)(?:\\\\s){1,2})?(?# )(?# symbol is present only in EQ\\\\n\\\" )(?P<trade_rate>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<principal>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<commission>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<trans_fee>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<addl_fee>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<tag_number>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<net_amount>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<trade_num>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<mkt>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<cap>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<marker1>Desc:)(?:\\\\s){1,2}(?# )(?:(?P<option>(?#     )(?P<opt_type>CALL|PUT) (?#     )(?P<opt_name>\\\\w+) (?#     )(?P<expiry_date>\\\\d{2}\\\\/\\\\d{2}\\\\/\\\\d{2}) (?#     )(?P<strike_price>[,.\\\\-\\\\d]+)(?#     )(?# ))(?:\\\\s){1,2})?(?# section is only for options\\\\n\\\" )(?P<scrip_name>.+)(?# )(?P<marker2>Interest\\\\/STTax:)(?:\\\\s){1,2}(?# )(?P<interest_tax>[,.\\\\-\\\\d]+)(?:\\\\s){1,2}(?# )(?P<marker3>CUSIP:)(?:\\\\s){1,2}(?# )(?P<cusip_number>[\\\\w]+)(?:\\\\s){1,2}(?# )(?P<marker4>Currency:)(?:\\\\s){1,2}(?# )(?P<currency>[\\\\w]+)(?:\\\\s){1,2}\",\n    \"reference\": \"\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8000/api/docminer/extractors/",
@@ -329,24 +407,24 @@
 		{
 			"name": "Extractor: Modify",
 			"request": {
-				"method": "PUT",
+				"method": "PATCH",
 				"header": [
-					{
-						"description": "Alice's Authentication Token",
-						"key": "Authorization",
-						"type": "text",
-						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5"
-					},
 					{
 						"key": "Content-Type",
 						"name": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Token 864556deab19c0b84c28d1a56b20c2c3808c9099",
+						"description": "Alice's Authentication Token",
+						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"title\": \"Modified Again\",\n    \"institute_name\": \"Etrade-Optionshouse-2\",\n    \"document_type\": \"Statement\",\n    \"regex_parser\": \"(\\\\w*)\"\n}"
+					"raw": "{\n    \"title\": \"Etrade-Optionshouse ContractNote Parser\",\n    \"institute_name\": \"Etrade-Optionshouse\",\n    \"document_type\": \"ContractNote\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8000/api/docminer/extractors/1/",
@@ -373,7 +451,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5",
+						"value": "Token 864556deab19c0b84c28d1a56b20c2c3808c9099",
 						"description": "Alice's Authentication Token",
 						"type": "text"
 					}
@@ -383,7 +461,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/docminer/extractors/4/",
+					"raw": "http://localhost:8000/api/docminer/extractors/3/",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -393,7 +471,7 @@
 						"api",
 						"docminer",
 						"extractors",
-						"4",
+						"3",
 						""
 					]
 				}
@@ -409,10 +487,10 @@
 				"method": "GET",
 				"header": [
 					{
-						"description": "Alice's Authentication Token",
 						"key": "Authorization",
-						"type": "text",
-						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5"
+						"value": "Token 864556deab19c0b84c28d1a56b20c2c3808c9099",
+						"description": "Alice's Authentication Token",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -445,10 +523,10 @@
 				"method": "GET",
 				"header": [
 					{
-						"description": "Alice's Authentication Token",
 						"key": "Authorization",
-						"type": "text",
-						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5"
+						"value": "Token 864556deab19c0b84c28d1a56b20c2c3808c9099",
+						"description": "Alice's Authentication Token",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -456,7 +534,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/docminer/documents/21/",
+					"raw": "http://localhost:8000/api/docminer/documents/3/",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -466,7 +544,7 @@
 						"api",
 						"docminer",
 						"documents",
-						"21",
+						"3",
 						""
 					]
 				}
@@ -474,26 +552,104 @@
 			"response": []
 		},
 		{
-			"name": "Document: Create",
+			"name": "Document: Create (Etrade-Optionshouse)",
 			"request": {
 				"method": "POST",
 				"header": [
 					{
-						"description": "Alice's Authentication Token",
-						"key": "Authorization",
-						"type": "text",
-						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5"
-					},
-					{
 						"key": "Content-Type",
 						"name": "Content-Type",
-						"value": "application/json",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Token 307e60bcf5f1930b39a6ce5bc87b171ed0451323",
+						"description": "Alice's Authentication Token",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"title\": \"Erade Statement\",\n    \"institute_name\": \"Etrade\",\n    \"document_type\": \"Contract Note\",\n    \"text\": \"18 SNAP INC COMMISSION $23.50\\r\\nOPEN CONTRACT OPT REG FEE $1.67\\r\\nNET AMOUNT $6,725.17\\r\\n02/22/18 02/23/18 3 4 BUY 100 $.70 Margin PRINCIPAL $7,000.00\\r\\nCALL SNAP 03/16/18 19 SNAP INC COMMISSION $23.50\\r\\nOPEN CONTRACT OPT REG FEE $1.67\\r\\nNET AMOUNT $7,025.17\\r\\n02/22/18 02/23/18 3 1 SELL 100 $.38 Margin PRINCIPAL $3,800.00\\r\\nCALL SNAP 03/16/18 19 SNAP INC COMMISSION $23.50\\r\\nCLOSING CONTRACT FINRA TAF\\r\\nOPT REG FEE\\r\\nFEE\\r\\n$0.20\\r\\n1.67\\r\\n0.09\\r\\nNET AMOUNT $3,774.54\\r\\n02/22/18 02/23/18 3 1 SELL 100 $.40 Margin PRINCIPAL $4,000.00\\r\\nCALL SNAP 03/16/18 20 SNAP INC COMMISSION $23.50\\r\\nCLOSING CONTRACT FINRA TAF\\r\\nOPT REG FEE\\r\\nFEE\\r\\n$0.20\\r\\n1.67\\r\\n0.10\\r\\nNET AMOUNT $3,974.53\\r\\n\\f237 33936 PBA 1 31014 1 of 1 C EDLV AFPEDLV 22/02/18 23:52 001\\r\\nNEERAJ GUPTA\\r\\n39632 POTRERO DR\\r\\nNEWARK CA 94560-5612\"\n}"
+					"raw": "{\n    \"title\": \"Etrade Optionshouse Statement\",\n    \"institute_name\": \"Etrade-Optionshouse\",\n    \"document_type\": \"ContractNote\",\n    \"text\": \"Apex Clearing Corporation\\r\\n350 N. St. Paul Street 1300\\r\\nDallas, TX 75201\\r\\nAccount Number: 5PD-05535\\r\\nNEERAJ GUPTA\\r\\n39632 POTRERO DR\\r\\nNEWARK CA 94560-5612\\r\\nOFFICE SERVING YOU\\r\\nOPTIONSHOUSE\\r\\n877-598-3190\\r\\n\\fAccount clearedby\\r\\nApexClearingCorporation\\r\\n350 N. St. Paul Street 1300\\r\\nDallas,Texas75201\\r\\nPage: 1\\r\\nAccount Number: 5PD-05535 Account Name: NEERAJ GUPTA\\r\\nProcessDate:11/30/2016\\r\\nAcct\\r\\nType B/S Trade Date Settle Date QTY SYM PRICE Principal COMM Tran Fee\\r\\nAdd’l\\r\\nFees\\r\\nTag\\r\\nNumber Net Amount Trade#\\r\\nM\\r\\nK\\r\\nT\\r\\nC\\r\\nA\\r\\nP\\r\\n2 S 11/30/16 12/01/16 100.000 0.2100000 2,100.00 23.50 4.32 0.00 C7013 2,072.18 AG61201 5 1\\r\\nDesc: CALL GPRO 12/16/16 11 GOPRO INC Interest/STTax: 0.00 CUSIP: 9BXSXM4\\r\\nCurrency: USD ReportedPX: MarkUp/Down:\\r\\nTrailer: OPEN CONTRACT\\r\\n2 B 11/30/16 12/05/16 10,000.000 WPRT 1.3000000 13,000.00 3.95 0.00 0.00 W9134 13,003.95 AG61205 6 1\\r\\nDesc: ***WESTPORT FUEL SYSTEMS INC Interest/STTax: 0.00 CUSIP: 960908309\\r\\nCurrency: USD ReportedPX: MarkUp/Down:\\r\\nTrailer:\\r\\nSUMMARY FOR CURRENT TRADE DATE: 11/30/16\\r\\nTOTAL SHARES BOUGHT: 10,000.00 TOTAL DOLLARS BOUGHT: -13,003.95\\r\\nTOTAL SHARES SOLD: -100.00 TOTAL DOLLARS SOLD: 2,072.18\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/documents/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"documents",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Document: Create (Etrade)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"description": "Alice's Authentication Token",
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token 307e60bcf5f1930b39a6ce5bc87b171ed0451323"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Erade Statement\",\n    \"institute_name\": \"Etrade-Optionshouse\",\n    \"document_type\": \"ContractNote\",\n    \"text\": \"E*TRADE Securities LLC\\r\\nPO Box 484\\r\\nJersey City, NJ 07303-0484\\r\\nDETACH HERE DETACH HERE\\r\\nMake checks payable to E*TRADE Securities LLC.\\r\\nMail depositsto:\\r\\nE TRADE\\r\\nPlease do not send cash Dollars Cents\\r\\nTOTAL DEPOSIT\\r\\nAccount Name:\\r\\nNEERAJ GUPTA\\r\\nE TRADE Securities LLC\\r\\nPO Box 484\\r\\nJersey City, NJ 07303-0484\\r\\n1-800-ETRADE-1 (1-800-387-2331)\\r\\netrade.com\\r\\n062120180001 900542174173\\r\\nAccount Number: XXXX-7417\\r\\nUse This Deposit Slip Acct: XXXX-7417\\r\\nInvestment Account\\r\\nNEERAJ GUPTA\\r\\nFF5 WILDGRASSAPTS BLK 2\\r\\n8-1 S.T. BED, KORAMANGALA\\r\\nBANGALORE\\r\\n560047 INDIA\\r\\nTRADE CONFIRMATION\\r\\nPage 1 of 4\\r\\nTRADE\\r\\nDATE\\r\\nSETL\\r\\nDATE\\r\\nMKT /\\r\\nCPT\\r\\nSYMBOL /\\r\\nCUSIP\\r\\nBUY /\\r\\nSELL QUANTITY PRICE\\r\\nACCT\\r\\nTYPE\\r\\n06/21/18 06/22/18 2 1 BUY 1 $.74 Margin PRINCIPAL $74.00\\r\\nCALL PBR 01/18/19 12 PETROLEO BRASILEIRO SA COMMISSION $0.15\\r\\nOPEN CONTRACT OPT REG FEE $0.02\\r\\nNET AMOUNT $74.17\\r\\n06/21/18 06/22/18 3 1 BUY 41 $.74 Margin PRINCIPAL $3,034.00\\r\\nCALL PBR 01/18/19 12 PETROLEO BRASILEIRO SA COMMISSION $14.65\\r\\nOPEN CONTRACT OPT REG FEE $0.68\\r\\nNET AMOUNT $3,049.33\\r\\n06/21/18 06/22/18 3 4 BUY 11 $.73 Margin PRINCIPAL $803.00\\r\\nCALL PBR 01/18/19 12 PETROLEO BRASILEIRO SA COMMISSION $10.15\\r\\nOPEN CONTRACT OPT REG FEE $0.18\\r\\nNET AMOUNT $813.33\\r\\n06/21/18 06/22/18 5 1 SELL 84 $.66 Margin PRINCIPAL $5,544.00\\r\\nCALL SNAP 01/18/19 19 SNAP INC COMMISSION $12.60\\r\\nCLOSING CONTRACT FINRA TAF\\r\\nOPT REG FEE\\r\\nFEE\\r\\n$0.17\\r\\n1.40\\r\\n0.08\\r\\nNET AMOUNT $5,529.75\\r\\n06/21/18 06/22/18 5 1 BUY 46 $.73 Margin PRINCIPAL $3,358.00\\r\\nCALL PBR 01/18/19 12 PETROLEO BRASILEIRO SA COMMISSION $6.90\\r\\nOPEN CONTRACT OPT REG FEE $0.77\\r\\nNET AMOUNT $3,365.67\\r\\n06/21/18 06/22/18 5 1 BUY 46 $.74 Margin PRINCIPAL $3,404.00\\r\\nCALL PBR 01/18/19 12 PETROLEO BRASILEIRO SA COMMISSION $6.90\\r\\nOPEN CONTRACT OPT REG FEE $0.77\\r\\nNET AMOUNT $3,411.67\\r\\n\\f237 39677 PBA 2 78813 1 of 1 C EDLV AFPEDLV 21/06/18 23:26 001\\r\\nAccount Number: XXXX-7417\\r\\nE TRADE\\r\\nInvestment Account\\r\\nTRADE CONFIRMATION\\r\\nPage 2 of 4\\r\\nTRADE\\r\\nDATE\\r\\nSETL\\r\\nDATE\\r\\nMKT /\\r\\nCPT\\r\\nSYMBOL /\\r\\nCUSIP\\r\\nBUY /\\r\\nSELL QUANTITY PRICE\\r\\nACCT\\r\\nTYPE\\r\\n06/21/18 06/22/18 6 1 BUY 55 $.74 Margin PRINCIPAL $4,070.00\\r\\nCALL PBR 01/18/19 12 PETROLEO BRASILEIRO SA COMMISSION $8.25\\r\\nOPEN CONTRACT OPT REG FEE $0.92\\r\\nNET AMOUNT $4,079.17\\r\\n06/21/18 06/22/18 3 1 SELL 8 $.66 Margin PRINCIPAL $528.00\\r\\nCALL SNAP 01/18/19 19 SNAP INC COMMISSION $9.70\\r\\nCLOSING CONTRACT OPT REG FEE\\r\\nFEE\\r\\n$0.13\\r\\n0.01\\r\\nNET AMOUNT $518.16\\r\\n06/21/18 06/22/18 3 4 SELL 8 $.66 Margin PRINCIPAL $528.00\\r\\nCALL SNAP 01/18/19 19 SNAP INC COMMISSION $1.20\\r\\nCLOSING CONTRACT OPT REG FEE\\r\\nFEE\\r\\n$0.13\\r\\n0.01\\r\\nNET AMOUNT $526.66\\r\\n\\fThis Page Intentionally Left Blank\\r\\n237 39677 PBA 2 78813 1 of 1 C EDLV AFPEDLV 21/06/18 23:26 001\\r\\n\\fNEERAJ GUPTA\\r\\nFF5 WILDGRASS APTS BLK 2\\r\\n8-1 S.T. BED, KORAMANGALA\\r\\nBANGALORE\\r\\n560047 INDIA\\r\\n237 39677 PBA 2 78813 1 of 1 C EDLV AFPEDLV 21/06/18 23:26 001\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/documents/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"documents",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Document: Create (HDFC Credit Card)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"description": "Alice's Authentication Token",
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token 307e60bcf5f1930b39a6ce5bc87b171ed0451323"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Erade Statement\",\n    \"institute_name\": \"Etrade-Optionshouse\",\n    \"document_type\": \"ContractNote\",\n    \"text\": \"In case you wish to update the personal details,please write a letter\\r\\nto The Manager, HDFC Bank Card Division, # 8, L B Road,\\r\\nThiruvanmiyur, Chennai – 600041\\r\\nName : NEERAJ GUPTA\\r\\nEmail : NEERAJ76@YAHOO.COM\\r\\nAddress : #FF5 WILD GRASS APRTS BLK-2 NO 8/1 NIRGUNA\\r\\nMNDR LYT ST BED KORAMANGALA\\r\\nBANGALORE-560047 KAR\\r\\n0\\r\\n0\\r\\nGST No :\\r\\nStatement for HDFC Bank Credit Card\\r\\nStatement Date:08/07/2018 Card No: 4854 98XX XXXX 5891\\r\\nPayment Due Date Total Dues Minimum Amount Due\\r\\n28/07/2018 97,724.00 4,890.00\\r\\nCredit Limit Available Credit Limit Available Cash Limit\\r\\n6,50,000 5,48,772 2,60,000\\r\\nAccount Summary\\r\\nOpening\\r\\nBalance\\r\\nPayment/\\r\\nCredits\\r\\nPurchase/\\r\\nDebits\\r\\nFinance\\r\\nCharges\\r\\nTotal Dues\\r\\n36,628.46 36,631.00 97,726.47 0.00 97,724.00\\r\\nPast Dues (If any)\\r\\nOverlimit 3 Months+ 2 Months 1 Month Current Dues\\r\\nMinimum\\r\\nAmount Due\\r\\n0.00 0.00 0.00 0.00 4,890.00 4,890.00\\r\\nIMPORTANT INFORMATION\\r\\n1. ALL LOUNGE VISITS USING PRIORITY PASS CARD WITHIN INDIA AND ALL GUEST\\r\\nVISITS IS CHARGED AT $27+TAX PER PERSON PER VISIT\\r\\n2. LOUNGE VISITS USING PRIORITY PASS CARD OUTSIDE INDIA IS CHARGED AT\\r\\n$27+TAX PER PERSON ABOVE THE COMPLIMENTARY CAPPING\\r\\n3. NOW GET 15000 BONUS RP EVERY YEAR ON SPENDS OF RS.8LAC WEF 1 APR18 ON\\r\\nREGALIA. TO KNOW MORE VISIT HDFCBANK.COM.T&C\\r\\nDomestic Transactions\\r\\nDate Transaction Description Amount (in Rs.)\\r\\nNEERAJ GUPTA\\r\\n08/06/2018 T R BOOKS STALL RISHIKESH 990.00\\r\\n08/06/2018 DNH*GODADDY.COM 480-505-88 3,225.60\\r\\n10/06/2018 IFB INDUSTRIES LTD BANGALORE 34,580.00\\r\\n15/06/2018 CAFE COFFEE DAY BANGALORE 227.00\\r\\n15/06/2018 PAYU MONEY GURGAON 2,596.00\\r\\n16/06/2018 THE LEELA PALACE-BANGA BANGALORE 22,903.60\\r\\n17/06/2018 AVENUES INDIA PVT LTD MUMBAI 1,178.82\\r\\n19/06/2018 ACT Pvt Ltd Bangalore 7,497.64\\r\\n19/06/2018 AVENUES INDIA PVT LTD MUMBAI 2,360.00\\r\\n20/06/2018 Spay 1137820223 Airtel Mob TXHC5809 588.82\\r\\n22/06/2018 WWW WEWORK CO IN GURGAON 2.00\\r\\n22/06/2018 WWW WEWORK CO IN GURGAON 2.00 Cr\\r\\n23/06/2018 DNH*GODADDY.COM 480-505-88 5,146.40\\r\\n25/06/2018 TATA STARBUCKS LIMITED BANGALORE 483.00\\r\\n27/06/2018 IGST-VPS1817977138928-RATE 18.0 -29 (Ref# VT181790069011530000090) 22.89\\r\\n28/06/2018 NETBANKING TRANSFER (Ref# 00000000000628008295857) 36,629.00 Cr\\r\\n05/07/2018 WWW WEWORK CO IN GURGAON 8,850.00\\r\\nVISA Regalia Credit Card Statement\\r\\nHSN Code : 9971\\r\\nHDFC Bank Credit Cards GSTIN : 33AAACH2702H2Z6\\r\\nPage 1 of 4\\r\\n\\fDomestic Transactions\\r\\nDate Transaction Description Amount (in Rs.)\\r\\nNEERAJ GUPTA\\r\\n05/07/2018 Spay 1134401858 Airtel Mob TXHC5864 588.82\\r\\n08/07/2018 CONSOLIDATED FCY MARKUP FEE (Ref# VT181790069011530000090) 127.17\\r\\nVISA Regalia Credit Card Statement\\r\\nHSN Code : 9971\\r\\nHDFC Bank Credit Cards GSTIN : 33AAACH2702H2Z6\\r\\nPage 2 of 4\\r\\n\\fInternational Transactions\\r\\nDate Transaction Description Amount (in Rs.)\\r\\nNEERAJ GUPTA\\r\\nnull 26/06/2018 SP * BETTERBACK GETBETTERB USD 93.00 6,358.71\\r\\nReward Points Summary\\r\\nOpening Balance Earned Disbursed Adjusted/Lapsed Closing Balance\\r\\nPoints expiring in 30\\r\\ndays or next month\\r\\nPoints expiring in 60\\r\\ndays\\r\\n35,385 2,570 0 0 37,955 0 0\\r\\n* Note : All contents of the Statement will be deemed to be correct and accepted by you, unless you inform us of any discrepancies within 60 days from the date of this statement\\r\\n* The available credit limit showed herein takes into account charges incurred but not billed\\r\\nFor HDFC Bank\\r\\nManojGogoi\\r\\nVISA Regalia Credit Card Statement\\r\\nHSN Code : 9971\\r\\nHDFC Bank Credit Cards GSTIN : 33AAACH2702H2Z6\\r\\nPage 3 of 4\\r\\nDigitally signed by Credit Card Statement\\r\\nDate: 2018.07.09 06:29:15 IST\\r\\nSignature Not Verified\\r\\n\\f6\\r\\nOffers on your Credit Card\\r\\nGet 5X Reward Points on Big Basket, Snapdeal & Lifestyle. Offer valid till 30th Sep,2018. TCA\\r\\n•\\r\\nEnjoy Instant Discount* on Flight bookings on Spicejet,GoIbibo,MakeMyTrip,Cleartrip. Offer valid till 30th Sep,2018. TCA\\r\\n•\\r\\nGet upto 10% discount on Flight, Hotel, Holiday bookings at Thomas Cook. Offer valid till 31st Dec, 2018. TCA\\r\\n•\\r\\nUpto Rs200 off on Grocery Spends @ Grofers from 01 to 07 of Every Month. Offer valid till 31st Dec,2018. TCA\\r\\n•\\r\\nUSE Code: HDFCOFFER to get 50% Off + 500 Off on Reliance Trends. Offer valid till 31st Aug, 2018.TCA\\r\\n•\\r\\nTerms & Conditions apply, visit www.offers.smartbuy.hdfcbank.com for offer details\\r\\nImportant Information\\r\\nThe \\\"Available Credit Limit\\\" shown in this statement takes into account charges incurred but not due. Please ensure that at least the \\\"Minimum Amount\\r\\nDue\\\" reaches us by the \\\"Due Date\\\".\\r\\nIf the minimum amount due or part amount less than the total amount due is paid, interest charges are applicable (including fresh purchases, if any) on an\\r\\naverage daily reducing balance method.\\r\\nTo Hotlist your credit card, login into Netbanking or call our phone banking numbers, please\\r\\nThe Credit Card Information Bureau India Ltd.(CIBIL) is an initiative of the Government of India and the Reserve Bank of India (RBI) to improve the\\r\\nfunctionality and stability of the Indian financial system. All banks and financial institutions participating in this initiative are required to share customer\\r\\ndata with CIBIL.\\r\\nTo know the Voluntary Codes as prescribed by the \\\"The Banking Codes and Standards Board of India (BCSBI)\\\" , please\\r\\n•\\r\\n•\\r\\nclick here\\r\\n•\\r\\n•\\r\\nclick here\\r\\n•\\r\\nOther offers on your Credit Card\\r\\nCompare Prices across top sites and\\r\\nsave more on shopping and flight\\r\\nbookings on SmartBuy. Compare Karo,\\r\\nSmart Raho.\\r\\nAll payments, One App, One Click, Book\\r\\nTickets I Pay Bills I Book a Taxi I Send\\r\\nMoney I Buy Grocery.\\r\\nKnow more Know more\\r\\nExclusive offers at 75+ online merchants\\r\\nand 5000+ offline stores across\\r\\nShopping, Travel, Groceries and others.\\r\\nSimplify your payments with convenient\\r\\nEasy EMI offers on a variety of purchases.\\r\\nKnow more Know more\\r\\nPayment Options\\r\\nStatement and Payment\\r\\nrelated information\\r\\nMITC (Most Imp Terms &\\r\\nConditions)\\r\\nCustomer Right Policy\\r\\nVISA Regalia Credit Card Statement\\r\\nHSN Code : 9971\\r\\nHDFC Bank Credit Cards GSTIN : 33AAACH2702H2Z6\\r\\nPage 4 of 4\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8000/api/docminer/documents/",
@@ -532,47 +688,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"title\": \"Erade Statement Modified\",\n    \"institute_name\": \"Etrade\",\n    \"document_type\": \"Contract Note\",\n    \"text\": \"18 SNAP INC COMMISSION $23.50\\r\\nOPEN CONTRACT OPT REG FEE $1.67\\r\\nNET AMOUNT $6,725.17\\r\\n02/22/18 02/23/18 3 4 BUY 100 $.70 Margin PRINCIPAL $7,000.00\\r\\nCALL SNAP 03/16/18 19 SNAP INC COMMISSION $23.50\\r\\nOPEN CONTRACT OPT REG FEE $1.67\\r\\nNET AMOUNT $7,025.17\\r\\n02/22/18 02/23/18 3 1 SELL 100 $.38 Margin PRINCIPAL $3,800.00\\r\\nCALL SNAP 03/16/18 19 SNAP INC COMMISSION $23.50\\r\\nCLOSING CONTRACT FINRA TAF\\r\\nOPT REG FEE\\r\\nFEE\\r\\n$0.20\\r\\n1.67\\r\\n0.09\\r\\nNET AMOUNT $3,774.54\\r\\n02/22/18 02/23/18 3 1 SELL 100 $.40 Margin PRINCIPAL $4,000.00\\r\\nCALL SNAP 03/16/18 20 SNAP INC COMMISSION $23.50\\r\\nCLOSING CONTRACT FINRA TAF\\r\\nOPT REG FEE\\r\\nFEE\\r\\n$0.20\\r\\n1.67\\r\\n0.10\\r\\nNET AMOUNT $3,974.53\\r\\n\\f237 33936 PBA 1 31014 1 of 1 C EDLV AFPEDLV 22/02/18 23:52 001\\r\\nNEERAJ GUPTA\\r\\n39632 POTRERO DR\\r\\nNEWARK CA 94560-5612\"\n}"
-				},
-				"url": {
-					"raw": "http://localhost:8000/api/docminer/documents/4/",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"docminer",
-						"documents",
-						"4",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Document: Modify Partial",
-			"request": {
-				"method": "PATCH",
-				"header": [
-					{
-						"description": "Alice's Authentication Token",
-						"key": "Authorization",
-						"type": "text",
-						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5"
-					},
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"document_type\": \"ContractNote\"\n}"
+					"raw": "{\n    \"title\": \"Erade Statement Modified\",\n    \"institute_name\": \"Etrade\",\n    \"document_type\": \"ContractNote\",\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8000/api/docminer/documents/21/",
@@ -593,6 +709,46 @@
 			"response": []
 		},
 		{
+			"name": "Document: Modify Partial",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Token 864556deab19c0b84c28d1a56b20c2c3808c9099",
+						"description": "Alice's Authentication Token",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n     \"institute_name\": \"Etrade-Optionshouse\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/documents/3/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"documents",
+						"3",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Document: Delete",
 			"request": {
 				"method": "DELETE",
@@ -601,7 +757,7 @@
 						"description": "Alice's Authentication Token",
 						"key": "Authorization",
 						"type": "text",
-						"value": "Token fa29e9f02c45527ac658515d20ac49e2b41e6da5"
+						"value": "Token 864556deab19c0b84c28d1a56b20c2c3808c9099"
 					}
 				],
 				"body": {
@@ -657,7 +813,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/docminer/documents/21/transactions/json/",
+					"raw": "http://localhost:8000/api/docminer/documents/22/transactions/json/",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -667,7 +823,7 @@
 						"api",
 						"docminer",
 						"documents",
-						"21",
+						"22",
 						"transactions",
 						"json",
 						""
@@ -708,6 +864,46 @@
 						"documents",
 						"17",
 						"transactions",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Document: Upload File",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"description": "Alice's Authentication Token",
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token 864556deab19c0b84c28d1a56b20c2c3808c9099"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Erade Statement\",\n    \"institute_name\": \"Etrade\",\n    \"document_type\": \"ContractNote\"\n\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/docminer/documents/pdf/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"docminer",
+						"documents",
+						"pdf",
 						""
 					]
 				}
