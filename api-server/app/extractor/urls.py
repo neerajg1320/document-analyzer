@@ -30,4 +30,5 @@ urlpatterns = [
 
     path('documents/<int:pk>/transactions/', document_transactions, name='document-transactions'),
     path('documents/<int:pk>/transactions/json/', document_transactions_json, name='document-transactions-json'),
+    path('upload/', views.FileView.as_view(), name='file-upload'),
 ]
