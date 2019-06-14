@@ -177,7 +177,6 @@ from extractor.pdf_routines import read_pdf, is_encrypted_pdf, decrypt_pdf, \
     pdftotext_read_pdf
 
 
-
 class FileViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -215,16 +214,34 @@ class FileViewSet(viewsets.ModelViewSet):
         file = self.get_object()
 
         if file.text is None or file.text == "" or True:
-            file_path = os.path.join(settings.MEDIA_ROOT, str(file.file))
-
-            if is_encrypted_pdf(file_path):
-                print("PDF is encrypted")
-                decrypted_file_name = "decrypted_" + str(file.file)
-                decrypted_file_path = os.path.join(settings.MEDIA_ROOT, decrypted_file_name)
-                decrypt_pdf(file_path, decrypted_file_path, file.password)
-                file_path = decrypted_file_path
-
-            file.text = pdftotext_read_pdf(file_path, file.password)
+            self.pdf_file_to_text(file)
             super(File, file).save()
 
         return Response(file.text)
+
+    @action(detail=True, renderer_classes=[renderers.JSONRenderer])
+    def documentize(self, request, *args, **kwargs):
+        file = self.get_object()
+
+        if file.text is None or file.text == "" or True:
+            self.pdf_file_to_text(file)
+            super(File, file).save()
+
+        document = Document.objects.create(user=file.user,
+                                           title=file.title,
+                                           institute_name=file.institute_name,
+                                           document_type=file.document_type,
+                                           text=file.text)
+
+        document_serialized = serializers.DocumentDetailSerializer(document)
+        return Response(document_serialized.data)
+
+    def pdf_file_to_text(self, file):
+        file_path = os.path.join(settings.MEDIA_ROOT, str(file.file))
+        if is_encrypted_pdf(file_path):
+            print("PDF is encrypted")
+            decrypted_file_name = "decrypted_" + str(file.file)
+            decrypted_file_path = os.path.join(settings.MEDIA_ROOT, decrypted_file_name)
+            decrypt_pdf(file_path, decrypted_file_path, file.password)
+            file_path = decrypted_file_path
+        file.text = pdftotext_read_pdf(file_path, file.password)
