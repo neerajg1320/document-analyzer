@@ -93,7 +93,24 @@ class Document(models.Model):
         return self.title
 
 
+from django.db import connection
+
+
 class File(models.Model):
+    title = models.CharField(blank=True, max_length=255)
     file = models.FileField(blank=False, null=False)
     remark = models.CharField(max_length=20)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+    # https://stackoverflow.com/questions/4532681/how-to-remove-all-of-the-data-in-a-table-using-django
+    def delete_all(self):
+        self.__class__.objects.all().delete()
+
+    def drop_table(self):
+        cursor = connection.cursor()
+        table_name = self.__class__._meta.db_table
+        sql = "DROP TABLE %s;" % (table_name, )
+        cursor.execute(sql)

@@ -8,6 +8,7 @@ router = DefaultRouter()
 router.register('tags', views.TagViewSet)
 router.register('extractors', views.ExtractorViewSet)
 router.register('documents', views.DocumentViewSet)
+router.register('files', views.FileViewSet)
 
 app_name = 'extractor'
 
@@ -26,9 +27,10 @@ document_transactions_json = views.DocumentViewSet.as_view({
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('documents/<int:pk>/highlight/', document_highlight, name='document-highlight'),
 
+    path('documents/<int:pk>/highlight/', document_highlight, name='document-highlight'),
     path('documents/<int:pk>/transactions/', document_transactions, name='document-transactions'),
     path('documents/<int:pk>/transactions/json/', document_transactions_json, name='document-transactions-json'),
-    path('upload/', views.FileView.as_view(), name='file-upload'),
+
+    # path('files/upload/', views.FileViewSet.as_view(), name='file-upload'),
 ]

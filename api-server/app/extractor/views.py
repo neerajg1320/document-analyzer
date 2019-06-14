@@ -4,7 +4,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 
-from core.models import Tag, Extractor, Document
+from core.models import Tag, Extractor, Document, File
 
 from extractor import serializers
 
@@ -174,13 +174,19 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-class FileView(APIView):
-    parser_classes = (MultiPartParser, FormParser)
+class FileViewSet(viewsets.ModelViewSet):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
-    def post(self, request, *args, **kwargs):
-        file_serializer = serializers.FileSerializer(data=request.data)
-        if file_serializer.is_valid():
-            file_serializer.save()
-            return Response(file_serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    queryset = File.objects.all()
+    serializer_class = serializers.FileSerializer
+
+    # parser_classes = (MultiPartParser, FormParser)
+    #
+    # def post(self, request, *args, **kwargs):
+    #     file_serializer = serializers.FileSerializer(data=request.data)
+    #     if file_serializer.is_valid():
+    #         file_serializer.save()
+    #         return Response(file_serializer.data, status=status.HTTP_201_CREATED)
+    #     else:
+    #         return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
