@@ -13,6 +13,13 @@ docker-compose run --rm app sh -c "python manage.py createsuperuser"
 docker-compose up
 
 
+# To run a shell on the container
+docker exec -it <api-server_app_1> sh
+
+# To find container name
+docker ps 
+
+
 # Alert: docker-compose down will delete the virtual machines
 # Alert: Changing the directory will delete the virtual machines
 

@@ -10,7 +10,7 @@ from extractor import serializers
 
 from extractor.text_routines import create_highlighted_text, \
     create_transactions_from_text_tuples_str, create_transactions_dict_array_from_text
-from extractor.pdf_routines import pdftotext_read_pdf
+
 
 
 import json
@@ -170,10 +170,11 @@ class DocumentViewSet(viewsets.ModelViewSet):
         return Response(transactions_array)
 
 
-from rest_framework.views import APIView
-from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
-from rest_framework import status
+from django.conf import settings
+import os
+from extractor.pdf_routines import read_pdf, is_encrypted_pdf, decrypt_pdf, pdftotext_read_pdf \
+
 
 
 class FileViewSet(viewsets.ModelViewSet):
@@ -181,25 +182,50 @@ class FileViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     queryset = File.objects.all()
-    serializer_class = serializers.FileSerializer
+    serializer_class = serializers.FileListSerializer
 
-    # parser_classes = (MultiPartParser, FormParser)
-    #
-    # def post(self, request, *args, **kwargs):
-    #     file_serializer = serializers.FileSerializer(data=request.data)
-    #     if file_serializer.is_valid():
-    #         file_serializer.save()
-    #         return Response(file_serializer.data, status=status.HTTP_201_CREATED)
-    #     else:
-    #         return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get_queryset(self):
+        """ Return objects for current user only """
+        return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        """ Create a new document """
+        # TBD: Here we should perform is_staff check
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        """ Create a new document """
+        # TBD: Here we should perform is_staff check
+        # print(serializer.validated_data)
+        serializer.save(user=self.request.user)
+
+    def get_serializer_class(self):
+        """ Return appropriate serializer class """
+        if self.action == 'retrieve' \
+                or self.action == 'update' \
+                or self.action == 'create':
+            return serializers.FileDetailSerializer
+
+        # return self.serializer_class
+        return serializers.FileListSerializer
 
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
     def textify(self, request, *args, **kwargs):
         file = self.get_object()
-        file.text = "Sample Text"
-        if file.text is None or file.text == "":
-            # document.highlighted = create_highlighted_text(document.text, title=document.title)
-            file.text = pdftotext_read_pdf(file.file)
+
+        if file.text is None or file.text == "" or True:
+            file_path = os.path.join(settings.MEDIA_ROOT, str(file.file))
+
+            if is_encrypted_pdf(file_path):
+                print("PDF is encrypted")
+                decrypted_file_name = "decrypted_" + str(file.file)
+                decrypted_file_path = os.path.join(settings.MEDIA_ROOT, decrypted_file_name)
+                decrypt_pdf(file_path, decrypted_file_path, file.password)
+                file_path = decrypted_file_path
+
+            #file.text = read_pdf(file_path, file.password)
+
+            file.text = pdftotext_read_pdf(file_path, file.password)
             super(File, file).save()
 
         return Response(file.text)

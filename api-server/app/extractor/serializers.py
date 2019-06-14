@@ -60,8 +60,18 @@ class DocumentDetailSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'highlighted',)
 
 
-class FileSerializer(serializers.ModelSerializer):
+class FileListSerializer(serializers.ModelSerializer):
     class Meta():
         model = File
-        fields = ('id', 'title', 'file', 'remark', 'timestamp')
+        fields = ('id', 'title', 'institute_name', 'document_type',
+                  'file', 'remark', 'timestamp')
         read_only_fields = ('id',)
+
+
+class FileDetailSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = File
+        fields = ('id', 'title', 'institute_name', 'document_type',
+                  'file', 'password', 'text', 'remark', 'timestamp')
+        read_only_fields = ('id', 'text')
+
