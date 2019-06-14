@@ -86,11 +86,10 @@ function documentize_file(user_auth_token, file_id, result_elm) {
 }
 
 
-$("#btn_documentize").click(function() {
-    var file_id = $("#input_file_id").val();
-    input_document_elm = $("#input_document_id");
-    documentize_file(g_user_auth_token, file_id, input_document_elm);
+$("#btn_load_file").click(function() {
+    g_tabulator_table.setDataFromLocalFile(".json");
 });
+
 
 $("#btn_download").click(function() {
     download_document_using_input(g_tabulator_table, g_user_auth_token);
@@ -98,8 +97,11 @@ $("#btn_download").click(function() {
     // set_sample_transactions(g_tabulator_table);
 });
 
-$("#btn_load_file").click(function() {
-    g_tabulator_table.setDataFromLocalFile(".json");
+
+$("#btn_documentize").click(function() {
+    var file_id = $("#input_file_id").val();
+    input_document_elm = $("#input_document_id");
+    documentize_file(g_user_auth_token, file_id, input_document_elm);
 });
 
 
@@ -115,7 +117,7 @@ $("#fileinfo").submit(function(e) {
         contentType: false,
         processData: false,
         success: function(response) {
-            alert('File upload successful (id = ' + response.id + ')');
+            // alert('File upload successful (id = ' + response.id + ')');
             $("#input_file_id").val(response.id);
             $("#btn_documentize").click();
         },
