@@ -71,7 +71,7 @@ def read_pdf(file_name, password="password", flag_replace_newline=False):
 #
 #
 import subprocess
-PDF_COMMAND = '/usr/bin/pdftotext'
+PDF_COMMAND = 'pdftotext'
 
 
 def pdftotext_read_pdf_using_subprocess(file_path, password=None, flag_replace_newline=False):
