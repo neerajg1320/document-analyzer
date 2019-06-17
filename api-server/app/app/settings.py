@@ -82,6 +82,27 @@ WSGI_APPLICATION = 'app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
+# The following variables enable our django server to be run from a docker container and
+# without a docker container i.e. on the local environment. This is useful when the host
+# we are using does not have docker install on it.
+#
+POSTGRES_DB_HOST = os.environ.get('DB_HOST')
+if POSTGRES_DB_HOST is None:
+    POSTGRES_DB_HOST = 'localhost'
+
+POSTGRES_DB_NAME = os.environ.get('DB_NAME')
+if POSTGRES_DB_NAME is None:
+    POSTGRES_DB_NAME = 'app'
+
+POSTGRES_DB_USER = os.environ.get('DB_USER')
+if POSTGRES_DB_USER is None:
+    POSTGRES_DB_USER = 'postgres'
+
+POSTGRES_DB_PASS = os.environ.get('DB_PASS')
+if POSTGRES_DB_PASS is None:
+    POSTGRES_DB_PASS = 'Postgres123'
+
+
 DATABASES = {
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
@@ -89,10 +110,10 @@ DATABASES = {
     # }
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': os.environ.get('DB_HOST'),
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASS')
+        'HOST': POSTGRES_DB_HOST,
+        'NAME': POSTGRES_DB_NAME,
+        'USER': POSTGRES_DB_USER,
+        'PASSWORD': POSTGRES_DB_PASS,
     }
 }
 
