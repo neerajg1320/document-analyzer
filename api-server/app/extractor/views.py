@@ -170,7 +170,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         return Response(transactions_array)
 
     # Should use the reverse function
-    @action(detail=True, renderer_classes=[renderers.JSONRenderer])
+    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
     def transactions_pandas(self, request, *args, **kwargs):
         document = self.get_object()
         # unconditionally enabled temporarily
@@ -197,13 +197,12 @@ class DocumentViewSet(viewsets.ModelViewSet):
             print("Loading transaction from document.transactions")
             transactions_array = json.loads(document.transactions)
 
-
         df = pd.DataFrame(transactions_array);
-        print("Pandas DataFrame:")
-        print(df)
+        transactions_pandas_str = str(df)
+        print("Pandas DataFrame:\n" + transactions_pandas_str)
 
         # highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
-        return Response(transactions_array)
+        return Response(transactions_pandas_str)
 
 from rest_framework.response import Response
 from django.conf import settings
