@@ -1,6 +1,9 @@
 # document-analyzer
 The Document Analyzer Project 
 
+# Start the api-server
+cd api-server
+
 # On a New Machine we need to Install docker and do following steps
 docker-compose build 
 docker-compose run --rm app sh -c "python manage.py makemigrations core"
@@ -8,6 +11,13 @@ docker-compose run --rm app sh -c "python manage.py makemigrations core"
 # Create superuser admin@abc.com:Admin123
 docker-compose run --rm app sh -c "python manage.py createsuperuser"
 docker-compose up
+
+
+# To run a shell on the container
+docker exec -it <api-server_app_1> sh
+
+# To find container name
+docker ps 
 
 
 # Alert: docker-compose down will delete the virtual machines
@@ -23,6 +33,16 @@ docker-compose run --rm app sh -c "python manage.py createsuperuser"
 docker-compose run --rm app sh -c "python manage.py makemigrations"
 
 
+# Django delete all objects in a model
+# In database terms this would be clearing a table
+docker-compose run --rm app sh -c "python manage.py shell"
+Model.objects.all().delete()
+
+# Drop Table
+cursor = connection.cursor()
+table_name = self.model._meta.db_table
+sql = "DROP TABLE %s;" % (table_name, )
+cursor.execute(sql)
 
 # Python migrations reset
 # https://simpleisbetterthancomplex.com/tutorial/2016/07/26/how-to-reset-migrations.html

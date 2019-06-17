@@ -4,12 +4,14 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 
-from core.models import Tag, Extractor, Document
+from core.models import Tag, Extractor, Document, File
 
 from extractor import serializers
 
 from extractor.text_routines import create_highlighted_text, \
     create_transactions_from_text_tuples_str, create_transactions_dict_array_from_text
+
+import pandas as pd
 
 import json
 class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
@@ -167,5 +169,114 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
         return Response(transactions_array)
 
+    # Should use the reverse function
+    @action(detail=True, renderer_classes=[renderers.JSONRenderer])
+    def transactions_pandas(self, request, *args, **kwargs):
+        document = self.get_object()
+        # unconditionally enabled temporarily
+        if document.transactions is None or document.transactions == "" or True:
+            print("Creating transactions from document.text")
+            # Lookup for the parser(extractor)
+            #   based on institure name (e.g. HDFC) and document type (e.g. Savings Statement)
+            extractors = Extractor.objects.filter(institute_name__iexact=document.institute_name,
+                                                  document_type__iexact=document.document_type)
+            if not extractors:
+                raise Exception("Extractor not found")
+
+            transaction_regex_str = extractors[0].regex_parser
+
+            # The following will send the table header first and then table rows as values
+            # document.transactions = create_transactions_from_text_tuples_str(transaction_regex_str, document.text)
+
+            # The following will send the data in json format
+            transactions_array = create_transactions_dict_array_from_text(transaction_regex_str, document.text)
+            document.transactions = json.dumps(transactions_array)
+
+            super(Document, document).save()
+        else:
+            print("Loading transaction from document.transactions")
+            transactions_array = json.loads(document.transactions)
 
 
+        df = pd.DataFrame(transactions_array);
+        print(df)
+
+        # highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
+        return Response(transactions_array)
+
+from rest_framework.response import Response
+from django.conf import settings
+import os
+from extractor.pdf_routines import read_pdf, is_encrypted_pdf, decrypt_pdf, \
+    pdftotext_read_pdf, pdftotext_read_pdf_using_subprocess
+
+
+class FileViewSet(viewsets.ModelViewSet):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    queryset = File.objects.all()
+    serializer_class = serializers.FileListSerializer
+
+    def get_queryset(self):
+        """ Return objects for current user only """
+        return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        """ Create a new document """
+        # TBD: Here we should perform is_staff check
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        """ Create a new document """
+        # TBD: Here we should perform is_staff check
+        # print(serializer.validated_data)
+        serializer.save(user=self.request.user)
+
+    def get_serializer_class(self):
+        """ Return appropriate serializer class """
+        if self.action == 'retrieve' \
+                or self.action == 'update' \
+                or self.action == 'create':
+            return serializers.FileDetailSerializer
+
+        # return self.serializer_class
+        return serializers.FileListSerializer
+
+    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
+    def textify(self, request, *args, **kwargs):
+        file = self.get_object()
+
+        if file.text is None or file.text == "" or True:
+            self.pdf_file_to_text(file)
+            super(File, file).save()
+
+        return Response(file.text)
+
+    @action(detail=True, renderer_classes=[renderers.JSONRenderer])
+    def documentize(self, request, *args, **kwargs):
+        file = self.get_object()
+
+        if file.text is None or file.text == "" or True:
+            self.pdf_file_to_text(file)
+            super(File, file).save()
+
+        document = Document.objects.create(user=file.user,
+                                           title=file.title,
+                                           institute_name=file.institute_name,
+                                           document_type=file.document_type,
+                                           text=file.text)
+
+        document_serialized = serializers.DocumentDetailSerializer(document)
+        return Response(document_serialized.data)
+
+    def pdf_file_to_text(self, file):
+        file_path = os.path.join(settings.MEDIA_ROOT, str(file.file))
+        if is_encrypted_pdf(file_path):
+            print("PDF is encrypted")
+            decrypted_file_name = "decrypted_" + str(file.file)
+            decrypted_file_path = os.path.join(settings.MEDIA_ROOT, decrypted_file_name)
+            decrypt_pdf(file_path, decrypted_file_path, file.password)
+            file_path = decrypted_file_path
+        # file.text = pdftotext_read_pdf(file_path, file.password)
+        file.text = pdftotext_read_pdf_using_subprocess(file_path, file.password)

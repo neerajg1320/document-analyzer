@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core.models import Tag, Extractor, Document
+from core.models import Tag, Extractor, Document, File
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -58,3 +58,20 @@ class DocumentDetailSerializer(serializers.ModelSerializer):
         # fields = ('id', 'title', 'institute_name', 'document_type', 'text', 'highlighted', 'transactions')
         fields = ('id', 'title', 'institute_name', 'document_type', 'text',)
         read_only_fields = ('id', 'highlighted',)
+
+
+class FileListSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = File
+        fields = ('id', 'title', 'institute_name', 'document_type',
+                  'file', 'remark', 'timestamp')
+        read_only_fields = ('id',)
+
+
+class FileDetailSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = File
+        fields = ('id', 'title', 'institute_name', 'document_type',
+                  'file', 'password', 'text', 'remark', 'timestamp')
+        read_only_fields = ('id', 'text')
+

@@ -64,9 +64,9 @@ class Extractor(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )
-
     institute_name = models.CharField(max_length=255, blank=False)
     document_type = models.CharField(max_length=255, blank=False)
+
     regex_parser = models.CharField(max_length=2048, blank=False)
     reference = models.CharField(max_length=512, blank=True)
 
@@ -82,9 +82,9 @@ class Document(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )
-
     institute_name = models.CharField(max_length=255, blank=False)
     document_type = models.CharField(max_length=255, blank=False)
+
     text = models.TextField()
     highlighted = models.TextField(default="")
     transactions = models.TextField(default="")
@@ -92,3 +92,36 @@ class Document(models.Model):
     def __str__(self):
         return self.title
 
+
+from django.db import connection
+
+
+class File(models.Model):
+    title = models.CharField(blank=True, max_length=255)
+    user = models.ForeignKey(
+        # We could have user User below, but using settings is a better way
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        blank=True,
+    )
+    institute_name = models.CharField(max_length=255, blank=True)
+    document_type = models.CharField(max_length=255, blank=True)
+
+    file = models.FileField(blank=False, null=False)
+    password = models.CharField(max_length=64, blank=True)
+    remark = models.CharField(max_length=20)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    text = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+    # https://stackoverflow.com/questions/4532681/how-to-remove-all-of-the-data-in-a-table-using-django
+    def delete_all(self):
+        self.__class__.objects.all().delete()
+
+    def drop_table(self):
+        cursor = connection.cursor()
+        table_name = self.__class__._meta.db_table
+        sql = "DROP TABLE %s;" % (table_name, )
+        cursor.execute(sql)

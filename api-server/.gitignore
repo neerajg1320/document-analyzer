@@ -107,3 +107,4 @@ venv.bak/
 .mypy_cache/
 
 app/core/migrations
+app/media
