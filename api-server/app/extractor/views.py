@@ -199,6 +199,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
 
         df = pd.DataFrame(transactions_array);
+        print("Pandas DataFrame:")
         print(df)
 
         # highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
