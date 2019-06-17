@@ -51,8 +51,15 @@ python manage.py showmigrations
 find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
 find . -path "*/migrations/*.pyc"  -delete   
 #
+python -m django --version
+pip install --upgrade --force-reinstall  Django==2.1.9
+
 python manage.py migrate --fake core zero
 python manage.py makemigrations
 
 #If the database already exists
 python manage.py migrate --fake
+
+
+# Install pdftotext
+brew install pkg-config poppler
