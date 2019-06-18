@@ -10,6 +10,7 @@ let g_tabulator_table = new Tabulator("#document-transactions-table", {
 });
 
 let g_document_text_box = $("#document-text")
+let g_document_pandas_box = $("#document-pandas")
 
 // MacPro Docker
 let g_user_auth_token_docker = '307e60bcf5f1930b39a6ce5bc87b171ed0451323';
@@ -34,7 +35,7 @@ function set_sample_transactions(tabulator_table) {
     tabulator_table.setData(credit_card_data);
 }
 
-function download_document_transactions(user_auth_token, document_id, tabulator_table, elm_text_box) {
+function download_document_transactions(user_auth_token, document_id, tabulator_table, elm_text_box, elm_pandas_box) {
     if (document_id == "") {
         alert("Please provide a valid document Id");
         return;
@@ -71,15 +72,32 @@ function download_document_transactions(user_auth_token, document_id, tabulator_
             tabulator_table.setData(response);
         }
     });
+
+    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
+    let document_transactions_pandas_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/transactions/pandas/';
+
+    $.ajax({
+        url: document_transactions_pandas_url,
+        headers : {
+            'Authorization' : 'Token ' + user_auth_token,
+        },
+        dataType: 'json',
+        success: function(response) {
+            // console.log(typeof(response), response);
+            //response is already a parsed JSON
+
+            elm_pandas_box.empty().append(response);
+        }
+    });
 }
 
 
 // These function deal with the elements
 //
 function download_document_using_input(tabulator_table, user_auth_token) {
-    document_id = $("#input_document_id").val();
+    let document_id = $("#input_document_id").val();
 
-    download_document_transactions(user_auth_token, document_id, tabulator_table, g_document_text_box)
+    download_document_transactions(user_auth_token, document_id, tabulator_table, g_document_text_box, g_document_pandas_box);
 }
 
 function documentize_file(user_auth_token, file_id, result_elm) {

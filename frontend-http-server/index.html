@@ -6,31 +6,34 @@
 <body>
 <!-- DOM section -->
 
-<form id="fileinfo" action="http://localhost:8000/api/docminer/files/"
-      method="post"
-      enctype="multipart/form-data">
-    <input name="title" type="text" value="Sample PDF">
-    <input name="institute_name" type="text" value="Etrade">
-    <input name="document_type" type="text" value="ContractNote">
-    <input name="remark" type="text" value="A Sample file">
-    <input name="file" type="file" id="image">
-    <input type="submit">
-</form>
-
+<div class="bordered">
+    <form id="fileinfo" action="http://localhost:8000/api/docminer/files/"
+          method="post"
+          enctype="multipart/form-data">
+        <input name="title" type="text" value="Sample PDF">
+        <input name="institute_name" type="text" value="Etrade">
+        <input name="document_type" type="text" value="ContractNote">
+        <input name="remark" type="text" value="A Sample file">
+        <input name="file" type="file" id="image">
+        <input type="submit">
+    </form>
+</div>
 
 <div id="document-info">
-    <div id="file-input">
+    <div id="file-input" class="bordered">
+        <span>File ID</span>
         <input id="input_file_id" type="text" name="file_id" value="45"/>
         <button id="btn_documentize">Documentize File</button>
         <!-- <button id="btn_load_file">Load File</button>-->
     </div>
-    <div id="document-input">
+    <div id="document-input" class="bordered">
+        <span>Document ID</span>
         <input id="input_document_id" type="text" name="document_id" value="102"/>
         <button id="btn_download">Get Transactions</button>
         <!-- <button id="btn_load_file">Load File</button>-->
     </div>
-    <div id="document-text"></div>
-    <div id="document-pandas"></div>
+    <div id="document-text" class="bordered scrollable"></div>
+    <div id="document-pandas" class="bordered scrollable"></div>
     <div id="document-transactions-table"></div>
 </div>
 
