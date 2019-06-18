@@ -146,7 +146,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
         document = self.get_object()
         # unconditionally enabled temporarily
         if document.transactions is None or document.transactions == "" or True:
-            print("Creating transactions from document.text")
             # Lookup for the parser(extractor)
             #   based on institure name (e.g. HDFC) and document type (e.g. Savings Statement)
             extractors = Extractor.objects.filter(institute_name__iexact=document.institute_name,
@@ -176,7 +175,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         document = self.get_object()
         # unconditionally enabled temporarily
         if document.transactions is None or document.transactions == "" or True:
-            print("Creating transactions from document.text")
+            # print("Creating transactions from document.text")
             # Lookup for the parser(extractor)
             #   based on institure name (e.g. HDFC) and document type (e.g. Savings Statement)
             extractors = Extractor.objects.filter(institute_name__iexact=document.institute_name,
@@ -230,7 +229,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         document = self.get_object()
         # unconditionally enabled temporarily
         if document.transactions is None or document.transactions == "" or True:
-            print("Creating transactions from document.text")
+            # print("Creating transactions from document.text")
             # Lookup for the parser(extractor)
             #   based on institure name (e.g. HDFC) and document type (e.g. Savings Statement)
             extractors = Extractor.objects.filter(institute_name__iexact=document.institute_name,
@@ -267,7 +266,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         df = df.groupby(groupby_dict, axis=1).sum()
 
         transactions_pandas_str = str(df)
-        print("Pandas DataFrame:\n" + transactions_pandas_str)
+        # print("Pandas DataFrame:\n" + transactions_pandas_str)
         return Response(transactions_pandas_str)
 
 
