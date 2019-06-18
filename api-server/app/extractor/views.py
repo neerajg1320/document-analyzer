@@ -202,7 +202,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
                         'trade_type': 'TradeType',
                         'trade_qty': 'TradeQuantity',
                         'principal': 'PrincipalAmount',
-                        'net_amount': 'NetAmount'}
+                        'net_amount': 'NetAmount',
+                        'option': 'Scrip'}
         transactions_array = self.transform_array_using_dict(transactions_array, groupby_dict)
 
         # highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
