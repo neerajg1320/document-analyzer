@@ -21,7 +21,7 @@ document_transactions = views.DocumentViewSet.as_view({
 }, renderer_classes=[renderers.StaticHTMLRenderer])
 
 document_transactions_json = views.DocumentViewSet.as_view({
-    'get': 'transactions_json'
+    'get': 'transactions_pandas_json'
 }, renderer_classes=[renderers.JSONRenderer])
 
 document_transactions_pandas = views.DocumentViewSet.as_view({

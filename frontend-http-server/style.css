@@ -15,6 +15,7 @@ div#document-text {
 }
 
 .bordered {
+    font-family: "Courier New";
     white-space: pre-wrap;  /* For treating \n as a newline */
     border:  1px dashed #000;
     padding: 10px;
