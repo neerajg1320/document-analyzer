@@ -203,10 +203,12 @@ class DocumentViewSet(viewsets.ModelViewSet):
                         'trade_qty': 'TradeQuantity',
                         'principal': 'PrincipalAmount',
                         'net_amount': 'NetAmount',
-                        'option': 'Scrip'}
+                        'option': 'Scrip',
+                        'symbol': 'Symbol',
+                        }
+
         transactions_array = self.transform_array_using_dict(transactions_array, groupby_dict)
 
-        # highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
         return Response(transactions_array)
 
     def transform_array_using_dict(self, transactions_array, mapper_dict):
@@ -217,6 +219,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # Set the index of df as Column 'id'
         # df = df.set_index('id')
         df = df.groupby(mapper_dict, axis=1).sum()
+
         # Create json from the pandas DataFrame
         transactions_array = json.loads(df.to_json(orient='records'))
         return transactions_array
