@@ -1,0 +1,83 @@
+[
+  {
+    NetAmount: "$74.17",
+    PrincipalAmount: "$74.00",
+    Scrip: "CALL PBR 01/18/19 12",
+    Symbol: 0,
+    TradeDate: "06/21/18",
+    TradeQuantity: 1,
+    TradeType: "BUY"
+  },
+  {
+    NetAmount: "$3,049.33",
+    PrincipalAmount: "$3,034.00",
+    Scrip: "CALL PBR 01/18/19 12",
+    Symbol: 0,
+    TradeDate: "06/21/18",
+    TradeQuantity: 41,
+    TradeType: "BUY"
+  },
+  {
+    NetAmount: "$813.33",
+    PrincipalAmount: "$803.00",
+    Scrip: "CALL PBR 01/18/19 12",
+    Symbol: 0,
+    TradeDate: "06/21/18",
+    TradeQuantity: 11,
+    TradeType: "BUY"
+  },
+  {
+    NetAmount: "$5,529.75",
+    PrincipalAmount: "$5,544.00",
+    Scrip: "CALL SNAP 01/18/19 19",
+    Symbol: 0,
+    TradeDate: "06/21/18",
+    TradeQuantity: 84,
+    TradeType: "SELL"
+  },
+  {
+    NetAmount: "$3,365.67",
+    PrincipalAmount: "$3,358.00",
+    Scrip: "CALL PBR 01/18/19 12",
+    Symbol: 0,
+    TradeDate: "06/21/18",
+    TradeQuantity: 46,
+    TradeType: "BUY"
+  },
+  {
+    NetAmount: "$3,411.67",
+    PrincipalAmount: "$3,404.00",
+    Scrip: "CALL PBR 01/18/19 12",
+    Symbol: 0,
+    TradeDate: "06/21/18",
+    TradeQuantity: 46,
+    TradeType: "BUY"
+  },
+  {
+    NetAmount: "$4,079.17",
+    PrincipalAmount: "$4,070.00",
+    Scrip: "CALL PBR 01/18/19 12",
+    Symbol: 0,
+    TradeDate: "06/21/18",
+    TradeQuantity: 55,
+    TradeType: "BUY"
+  },
+  {
+    NetAmount: "$518.16",
+    PrincipalAmount: "$528.00",
+    Scrip: "CALL SNAP 01/18/19 19",
+    Symbol: 0,
+    TradeDate: "06/21/18",
+    TradeQuantity: 8,
+    TradeType: "SELL"
+  },
+  {
+    NetAmount: "$526.66",
+    PrincipalAmount: "$528.00",
+    Scrip: "CALL SNAP 01/18/19 19",
+    Symbol: 0,
+    TradeDate: "06/21/18",
+    TradeQuantity: 8,
+    TradeType: "SELL"
+  }
+]

@@ -21,7 +21,7 @@ let g_user_auth_token_local = '219201bc10fb6baa4a4cbc36d318aedaa89f78b7';
 
 
 
-var flag_server_local = false;
+var flag_server_local = true;
 
 var g_user_auth_token = g_user_auth_token_docker;
 if (flag_server_local) {

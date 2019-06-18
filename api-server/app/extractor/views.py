@@ -14,7 +14,7 @@ from extractor.text_routines import create_highlighted_text, \
 import pandas as pd
 
 import json
-
+from datetime import datetime
 
 class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
                             mixins.ListModelMixin,
@@ -198,6 +198,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
             transactions_array = json.loads(document.transactions)
 
         groupby_dict = {'trade_date': 'TradeDate',
+                        'setl_date': 'SettleDate',
                         'trade_type': 'TradeType',
                         'trade_qty': 'TradeQuantity',
                         'principal': 'PrincipalAmount',
@@ -218,6 +219,17 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # Set the index of df as Column 'id'
         # df = df.set_index('id')
         df = df.groupby(mapper_dict, axis=1).sum()
+
+        # Map the columns NetAmount, PrincipalAmount as float
+        amount_cols = ['NetAmount', 'PrincipalAmount']
+        df[amount_cols] = df[amount_cols].replace({'\$': '', ',': ''}, regex=True)
+        df[amount_cols] = df[amount_cols].astype(float)
+
+        # Serialize the date columns to a format of our choice
+        # First we convert then to datetime format using pd.to_datetime function
+        date_cols = ['TradeDate', 'SettleDate']
+        df[date_cols] = df[date_cols].apply(pd.to_datetime)
+        df[date_cols] = df[date_cols].applymap(lambda x: datetime.strftime(x, "%Y-%m-%d"))
 
         # Create json from the pandas DataFrame
         transactions_array = json.loads(df.to_json(orient='records'))
