@@ -1,4 +1,6 @@
-
+div#main-div {
+    padding: 20px;
+}
 
 div#document-input, div#file-input {
     text-align: center;
