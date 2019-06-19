@@ -163,37 +163,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
         return Response(highlighted_text)
 
-    @action(detail=True, renderer_classes=[renderers.JSONRenderer])
-    def transactions_json(self, request, *args, **kwargs):
-        document = self.get_object()
-        # unconditionally enabled temporarily
-        if document.transactions is None or document.transactions == "" or True:
-            # Lookup for the parser(extractor)
-            #   based on institure name (e.g. HDFC) and document type (e.g. Savings Statement)
-            extractors = Extractor.objects.filter(institute_name__iexact=document.institute_name,
-                                                  document_type__iexact=document.document_type)
-            if not extractors:
-                raise Exception("Extractor not found")
-
-            transaction_regex_str = extractors[0].regex_parser
-
-            # The following will send the table header first and then table rows as values
-            # document.transactions = create_transactions_from_text_tuples_str(transaction_regex_str, document.text)
-
-            # The following will send the data in json format
-            transactions_array = create_transactions_dict_array_from_text(transaction_regex_str, document.text)
-            document.transactions = json.dumps(transactions_array)
-
-            super(Document, document).save()
-        else:
-            print("Loading transaction from document.transactions")
-            transactions_array = json.loads(document.transactions)
-
-        # highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
-        return Response(transactions_array)
-
-    @action(detail=True, renderer_classes=[renderers.JSONRenderer])
-    def transactions_pandas_json(self, request, *args, **kwargs):
+    def get_or_create_transactions(self):
         document = self.get_object()
         # unconditionally enabled temporarily
         if document.transactions is None or document.transactions == "" or True:
@@ -218,17 +188,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         else:
             print("Loading transaction from document.transactions")
             transactions_array = json.loads(document.transactions)
-
-        df = pd.DataFrame(transactions_array);
-
-        # Need to be lookup based
-        groupby_dict = self.get_groupby_dict(document)
-
-        df = transform_df_using_dict(df, groupby_dict)
-
-        transactions_array = json.loads(df.to_json(orient='records'))
-
-        return Response(transactions_array)
+        return document, transactions_array
 
     def get_groupby_dict(self, document):
         if document.document_type == "ContractNote":
@@ -243,33 +203,32 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         return groupby_dict
 
+    @action(detail=True, renderer_classes=[renderers.JSONRenderer])
+    def transactions_json(self, request, *args, **kwargs):
+        document, transactions_array = self.get_or_create_transactions()
+
+        # highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
+        return Response(transactions_array)
+
+    @action(detail=True, renderer_classes=[renderers.JSONRenderer])
+    def mapped_transactions_json(self, request, *args, **kwargs):
+        document, transactions_array = self.get_or_create_transactions()
+
+        df = pd.DataFrame(transactions_array);
+
+        # Need to be lookup based
+        groupby_dict = self.get_groupby_dict(document)
+
+        df = transform_df_using_dict(df, groupby_dict)
+
+        transactions_array = json.loads(df.to_json(orient='records'))
+
+        return Response(transactions_array)
+
     # Should use the reverse function
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
-    def transactions_pandas(self, request, *args, **kwargs):
-        document = self.get_object()
-        # unconditionally enabled temporarily
-        if document.transactions is None or document.transactions == "" or True:
-            # print("Creating transactions from document.text")
-            # Lookup for the parser(extractor)
-            #   based on institure name (e.g. HDFC) and document type (e.g. Savings Statement)
-            extractors = Extractor.objects.filter(institute_name__iexact=document.institute_name,
-                                                  document_type__iexact=document.document_type)
-            if not extractors:
-                raise Exception("Extractor not found")
-
-            transaction_regex_str = extractors[0].regex_parser
-
-            # The following will send the table header first and then table rows as values
-            # document.transactions = create_transactions_from_text_tuples_str(transaction_regex_str, document.text)
-
-            # The following will send the data in json format
-            transactions_array = create_transactions_dict_array_from_text(transaction_regex_str, document.text)
-            document.transactions = json.dumps(transactions_array)
-
-            super(Document, document).save()
-        else:
-            print("Loading transaction from document.transactions")
-            transactions_array = json.loads(document.transactions)
+    def transactions_dataframe(self, request, *args, **kwargs):
+        document, transactions_array = self.get_or_create_transactions()
 
         # Here we shall map data
         df = pd.DataFrame(transactions_array);
