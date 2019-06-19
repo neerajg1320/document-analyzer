@@ -24,6 +24,11 @@ document_transactions_json = views.DocumentViewSet.as_view({
     'get': 'mapped_transactions_json'
 }, renderer_classes=[renderers.JSONRenderer])
 
+document_transactions_csv = views.DocumentViewSet.as_view({
+    'get': 'mapped_transactions_csv'
+}, renderer_classes=[renderers.JSONRenderer])
+
+
 document_transactions_dataframe = views.DocumentViewSet.as_view({
     'get': 'transactions_dataframe'
 }, renderer_classes=[renderers.JSONRenderer])
@@ -40,7 +45,8 @@ urlpatterns = [
     path('documents/<int:pk>/highlight/', document_highlight, name='document-highlight'),
     path('documents/<int:pk>/transactions/', document_transactions, name='document-transactions'),
     path('documents/<int:pk>/transactions/json/', document_transactions_json, name='document-transactions-json'),
-    path('documents/<int:pk>/transactions/dataframe/', document_transactions_dataframe, name='document-transactions-json'),
+    path('documents/<int:pk>/transactions/csv/', document_transactions_csv, name='document-transactions-csv'),
+    path('documents/<int:pk>/transactions/dataframe/', document_transactions_dataframe, name='document-transactions-dataframe'),
 
     path('files/<int:pk>/textify/', file_textify, name='file-textify'),
 ]

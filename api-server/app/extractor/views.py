@@ -15,6 +15,7 @@ import pandas as pd
 
 import json
 import hjson
+from io import StringIO
 
 from extractor.pandas_routines import transform_df_using_dict
 
@@ -224,6 +225,25 @@ class DocumentViewSet(viewsets.ModelViewSet):
         transactions_array = json.loads(df.to_json(orient='records'))
 
         return Response(transactions_array)
+
+    @action(detail=True, renderer_classes=[renderers.JSONRenderer])
+    def mapped_transactions_csv(self, request, *args, **kwargs):
+        document, transactions_array = self.get_or_create_transactions()
+
+        df = pd.DataFrame(transactions_array);
+
+        # Need to be lookup based
+        groupby_dict = self.get_groupby_dict(document)
+        df = transform_df_using_dict(df, groupby_dict)
+
+        # We have to explore if hardcoding or columns can be removed
+        # df.columns.values[0] = 'Id'
+        # df = df.rename(columns={"": "Id"})
+
+        buf = StringIO()
+        df.to_csv(buf, index=False)
+
+        return Response(buf.getvalue())
 
     # Should use the reverse function
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
