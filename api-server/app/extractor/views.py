@@ -14,6 +14,7 @@ from extractor.text_routines import create_highlighted_text, \
 import pandas as pd
 
 import json
+import hjson
 
 from extractor.pandas_routines import transform_df_using_dict
 
@@ -81,7 +82,7 @@ class ExtractorViewSet(viewsets.ModelViewSet):
         return serializers.ExtractorListSerializer
 
 
-trade_groupby_dict = {
+trade_groupby_json = """{
     'trade_date': 'TradeDate',
     'setl_date': 'SettleDate',
     'trade_type': 'TradeType',
@@ -90,15 +91,14 @@ trade_groupby_dict = {
     'net_amount': 'NetAmount',
     'option': 'Scrip',
     'symbol': 'Symbol',
-}
+}"""
 
-creditcard_groupby_dict = {
+creditcard_groupby_json = """{
     'date': 'Date',
     'description': 'Description',
     'amount': 'Amount',
     'type': 'Type',
-}
-
+}"""
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
@@ -222,16 +222,26 @@ class DocumentViewSet(viewsets.ModelViewSet):
         df = pd.DataFrame(transactions_array);
 
         # Need to be lookup based
-        if document.document_type == "ContractNote":
-            groupby_dict = trade_groupby_dict
-        elif document.document_type == "CreditCardStatement":
-            groupby_dict = creditcard_groupby_dict
+        groupby_dict = self.get_groupby_dict(document)
 
         df = transform_df_using_dict(df, groupby_dict)
 
         transactions_array = json.loads(df.to_json(orient='records'))
 
         return Response(transactions_array)
+
+    def get_groupby_dict(self, document):
+        if document.document_type == "ContractNote":
+            groupby_dict_json = trade_groupby_json
+        elif document.document_type == "CreditCardStatement":
+            groupby_dict_json = creditcard_groupby_json
+
+        # hjson.loads makes sure that keys are also strings
+        groupby_dict = hjson.loads(groupby_dict_json)
+
+        # print(groupby_dict)
+
+        return groupby_dict
 
     # Should use the reverse function
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
@@ -265,10 +275,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         df = pd.DataFrame(transactions_array);
 
         # Need to be lookup based
-        if document.document_type == "ContractNote":
-            groupby_dict = trade_groupby_dict
-        elif document.document_type == "CreditCardStatement":
-            groupby_dict = creditcard_groupby_dict
+        groupby_dict = self.get_groupby_dict(document)
 
         df = transform_df_using_dict(df, groupby_dict)
 
