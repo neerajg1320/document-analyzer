@@ -74,7 +74,7 @@ function download_document_transactions(user_auth_token, document_id, tabulator_
     });
 
     // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
-    let document_transactions_pandas_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/transactions/pandas/';
+    let document_transactions_pandas_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/transactions/dataframe/';
 
     $.ajax({
         url: document_transactions_pandas_url,
