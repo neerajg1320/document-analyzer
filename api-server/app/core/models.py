@@ -87,7 +87,7 @@ class Document(models.Model):
 
     text = models.TextField()
     highlighted = models.TextField(default="")
-    transactions = models.TextField(default="")
+    transactions_json = models.TextField(default="")
 
     def __str__(self):
         return self.title
@@ -129,7 +129,10 @@ class File(models.Model):
 
 class Transaction(models.Model):
     # https://medium.com/@krishnaregmi/handling-model-relationships-in-django-rest-framework-e0dfbcf1d83e
-    doc = models.ForeignKey(Document, on_delete=models.CASCADE, default=None, )
+    doc = models.ForeignKey(Document,
+                            on_delete=models.CASCADE,
+                            default=None,
+                            related_name = 'transactions',)
 
     TradeDate = models.DateTimeField(blank=False)
     Scrip = models.CharField(max_length=64, blank=True)
@@ -140,3 +143,6 @@ class Transaction(models.Model):
     TradeType = models.CharField(max_length=16)
     PrincipalAmount = models.DecimalField(decimal_places=4, max_digits=20)
     NetAmount = models.DecimalField(decimal_places=4, max_digits=20)
+
+    def __str__(self):
+        return '%d: %s' % (self.id, self.Scrip)

@@ -54,7 +54,7 @@ class DocumentListSerializer(serializers.ModelSerializer):
 class DocumentDetailSerializer(serializers.ModelSerializer):
     """ Serializer for Document objects """
     # transactions = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='transaction-detail')
-
+    transactions = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = Document
@@ -64,8 +64,8 @@ class DocumentDetailSerializer(serializers.ModelSerializer):
         # But we need to watch out for any side effects.
         #
         # fields = ('id', 'title', 'institute_name', 'document_type', 'text', 'highlighted', 'transactions')
-        fields = ('id', 'title', 'institute_name', 'document_type', 'text', 'transactions',)
-        read_only_fields = ('id', 'highlighted', 'transactions')
+        fields = ('id', 'title', 'institute_name', 'document_type', 'text', 'transactions_json', 'transactions',)
+        read_only_fields = ('id', 'highlighted', 'transactions_json', 'transactions',)
 
 
 class FileListSerializer(serializers.ModelSerializer):
