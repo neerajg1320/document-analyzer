@@ -128,6 +128,14 @@ class File(models.Model):
 
 
 class Transaction(models.Model):
+    user = models.ForeignKey(
+        # We could have user User below, but using settings is a better way
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        blank=True,
+        default="alice@abc.com",
+    )
+
     # https://medium.com/@krishnaregmi/handling-model-relationships-in-django-rest-framework-e0dfbcf1d83e
     doc = models.ForeignKey(Document,
                             on_delete=models.CASCADE,

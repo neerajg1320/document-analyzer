@@ -148,7 +148,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def transactions(self, request, *args, **kwargs):
         document = self.get_object()
         # unconditionally enabled temporarily
-        if document.transactions is None or document.transactions == "" or True:
+        if document.transactions_json is None or document.transactions_json == "" or True:
             # Lookup for the parser(extractor)
             #   based on institure name (e.g. HDFC) and document type (e.g. Savings Statement)
             extractors = Extractor.objects.filter(institute_name__iexact=document.institute_name,
@@ -159,17 +159,17 @@ class DocumentViewSet(viewsets.ModelViewSet):
             transaction_regex_str = extractors[0].regex_parser
 
             # The following will send the table header first and then table rows as values
-            document.transactions = create_transactions_from_text_tuples_str(transaction_regex_str, document.text)
+            document.transactions_json = create_transactions_from_text_tuples_str(transaction_regex_str, document.text)
 
             super(Document, document).save()
 
-        highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
+        highlighted_text = create_highlighted_text(document.transactions_json, title="Transactions")
         return Response(highlighted_text)
 
     def get_or_create_transactions(self):
         document = self.get_object()
         # unconditionally enabled temporarily
-        if document.transactions is None or document.transactions == "" or True:
+        if document.transactions_json is None or document.transactions_json == "" or True:
             # print("Creating transactions from document.text")
             # Lookup for the parser(extractor)
             #   based on institure name (e.g. HDFC) and document type (e.g. Savings Statement)
@@ -180,17 +180,14 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
             transaction_regex_str = extractors[0].regex_parser
 
-            # The following will send the table header first and then table rows as values
-            # document.transactions = create_transactions_from_text_tuples_str(transaction_regex_str, document.text)
-
             # The following will send the data in json format
             transactions_array = create_transactions_dict_array_from_text(transaction_regex_str, document.text)
-            document.transactions = json.dumps(transactions_array)
+            document.transactions_json = json.dumps(transactions_array)
 
             super(Document, document).save()
         else:
-            print("Loading transaction from document.transactions")
-            transactions_array = json.loads(document.transactions)
+            print("Loading transaction from document.transactions_json")
+            transactions_array = json.loads(document.transactions_json)
 
         return document, transactions_array
 
@@ -211,7 +208,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def transactions_json(self, request, *args, **kwargs):
         document, transactions_array = self.get_or_create_transactions()
 
-        # highlighted_text = create_highlighted_text(document.transactions, title="Transactions")
         return Response(transactions_array)
 
     @action(detail=True, renderer_classes=[renderers.JSONRenderer])
@@ -229,7 +225,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         for transaction in transactions_array:
             print(transaction)
-            Transaction.objects.create(doc=document, **transaction)
+            Transaction.objects.create(user=self.request.user,  doc=document, **transaction)
 
         return Response(transactions_array)
 
@@ -358,15 +354,15 @@ class TransactionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """ Return objects for current user only """
-        return self.queryset.filter()
+        return self.queryset.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         """ Create a new document """
         # TBD: Here we should perform is_staff check
-        serializer.save()
+        serializer.save(user=self.request.user)
 
     def perform_update(self, serializer):
         """ Create a new document """
         # TBD: Here we should perform is_staff check
         # print(serializer.validated_data)
-        serializer.save()
+        serializer.save(user=self.request.user)
