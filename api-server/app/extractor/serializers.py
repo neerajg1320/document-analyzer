@@ -53,8 +53,9 @@ class DocumentListSerializer(serializers.ModelSerializer):
 # The DocumentDetailSerializer shows regex_parser as well.
 class DocumentDetailSerializer(serializers.ModelSerializer):
     """ Serializer for Document objects """
-    # transactions = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='transaction-detail')
-    transactions = serializers.StringRelatedField(many=True)
+    transactions = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # transactions = serializers.StringRelatedField(many=True)
+    # transactions = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='transaction-list')
 
     class Meta:
         model = Document
