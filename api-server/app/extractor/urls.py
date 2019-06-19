@@ -9,6 +9,7 @@ router.register('tags', views.TagViewSet)
 router.register('extractors', views.ExtractorViewSet)
 router.register('documents', views.DocumentViewSet)
 router.register('files', views.FileViewSet)
+router.register('transactions', views.TransactionViewSet)
 
 app_name = 'extractor'
 

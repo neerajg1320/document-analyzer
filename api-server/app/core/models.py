@@ -125,3 +125,18 @@ class File(models.Model):
         table_name = self.__class__._meta.db_table
         sql = "DROP TABLE %s;" % (table_name, )
         cursor.execute(sql)
+
+
+class Transaction(models.Model):
+    # https://medium.com/@krishnaregmi/handling-model-relationships-in-django-rest-framework-e0dfbcf1d83e
+    doc = models.ForeignKey(Document, on_delete=models.CASCADE, default=None, )
+
+    TradeDate = models.DateTimeField(blank=False)
+    Scrip = models.CharField(max_length=64, blank=True)
+    Symbol = models.CharField(max_length=64, blank=True)
+    SettleDate = models.DateTimeField(blank=False)
+    TradeQuantity = models.DecimalField(decimal_places=2, max_digits=10)
+    # TradeType = models.ChoiceField(choices=["BUY", "SELL"]) # Kept for future
+    TradeType = models.CharField(max_length=16)
+    PrincipalAmount = models.DecimalField(decimal_places=4, max_digits=20)
+    NetAmount = models.DecimalField(decimal_places=4, max_digits=20)

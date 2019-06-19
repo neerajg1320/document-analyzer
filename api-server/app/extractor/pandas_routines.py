@@ -32,7 +32,7 @@ def transform_df_using_dict(df, mapper_dict):
     # Map the amount columns as float
     amount_cols = []
     for column in df.columns:
-        if "Amount" in column:
+        if "Amount" in column or 'Quantity' in column:
             amount_cols.append(column)
 
     df_clean_amounts(df, amount_cols)

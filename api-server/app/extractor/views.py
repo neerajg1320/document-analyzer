@@ -4,7 +4,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 
-from core.models import Tag, Extractor, Document, File
+from core.models import Tag, Extractor, Document, File, Transaction
 
 from extractor import serializers
 
@@ -191,6 +191,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         else:
             print("Loading transaction from document.transactions")
             transactions_array = json.loads(document.transactions)
+
         return document, transactions_array
 
     def get_groupby_dict(self, document):
@@ -225,6 +226,10 @@ class DocumentViewSet(viewsets.ModelViewSet):
         df = transform_df_using_dict(df, groupby_dict)
 
         transactions_array = json.loads(df.to_json(orient='records'))
+
+        for transaction in transactions_array:
+            print(transaction)
+            Transaction.objects.create(doc=document, **transaction)
 
         return Response(transactions_array)
 
@@ -340,3 +345,28 @@ class FileViewSet(viewsets.ModelViewSet):
         #     file_path = decrypted_file_path
         # file.text = pdftotext_read_pdf(file_path, file.password)
         file.text = pdftotext_read_pdf_using_subprocess(file_path, file.password)
+
+
+class TransactionViewSet(viewsets.ModelViewSet):
+    """ Manage documents in database """
+    queryset = Transaction.objects.all()
+
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    serializer_class = serializers.TransactionListSerializer
+
+    def get_queryset(self):
+        """ Return objects for current user only """
+        return self.queryset.filter()
+
+    def perform_create(self, serializer):
+        """ Create a new document """
+        # TBD: Here we should perform is_staff check
+        serializer.save()
+
+    def perform_update(self, serializer):
+        """ Create a new document """
+        # TBD: Here we should perform is_staff check
+        # print(serializer.validated_data)
+        serializer.save()

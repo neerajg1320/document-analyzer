@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core.models import Tag, Extractor, Document, File
+from core.models import Tag, Extractor, Document, File, Transaction
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -34,6 +34,12 @@ class ExtractorDetailSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 
+class TransactionListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = '__all__'
+
+
 # The DocumentSerializer does not show regex_parser.
 class DocumentListSerializer(serializers.ModelSerializer):
     """ Serializer for Document objects """
@@ -47,6 +53,8 @@ class DocumentListSerializer(serializers.ModelSerializer):
 # The DocumentDetailSerializer shows regex_parser as well.
 class DocumentDetailSerializer(serializers.ModelSerializer):
     """ Serializer for Document objects """
+    # transactions = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='transaction-detail')
+
 
     class Meta:
         model = Document
@@ -56,8 +64,8 @@ class DocumentDetailSerializer(serializers.ModelSerializer):
         # But we need to watch out for any side effects.
         #
         # fields = ('id', 'title', 'institute_name', 'document_type', 'text', 'highlighted', 'transactions')
-        fields = ('id', 'title', 'institute_name', 'document_type', 'text',)
-        read_only_fields = ('id', 'highlighted',)
+        fields = ('id', 'title', 'institute_name', 'document_type', 'text', 'transactions',)
+        read_only_fields = ('id', 'highlighted', 'transactions')
 
 
 class FileListSerializer(serializers.ModelSerializer):
@@ -74,4 +82,5 @@ class FileDetailSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'institute_name', 'document_type',
                   'file', 'password', 'text', 'remark', 'timestamp')
         read_only_fields = ('id', 'text')
+
 
