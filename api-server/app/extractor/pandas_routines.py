@@ -29,13 +29,24 @@ def transform_df_using_dict(df, mapper_dict):
 
     df = df_map_columns(df, mapper_dict)
 
-    # Map the columns NetAmount, PrincipalAmount as float
-    amount_cols = ['NetAmount', 'PrincipalAmount']
+    # Map the amount columns as float
+    amount_cols = []
+    for column in df.columns:
+        if "Amount" in column:
+            amount_cols.append(column)
+
+    print("Amount Columns: ", amount_cols)
+
     df_clean_amounts(df, amount_cols)
 
     # Serialize the date columns to a format of our choice
     # First we convert then to datetime format using pd.to_datetime function
-    date_cols = ['TradeDate', 'SettleDate']
+    date_cols = []
+    for column in df.columns:
+        if "Date" in column:
+            date_cols.append(column)
+
+    print("Date Columns: ", date_cols)
     df_clean_dates(df, date_cols)
 
     return df

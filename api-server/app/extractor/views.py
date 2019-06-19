@@ -81,7 +81,7 @@ class ExtractorViewSet(viewsets.ModelViewSet):
         return serializers.ExtractorListSerializer
 
 
-etrade_groupby_dict = {
+trade_groupby_dict = {
     'trade_date': 'TradeDate',
     'setl_date': 'SettleDate',
     'trade_type': 'TradeType',
@@ -91,6 +91,15 @@ etrade_groupby_dict = {
     'option': 'Scrip',
     'symbol': 'Symbol',
 }
+
+creditcard_groupby_dict = {
+    'date': 'Date',
+    'description': 'Description',
+    'amount': 'Amount',
+    'type': 'Type',
+}
+
+
 
 class DocumentViewSet(viewsets.ModelViewSet):
     """ Manage documents in database """
@@ -212,7 +221,12 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         df = pd.DataFrame(transactions_array);
 
-        df = transform_df_using_dict(df, etrade_groupby_dict)
+        if document.institute_name == "Etrade":
+            groupby_dict = trade_groupby_dict
+        elif document.institute_name == "SBI":
+            groupby_dict = creditcard_groupby_dict
+
+        df = transform_df_using_dict(df, groupby_dict)
 
         transactions_array = json.loads(df.to_json(orient='records'))
 
@@ -249,7 +263,12 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # Here we shall map data
         df = pd.DataFrame(transactions_array);
 
-        df = transform_df_using_dict(df, etrade_groupby_dict)
+        if document.institute_name == "Etrade":
+            groupby_dict = trade_groupby_dict
+        elif document.institute_name == "SBI":
+            groupby_dict = creditcard_groupby_dict
+
+        df = transform_df_using_dict(df, groupby_dict)
 
         transactions_pandas_str = str(df)
         # print("Pandas DataFrame:\n" + transactions_pandas_str)
@@ -324,11 +343,11 @@ class FileViewSet(viewsets.ModelViewSet):
 
     def pdf_file_to_text(self, file):
         file_path = os.path.join(settings.MEDIA_ROOT, str(file.file))
-        if is_encrypted_pdf(file_path):
-            print("PDF is encrypted")
-            decrypted_file_name = "decrypted_" + str(file.file)
-            decrypted_file_path = os.path.join(settings.MEDIA_ROOT, decrypted_file_name)
-            decrypt_pdf(file_path, decrypted_file_path, file.password)
-            file_path = decrypted_file_path
+        # if is_encrypted_pdf(file_path):
+        #     print("PDF is encrypted")
+        #     decrypted_file_name = "decrypted_" + str(file.file)
+        #     decrypted_file_path = os.path.join(settings.MEDIA_ROOT, decrypted_file_name)
+        #     decrypt_pdf(file_path, decrypted_file_path, file.password)
+        #     file_path = decrypted_file_path
         # file.text = pdftotext_read_pdf(file_path, file.password)
         file.text = pdftotext_read_pdf_using_subprocess(file_path, file.password)
