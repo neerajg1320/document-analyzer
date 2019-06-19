@@ -89,6 +89,8 @@ trade_groupby_json = """{
     'trade_type': 'TradeType',
     'trade_qty': 'TradeQuantity',
     'principal': 'PrincipalAmount',
+    'commission': 'Commission',
+    'reg_fee': 'Fees',
     'net_amount': 'NetAmount',
     'option': 'Scrip',
     'symbol': 'Symbol',
