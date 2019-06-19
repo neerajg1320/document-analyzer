@@ -221,9 +221,10 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         df = pd.DataFrame(transactions_array);
 
-        if document.institute_name == "Etrade":
+        # Need to be lookup based
+        if document.institute_name == "ContractNote":
             groupby_dict = trade_groupby_dict
-        elif document.institute_name == "SBI":
+        elif document.document_type == "CreditCardStatement":
             groupby_dict = creditcard_groupby_dict
 
         df = transform_df_using_dict(df, groupby_dict)
@@ -263,9 +264,10 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # Here we shall map data
         df = pd.DataFrame(transactions_array);
 
-        if document.institute_name == "Etrade":
+        # Need to be lookup based
+        if document.institute_name == "ContractNote":
             groupby_dict = trade_groupby_dict
-        elif document.institute_name == "SBI":
+        elif document.document_type == "CreditCardStatement":
             groupby_dict = creditcard_groupby_dict
 
         df = transform_df_using_dict(df, groupby_dict)
