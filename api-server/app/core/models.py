@@ -150,6 +150,8 @@ class Transaction(models.Model):
     # TradeType = models.ChoiceField(choices=["BUY", "SELL"]) # Kept for future
     TradeType = models.CharField(max_length=16)
     PrincipalAmount = models.DecimalField(decimal_places=4, max_digits=20)
+    Commission = models.DecimalField(decimal_places=4, max_digits=10, blank=True, default=0.0)
+    Fees = models.DecimalField(decimal_places=4, max_digits=10, blank=True, default=0.0)
     NetAmount = models.DecimalField(decimal_places=4, max_digits=20)
 
     def __str__(self):

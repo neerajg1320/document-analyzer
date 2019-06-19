@@ -224,7 +224,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
         transactions_array = json.loads(df.to_json(orient='records'))
 
         for transaction in transactions_array:
-            print(transaction)
             Transaction.objects.create(user=self.request.user,  doc=document, **transaction)
 
         return Response(transactions_array)
