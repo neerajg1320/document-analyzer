@@ -222,7 +222,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         df = pd.DataFrame(transactions_array);
 
         # Need to be lookup based
-        if document.institute_name == "ContractNote":
+        if document.document_type == "ContractNote":
             groupby_dict = trade_groupby_dict
         elif document.document_type == "CreditCardStatement":
             groupby_dict = creditcard_groupby_dict
@@ -265,7 +265,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         df = pd.DataFrame(transactions_array);
 
         # Need to be lookup based
-        if document.institute_name == "ContractNote":
+        if document.document_type == "ContractNote":
             groupby_dict = trade_groupby_dict
         elif document.document_type == "CreditCardStatement":
             groupby_dict = creditcard_groupby_dict
@@ -273,7 +273,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
         df = transform_df_using_dict(df, groupby_dict)
 
         transactions_pandas_str = str(df)
-        # print("Pandas DataFrame:\n" + transactions_pandas_str)
         return Response(transactions_pandas_str)
 
 

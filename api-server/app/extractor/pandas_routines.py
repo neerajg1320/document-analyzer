@@ -35,8 +35,6 @@ def transform_df_using_dict(df, mapper_dict):
         if "Amount" in column:
             amount_cols.append(column)
 
-    print("Amount Columns: ", amount_cols)
-
     df_clean_amounts(df, amount_cols)
 
     # Serialize the date columns to a format of our choice
@@ -46,7 +44,6 @@ def transform_df_using_dict(df, mapper_dict):
         if "Date" in column:
             date_cols.append(column)
 
-    print("Date Columns: ", date_cols)
     df_clean_dates(df, date_cols)
 
     return df
