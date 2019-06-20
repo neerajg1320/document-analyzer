@@ -1,0 +1,17 @@
+import pandas as pd
+from io import StringIO
+
+
+def is_file_extn_excel(file_extn):
+    return file_extn == ".xlsx"
+
+
+def excel_to_text(file_path):
+    df = pd.read_excel(file_path)
+
+    buf = StringIO()
+    df.to_csv(buf, index=False)
+
+    return buf.getvalue()
+
+

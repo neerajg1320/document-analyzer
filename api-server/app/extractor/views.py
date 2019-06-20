@@ -19,6 +19,7 @@ from io import StringIO
 
 from extractor.pandas_routines import transform_df_using_dict, df_dates_iso_format, \
     df_get_date_columns
+from extractor import excel_routines
 
 
 class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
@@ -335,7 +336,16 @@ class FileViewSet(viewsets.ModelViewSet):
 
         if file.text is None or file.text == "" or True:
             file_path = self.get_file_path(file)
-            file.text = pdftotext_read_pdf_using_subprocess(file_path, file.password)
+
+            file_name, file_extn = os.path.splitext(file_path)
+
+            if file_extn.lower() == '.pdf':
+                file.text = pdftotext_read_pdf_using_subprocess(file_path, file.password)
+            elif excel_routines.is_file_extn_excel(file_extn):
+                file.text = excel_routines.excel_to_text(file_path)
+            else :
+                file.text = "Format {} not supported".format(file_extn)
+
             super(File, file).save()
 
         document = Document.objects.create(user=file.user,
