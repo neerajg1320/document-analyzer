@@ -15,3 +15,7 @@ def excel_to_text(file_path):
     return buf.getvalue()
 
 
+def excel_to_json(file_path):
+    df = pd.read_excel(file_path)
+
+    return df.to_json(orient='records')

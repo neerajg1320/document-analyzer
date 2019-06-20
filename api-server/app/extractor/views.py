@@ -348,11 +348,16 @@ class FileViewSet(viewsets.ModelViewSet):
 
             super(File, file).save()
 
+        file_json = excel_routines.excel_to_json(file_path);
+        # print(file_json)
         document = Document.objects.create(user=file.user,
                                            title=file.title,
                                            institute_name=file.institute_name,
                                            document_type=file.document_type,
-                                           text=file.text)
+                                           text=file.text,
+                                           transactions_json=json.dumps(file_json))
+        print("After Storage")
+        print(document.transactions_json)
 
         document_serialized = serializers.DocumentDetailSerializer(document)
         return Response(document_serialized.data)
