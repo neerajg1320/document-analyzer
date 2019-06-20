@@ -319,17 +319,23 @@ class FileViewSet(viewsets.ModelViewSet):
         file = self.get_object()
 
         if file.text is None or file.text == "" or True:
-            self.pdf_file_to_text(file)
+            file_path = self.get_file_path(file)
+            file.text = pdftotext_read_pdf_using_subprocess(file_path, file.password)
             super(File, file).save()
 
         return Response(file.text)
+
+    def get_file_path(self, file):
+        file_path = os.path.join(settings.MEDIA_ROOT, str(file.file))
+        return file_path
 
     @action(detail=True, renderer_classes=[renderers.JSONRenderer])
     def documentize(self, request, *args, **kwargs):
         file = self.get_object()
 
         if file.text is None or file.text == "" or True:
-            self.pdf_file_to_text(file)
+            file_path = self.get_file_path(file)
+            file.text = pdftotext_read_pdf_using_subprocess(file_path, file.password)
             super(File, file).save()
 
         document = Document.objects.create(user=file.user,
@@ -340,17 +346,6 @@ class FileViewSet(viewsets.ModelViewSet):
 
         document_serialized = serializers.DocumentDetailSerializer(document)
         return Response(document_serialized.data)
-
-    def pdf_file_to_text(self, file):
-        file_path = os.path.join(settings.MEDIA_ROOT, str(file.file))
-        # if is_encrypted_pdf(file_path):
-        #     print("PDF is encrypted")
-        #     decrypted_file_name = "decrypted_" + str(file.file)
-        #     decrypted_file_path = os.path.join(settings.MEDIA_ROOT, decrypted_file_name)
-        #     decrypt_pdf(file_path, decrypted_file_path, file.password)
-        #     file_path = decrypted_file_path
-        # file.text = pdftotext_read_pdf(file_path, file.password)
-        file.text = pdftotext_read_pdf_using_subprocess(file_path, file.password)
 
 
 class TransactionViewSet(viewsets.ModelViewSet):
