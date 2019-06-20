@@ -210,6 +210,11 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         return Response(transactions_array)
 
+    def create_transactions(self, document, transactions_array):
+        for transaction in transactions_array:
+            # print(type(transaction), transaction)
+            Transaction.objects.create(user=self.request.user, doc=document, **transaction)
+
     @action(detail=True, renderer_classes=[renderers.JSONRenderer])
     def mapped_transactions_json(self, request, *args, **kwargs):
         document, transactions_array = self.get_or_create_transactions()
@@ -223,8 +228,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         transactions_array = json.loads(df.to_json(orient='records'))
 
-        for transaction in transactions_array:
-            Transaction.objects.create(user=self.request.user,  doc=document, **transaction)
+        self.create_transactions(document, transactions_array)
 
         return Response(transactions_array)
 
