@@ -17,7 +17,8 @@ import json
 import hjson
 from io import StringIO
 
-from extractor.pandas_routines import transform_df_using_dict, df_dates_iso_format
+from extractor.pandas_routines import transform_df_using_dict, df_dates_iso_format, \
+    df_get_date_columns
 
 
 class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
@@ -219,16 +220,22 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def mapped_transactions_json(self, request, *args, **kwargs):
         document, transactions_array = self.get_or_create_transactions()
 
-        df = pd.DataFrame(transactions_array);
+        flag_process_data = True
+        flag_create_transactions = False
 
-        # Need to be lookup based
-        groupby_dict = self.get_groupby_dict(document)
+        if flag_process_data:
+            df = pd.DataFrame(transactions_array);
 
-        df = transform_df_using_dict(df, groupby_dict)
+            # Need to be lookup based
+            groupby_dict = self.get_groupby_dict(document)
 
-        transactions_array = json.loads(df.to_json(orient='records'))
+            df = transform_df_using_dict(df, groupby_dict)
+            df = df_dates_iso_format(df)
 
-        self.create_transactions(document, transactions_array)
+            transactions_array = json.loads(df.to_json(orient='records'))
+
+            if flag_create_transactions:
+                self.create_transactions(document, transactions_array)
 
         return Response(transactions_array)
 

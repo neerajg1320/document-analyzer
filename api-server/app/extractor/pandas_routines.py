@@ -33,10 +33,9 @@ def df_dates_str(date_cols, df):
     return df
 
 
-def df_dates_iso_format(date_cols, df):
+def df_dates_iso_format(df):
+    date_cols = df_get_date_columns(df)
     df[date_cols] = df[date_cols].applymap(
-        # NG: 2019-06-20 10:43am Kept for future reference
-        # df[date_cols] = df[date_cols].applymap(lambda x: datetime.strftime(x, "%Y-%m-%d"))
         lambda x: datetime.fromtimestamp(x.timestamp(), tz=timezone.utc).isoformat()
     )
 
@@ -67,7 +66,6 @@ def df_map_columns_by_groupbydict(df, mapper_dict):
 def df_clean_amounts(df):
     # Map the amount columns as float
     amount_cols = df_get_amount_columns(df)
-
     df = df_clean_amount_columns(df, amount_cols)
 
     return df
@@ -77,7 +75,6 @@ def df_clean_dates(df):
     # Serialize the date columns to a format of our choice
     # First we convert then to datetime format using pd.to_datetime function
     date_cols = df_get_date_columns(df)
-
     df = df_clean_date_columns(df, date_cols)
 
     return df
@@ -93,8 +90,6 @@ def transform_df_using_dict(df, mapper_dict):
     df = df_clean_amounts(df)
 
     df = df_clean_dates(df)
-
-    df = df_dates_iso_format(df_get_date_columns(df), df)
 
     return df
 
