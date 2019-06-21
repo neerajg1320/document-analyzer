@@ -342,15 +342,11 @@ class FileViewSet(viewsets.ModelViewSet):
                 file.text = pdftotext_read_pdf_using_subprocess(file_path, file.password)
             elif excel_routines.is_file_extn_excel(file_extn):
                 file.text = excel_routines.excel_to_text(file_path)
-                # file_transactions_json = excel_routines.excel_to_json(file_path)
-                # print(file_transactions_json)
             else :
                 file.text = "Format {} not supported".format(file_extn)
 
             super(File, file).save()
 
-        file_json = excel_routines.excel_to_json(file_path);
-        # print(file_json)
         document = Document.objects.create(user=file.user,
                                            title=file.title,
                                            institute_name=file.institute_name,
