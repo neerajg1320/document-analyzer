@@ -171,7 +171,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def get_or_create_transactions_array(self):
         document = self.get_object()
         # unconditionally enabled temporarily
-        if document.transactions_json is None or document.transactions_json == "" or True:
+        if document.transactions_json is None or document.transactions_json == "":
             # print("Creating transactions from document.text")
             # Lookup for the parser(extractor)
             #   based on institure name (e.g. HDFC) and document type (e.g. Savings Statement)
@@ -193,10 +193,16 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         return document, transactions_array
 
+    @action(detail=True, renderer_classes=[renderers.JSONRenderer])
+    def transactions_json(self, request, *args, **kwargs):
+        document, transactions_array = self.get_or_create_transactions_array()
+
+        return Response(transactions_array)
+
     def get_or_create_transactions_dataframe(self):
         document = self.get_object()
         # unconditionally enabled temporarily
-        if document.transactions_json is None or document.transactions_json == "" or True:
+        if document.transactions_json is None or document.transactions_json == "":
             # print("Creating transactions from document.text")
             # Lookup for the parser(extractor)
             #   based on institure name (e.g. HDFC) and document type (e.g. Savings Statement)
@@ -232,12 +238,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # print(groupby_dict)
 
         return groupby_dict
-
-    @action(detail=True, renderer_classes=[renderers.JSONRenderer])
-    def transactions_json(self, request, *args, **kwargs):
-        document, transactions_array = self.get_or_create_transactions_array()
-
-        return Response(transactions_array)
 
     def create_transactions(self, document, transactions_array):
         for transaction in transactions_array:
