@@ -18,7 +18,7 @@ import hjson
 from io import StringIO
 
 from extractor.pandas_routines import transform_df_using_dict, df_dates_iso_format, \
-    df_get_date_columns
+    df_get_date_columns, df_dates_str
 from extractor import excel_routines
 
 
@@ -118,7 +118,11 @@ def text_extract_dataframe_json(institute_name, document_type, input_text):
     # The following will send the data in json format
     transactions_array = create_transactions_dict_array_from_text(transaction_regex_str, input_text)
     df = pd.DataFrame(transactions_array)
+
     return df.to_json(orient='records')
+
+
+g_flag_process_data = True
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
@@ -217,16 +221,13 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def get_or_create_transactions_dataframe(self):
         document = self.get_object()
 
-        if document.transactions_json is None or document.transactions_json == "" or False:
-            document.transactions_json = text_extract_dataframe_json(document.institute_name,
-                                                                     document.document_type,
-                                                                     document.text)
-            super(Document, document).save()
-        else:
-            print("Loading transaction from document.transactions_json")
-            # transactions_array = json.loads(document.transactions_json)
-            df = pd.read_json(document.transactions_json)
 
+        print("Loading transaction from document.transactions_json")
+        # transactions_array = json.loads(document.transactions_json)
+        df = pd.read_json(document.transactions_json)
+
+        # print('Loading')
+        # print(df[df_get_date_columns(df)])
         return document, df
 
     def get_groupby_dict(self, document):
@@ -251,15 +252,21 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def mapped_transactions_json(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
 
-        flag_process_data = False
+        # print("Before Processing")
+        # print(df['date'])
+
+        flag_process_data = True
         flag_create_transactions = False
 
         if flag_process_data:
             # Need to be lookup based
             groupby_dict = self.get_groupby_dict(document)
-
             df = transform_df_using_dict(df, groupby_dict)
-            df = df_dates_iso_format(df)
+            # df = df_dates_iso_format(df)
+            df = df_dates_str(df)
+
+        # print("Before Sending")
+        print(df.dtypes)
 
         transactions_array = json.loads(df.to_json(orient='records'))
 
@@ -272,7 +279,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def mapped_transactions_csv(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
 
-        flag_process_data = False
+        flag_process_data = g_flag_process_data
         if flag_process_data:
             # Need to be lookup based
             groupby_dict = self.get_groupby_dict(document)
@@ -288,11 +295,10 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def transactions_dataframe(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
 
-        flag_process_data = False
+        flag_process_data = True
         if flag_process_data:
             # Need to be lookup based
             groupby_dict = self.get_groupby_dict(document)
-
             df = transform_df_using_dict(df, groupby_dict)
 
         transactions_pandas_str = str(df)

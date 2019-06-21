@@ -8,7 +8,9 @@ def df_map_columns(df, mapper_dict):
 
     # Set the index of df as Column 'id'
     # df = df.set_index('id')
-    df = df.groupby(mapper_dict, axis=1).sum()
+    # The sum function is causing problem for pandas.timestamp i.e. dates
+    # df = df.groupby(mapper_dict, axis=1).min()
+    df = df.groupby(mapper_dict, axis=1).min()
     return df
 
 
@@ -20,12 +22,14 @@ def df_clean_amount_columns(df, amount_cols):
 
 
 def df_clean_date_columns(df, date_cols):
+
     df[date_cols] = df[date_cols].apply(pd.to_datetime)
 
     return df
 
 
-def df_dates_str(date_cols, df):
+def df_dates_str(df):
+    date_cols = df_get_date_columns(df)
     df[date_cols] = df[date_cols].applymap(
         lambda x: datetime.strftime(x, "%Y-%m-%d")
     )
@@ -53,7 +57,7 @@ def df_get_amount_columns(df):
 def df_get_date_columns(df):
     date_cols = []
     for column in df.columns:
-        if "Date" in column:
+        if "date" in column.lower():
             date_cols.append(column)
     return date_cols
 
