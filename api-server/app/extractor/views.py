@@ -207,7 +207,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
             super(Document, document).save()
         else:
-            print("Loading transaction from document.transactions_json")
             transactions_array = json.loads(document.transactions_json)
 
         return document, transactions_array
@@ -221,13 +220,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def get_or_create_transactions_dataframe(self):
         document = self.get_object()
 
-
-        print("Loading transaction from document.transactions_json")
-        # transactions_array = json.loads(document.transactions_json)
         df = pd.read_json(document.transactions_json)
 
-        # print('Loading')
-        # print(df[df_get_date_columns(df)])
         return document, df
 
     def get_groupby_dict(self, document):
@@ -236,10 +230,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         elif document.document_type == "CreditCardStatement":
             groupby_dict_json = creditcard_groupby_json
 
-        # hjson.loads makes sure that keys are also strings
         groupby_dict = hjson.loads(groupby_dict_json)
-
-        # print(groupby_dict)
 
         return groupby_dict
 
