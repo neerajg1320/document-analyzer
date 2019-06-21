@@ -217,7 +217,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def get_or_create_transactions_dataframe(self):
         document = self.get_object()
 
-        if document.transactions_json is None or document.transactions_json == "":
+        if document.transactions_json is None or document.transactions_json == "" or False:
             document.transactions_json = text_extract_dataframe_json(document.institute_name,
                                                                      document.document_type,
                                                                      document.text)
@@ -251,7 +251,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def mapped_transactions_json(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
 
-        flag_process_data = True
+        flag_process_data = False
         flag_create_transactions = False
 
         if flag_process_data:
@@ -276,10 +276,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
         groupby_dict = self.get_groupby_dict(document)
         df = transform_df_using_dict(df, groupby_dict)
 
-        # We have to explore if hardcoding or columns can be removed
-        # df.columns.values[0] = 'Id'
-        # df = df.rename(columns={"": "Id"})
-
         buf = StringIO()
         df.to_csv(buf, index=False)
 
@@ -290,10 +286,12 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def transactions_dataframe(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
 
-        # Need to be lookup based
-        groupby_dict = self.get_groupby_dict(document)
+        flag_process_data = False
+        if flag_process_data:
+            # Need to be lookup based
+            groupby_dict = self.get_groupby_dict(document)
 
-        df = transform_df_using_dict(df, groupby_dict)
+            df = transform_df_using_dict(df, groupby_dict)
 
         transactions_pandas_str = str(df)
         return Response(transactions_pandas_str)
@@ -361,10 +359,17 @@ class FileViewSet(viewsets.ModelViewSet):
         if file.text is None or file.text == "" or True:
             file_name, file_extn = os.path.splitext(file_path)
 
+            file_transactions_json = "Format {} not supported".format(file_extn)
             if file_extn.lower() == '.pdf':
+                # We first read the pdf, the password is used in case pdf is encrypted
                 file.text = pdftotext_read_pdf_using_subprocess(file_path, file.password)
+                # The we extract the transactions from the text
+                file_transactions_json = text_extract_dataframe_json(file.institute_name,
+                                                                     file.document_type,
+                                                                     file.text)
             elif excel_routines.is_file_extn_excel(file_extn):
                 file.text = excel_routines.excel_to_text(file_path)
+                file_transactions_json = excel_routines.excel_to_json(file_path)
             else :
                 file.text = "Format {} not supported".format(file_extn)
 
@@ -374,8 +379,9 @@ class FileViewSet(viewsets.ModelViewSet):
                                            title=file.title,
                                            institute_name=file.institute_name,
                                            document_type=file.document_type,
-                                           text=file.text,)
-        print(document)
+                                           text=file.text,
+                                           transactions_json=file_transactions_json)
+        # print(document)
 
         document_serialized = serializers.DocumentDetailSerializer(document)
         return Response(document_serialized.data)
