@@ -2,11 +2,35 @@ div#main-div {
     padding: 20px;
 }
 
-div#document-input, div#file-input {
-    text-align: center;
+div#input-box {
+    padding: 10px;
+    height: 100%;
+    width:100%;
+    overflow: hidden; /* This makes sure that children stay inside the parent div */
 }
 
-div#document-text {
+form#fileinfo {
+    float: left;
+    width: 40%;
+    margin: 2%;
+    display: inline-block;
+    text-align: center;
+    *display: inline;
+    zoom: 1;
+}
+
+div#file-input, div#document-input {
+    float: left;
+    height: 100%;
+    width: 20%;
+    margin: 2%;
+    display: inline-block;
+    text-align: center;
+    *display: inline;
+    zoom: 1;
+}
+
+div#document-text, div#document-pandas {
     height: 300px;
 }
 

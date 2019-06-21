@@ -7,8 +7,8 @@
 <!-- DOM section -->
 
 <div id="main-div">
-    <div class="bordered">
-        <form id="fileinfo" action="http://localhost:8000/api/docminer/files/"
+    <div id="input-box" class="bordered">
+        <form id="fileinfo" class="bordered" action="http://localhost:8000/api/docminer/files/"
               method="post"
               enctype="multipart/form-data">
             <input name="title" type="text" value="Sample PDF">
@@ -20,6 +20,18 @@
             <input type="submit">
         </form>
 
+        <div id="file-input" class="bordered">
+            <span>File ID</span>
+            <input id="input_file_id" type="text" name="file_id" value="45"/>
+            <button id="btn_documentize">Documentize File</button>
+            <!-- <button id="btn_load_file">Load File</button>-->
+        </div>
+        <div id="document-input" class="bordered">
+            <span>Document ID</span>
+            <input id="input_document_id" type="text" name="document_id" value="102"/>
+            <button id="btn_download">Get Transactions</button>
+            <!-- <button id="btn_load_file">Load File</button>-->
+        </div>
         <!--
         <form id="fileinfo" action="http://localhost:8000/api/docminer/files/"
               method="post"
@@ -36,18 +48,7 @@
     </div>
 
     <div id="document-info">
-        <div id="file-input" class="bordered">
-            <span>File ID</span>
-            <input id="input_file_id" type="text" name="file_id" value="45"/>
-            <button id="btn_documentize">Documentize File</button>
-            <!-- <button id="btn_load_file">Load File</button>-->
-        </div>
-        <div id="document-input" class="bordered">
-            <span>Document ID</span>
-            <input id="input_document_id" type="text" name="document_id" value="102"/>
-            <button id="btn_download">Get Transactions</button>
-            <!-- <button id="btn_load_file">Load File</button>-->
-        </div>
+
         <div id="document-text" class="bordered scrollable"></div>
         <div id="document-pandas" class="bordered scrollable"></div>
         <div id="document-transactions-table"></div>
