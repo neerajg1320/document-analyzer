@@ -22,6 +22,11 @@ from extractor.pandas_routines import transform_df_using_dict, df_dates_iso_form
 from extractor import excel_routines
 
 
+# Until supported keep the mapping false for Excel documents
+# The flag is manipulated in the FileViewSet::documentize functions
+g_flag_process_data = True
+
+
 class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
                             mixins.ListModelMixin,
                             mixins.CreateModelMixin):
@@ -122,9 +127,6 @@ def text_extract_dataframe_json(institute_name, document_type, input_text):
     return df.to_json(orient='records')
 
 
-g_flag_process_data = True
-
-
 class DocumentViewSet(viewsets.ModelViewSet):
     """ Manage documents in database """
     queryset = Document.objects.all()
@@ -222,6 +224,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         df = pd.read_json(document.transactions_json)
 
+        print("225:"+str(df))
         return document, df
 
     def get_groupby_dict(self, document):
@@ -246,7 +249,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # print("Before Processing")
         # print(df['date'])
 
-        flag_process_data = True
+        flag_process_data = g_flag_process_data
         flag_create_transactions = False
 
         if flag_process_data:
@@ -286,7 +289,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def transactions_dataframe(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
 
-        flag_process_data = True
+        flag_process_data = g_flag_process_data
         if flag_process_data:
             # Need to be lookup based
             groupby_dict = self.get_groupby_dict(document)
@@ -355,6 +358,8 @@ class FileViewSet(viewsets.ModelViewSet):
         file = self.get_object()
         file_path = self.get_file_path(file)
 
+        global g_flag_process_data
+
         if file.text is None or file.text == "" or True:
             file_name, file_extn = os.path.splitext(file_path)
 
@@ -366,9 +371,11 @@ class FileViewSet(viewsets.ModelViewSet):
                 file_transactions_json = text_extract_dataframe_json(file.institute_name,
                                                                      file.document_type,
                                                                      file.text)
+                g_flag_process_data = True
             elif excel_routines.is_file_extn_excel(file_extn):
                 file.text = excel_routines.excel_to_text(file_path)
                 file_transactions_json = excel_routines.excel_to_json(file_path)
+                g_flag_process_data = False
             else :
                 file.text = "Format {} not supported".format(file_extn)
 
