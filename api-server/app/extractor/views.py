@@ -272,9 +272,11 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def mapped_transactions_csv(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
 
-        # Need to be lookup based
-        groupby_dict = self.get_groupby_dict(document)
-        df = transform_df_using_dict(df, groupby_dict)
+        flag_process_data = False
+        if flag_process_data:
+            # Need to be lookup based
+            groupby_dict = self.get_groupby_dict(document)
+            df = transform_df_using_dict(df, groupby_dict)
 
         buf = StringIO()
         df.to_csv(buf, index=False)
