@@ -106,6 +106,21 @@ creditcard_groupby_json = """{
 }"""
 
 
+def text_extract_dataframe_json(institute_name, document_type, input_text):
+    # print("Creating transactions from document.text")
+    # Lookup for the parser(extractor)
+    #   based on institure name (e.g. HDFC) and document type (e.g. Savings Statement)
+    extractors = Extractor.objects.filter(institute_name__iexact=institute_name,
+                                          document_type__iexact=document_type)
+    if not extractors:
+        raise Exception("Extractor not found")
+    transaction_regex_str = extractors[0].regex_parser
+    # The following will send the data in json format
+    transactions_array = create_transactions_dict_array_from_text(transaction_regex_str, input_text)
+    df = pd.DataFrame(transactions_array)
+    return df.to_json(orient='records')
+
+
 class DocumentViewSet(viewsets.ModelViewSet):
     """ Manage documents in database """
     queryset = Document.objects.all()
@@ -150,7 +165,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def transactions(self, request, *args, **kwargs):
         document = self.get_object()
         # unconditionally enabled temporarily
-        if document.transactions_json is None or document.transactions_json == "" or True:
+        if document.transactions_json is None or document.transactions_json == "":
             # Lookup for the parser(extractor)
             #   based on institure name (e.g. HDFC) and document type (e.g. Savings Statement)
             extractors = Extractor.objects.filter(institute_name__iexact=document.institute_name,
@@ -201,23 +216,11 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     def get_or_create_transactions_dataframe(self):
         document = self.get_object()
-        # unconditionally enabled temporarily
+
         if document.transactions_json is None or document.transactions_json == "":
-            # print("Creating transactions from document.text")
-            # Lookup for the parser(extractor)
-            #   based on institure name (e.g. HDFC) and document type (e.g. Savings Statement)
-            extractors = Extractor.objects.filter(institute_name__iexact=document.institute_name,
-                                                  document_type__iexact=document.document_type)
-            if not extractors:
-                raise Exception("Extractor not found")
-
-            transaction_regex_str = extractors[0].regex_parser
-
-            # The following will send the data in json format
-            transactions_array = create_transactions_dict_array_from_text(transaction_regex_str, document.text)
-            df = pd.DataFrame(transactions_array)
-            document.transactions_json = df.to_json(orient='records')
-
+            document.transactions_json = text_extract_dataframe_json(document.institute_name,
+                                                                     document.document_type,
+                                                                     document.text)
             super(Document, document).save()
         else:
             print("Loading transaction from document.transactions_json")
