@@ -168,7 +168,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         highlighted_text = create_highlighted_text(document.transactions_json, title="Transactions")
         return Response(highlighted_text)
 
-    def get_or_create_transactions(self):
+    def get_or_create_transactions_array(self):
         document = self.get_object()
         # unconditionally enabled temporarily
         if document.transactions_json is None or document.transactions_json == "" or True:
@@ -193,6 +193,33 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         return document, transactions_array
 
+    def get_or_create_transactions_dataframe(self):
+        document = self.get_object()
+        # unconditionally enabled temporarily
+        if document.transactions_json is None or document.transactions_json == "" or True:
+            # print("Creating transactions from document.text")
+            # Lookup for the parser(extractor)
+            #   based on institure name (e.g. HDFC) and document type (e.g. Savings Statement)
+            extractors = Extractor.objects.filter(institute_name__iexact=document.institute_name,
+                                                  document_type__iexact=document.document_type)
+            if not extractors:
+                raise Exception("Extractor not found")
+
+            transaction_regex_str = extractors[0].regex_parser
+
+            # The following will send the data in json format
+            transactions_array = create_transactions_dict_array_from_text(transaction_regex_str, document.text)
+            df = pd.DataFrame(transactions_array)
+            document.transactions_json = df.to_json(orient='records')
+
+            super(Document, document).save()
+        else:
+            print("Loading transaction from document.transactions_json")
+            # transactions_array = json.loads(document.transactions_json)
+            df = pd.read_json(document.transactions_json)
+
+        return document, df
+
     def get_groupby_dict(self, document):
         if document.document_type == "ContractNote":
             groupby_dict_json = trade_groupby_json
@@ -208,7 +235,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, renderer_classes=[renderers.JSONRenderer])
     def transactions_json(self, request, *args, **kwargs):
-        document, transactions_array = self.get_or_create_transactions()
+        document, transactions_array = self.get_or_create_transactions_array()
 
         return Response(transactions_array)
 
@@ -219,32 +246,28 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, renderer_classes=[renderers.JSONRenderer])
     def mapped_transactions_json(self, request, *args, **kwargs):
-        document, transactions_array = self.get_or_create_transactions()
+        document, df = self.get_or_create_transactions_dataframe()
 
         flag_process_data = True
         flag_create_transactions = False
 
         if flag_process_data:
-            df = pd.DataFrame(transactions_array);
-
             # Need to be lookup based
             groupby_dict = self.get_groupby_dict(document)
 
             df = transform_df_using_dict(df, groupby_dict)
             df = df_dates_iso_format(df)
 
-            transactions_array = json.loads(df.to_json(orient='records'))
+        transactions_array = json.loads(df.to_json(orient='records'))
 
-            if flag_create_transactions:
-                self.create_transactions(document, transactions_array)
+        if flag_create_transactions:
+            self.create_transactions(document, transactions_array)
 
         return Response(transactions_array)
 
     @action(detail=True, renderer_classes=[renderers.JSONRenderer])
     def mapped_transactions_csv(self, request, *args, **kwargs):
-        document, transactions_array = self.get_or_create_transactions()
-
-        df = pd.DataFrame(transactions_array);
+        document, df = self.get_or_create_transactions_dataframe()
 
         # Need to be lookup based
         groupby_dict = self.get_groupby_dict(document)
@@ -262,10 +285,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
     # Should use the reverse function
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
     def transactions_dataframe(self, request, *args, **kwargs):
-        document, transactions_array = self.get_or_create_transactions()
-
-        # Here we shall map data
-        df = pd.DataFrame(transactions_array);
+        document, df = self.get_or_create_transactions_dataframe()
 
         # Need to be lookup based
         groupby_dict = self.get_groupby_dict(document)
