@@ -9,8 +9,10 @@ let g_tabulator_table = new Tabulator("#document-transactions-table", {
     },
 });
 
-let g_document_text_box = $("#document-text")
-let g_document_pandas_box = $("#document-pandas")
+let g_config_automate_flow = true;
+
+let g_document_text_box = $("#document-text");
+let g_document_pandas_box = $("#document-pandas");
 
 // MacPro Docker
 let g_user_auth_token_docker = '307e60bcf5f1930b39a6ce5bc87b171ed0451323';
@@ -112,7 +114,9 @@ function documentize_file(user_auth_token, file_id, result_elm) {
         dataType: 'json',
         success: function(response) {
             result_elm.val(response.id);
-            $("#btn_download").click();
+            if (g_config_automate_flow) {
+                $("#btn_download").click();
+            }
         }
     });
 }
@@ -151,7 +155,9 @@ $("#fileinfo").submit(function(e) {
         success: function(response) {
             // alert('File upload successful (id = ' + response.id + ')');
             $("#input_file_id").val(response.id);
-            $("#btn_documentize").click();
+            if (g_config_automate_flow) {
+                $("#btn_documentize").click();
+            }
         },
     });
     e.preventDefault();
