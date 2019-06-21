@@ -349,6 +349,8 @@ class FileViewSet(viewsets.ModelViewSet):
 
             super(File, file).save()
 
+        file_json = excel_routines.excel_to_json(file_path);
+        # print(file_json)
         document = Document.objects.create(user=file.user,
                                            title=file.title,
                                            institute_name=file.institute_name,
