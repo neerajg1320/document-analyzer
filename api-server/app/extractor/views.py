@@ -333,16 +333,17 @@ class FileViewSet(viewsets.ModelViewSet):
     @action(detail=True, renderer_classes=[renderers.JSONRenderer])
     def documentize(self, request, *args, **kwargs):
         file = self.get_object()
+        file_path = self.get_file_path(file)
 
         if file.text is None or file.text == "" or True:
-            file_path = self.get_file_path(file)
-
             file_name, file_extn = os.path.splitext(file_path)
 
             if file_extn.lower() == '.pdf':
                 file.text = pdftotext_read_pdf_using_subprocess(file_path, file.password)
             elif excel_routines.is_file_extn_excel(file_extn):
                 file.text = excel_routines.excel_to_text(file_path)
+                # file_transactions_json = excel_routines.excel_to_json(file_path)
+                # print(file_transactions_json)
             else :
                 file.text = "Format {} not supported".format(file_extn)
 
@@ -352,7 +353,8 @@ class FileViewSet(viewsets.ModelViewSet):
                                            title=file.title,
                                            institute_name=file.institute_name,
                                            document_type=file.document_type,
-                                           text=file.text)
+                                           text=file.text,)
+        print(document)
 
         document_serialized = serializers.DocumentDetailSerializer(document)
         return Response(document_serialized.data)

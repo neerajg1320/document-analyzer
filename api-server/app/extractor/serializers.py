@@ -66,7 +66,7 @@ class DocumentDetailSerializer(serializers.ModelSerializer):
         #
         # fields = ('id', 'title', 'institute_name', 'document_type', 'text', 'highlighted', 'transactions')
         fields = ('id', 'title', 'institute_name', 'document_type', 'text', 'transactions_json', 'transactions',)
-        read_only_fields = ('id', 'highlighted', 'transactions_json', 'transactions',)
+        read_only_fields = ('id', 'highlighted', 'transactions',)
 
 
 class FileListSerializer(serializers.ModelSerializer):
