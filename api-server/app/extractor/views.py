@@ -224,7 +224,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         df = pd.read_json(document.transactions_json)
 
-        print("225:"+str(df))
+        # print("225:"+str(df))
         return document, df
 
     def get_groupby_dict(self, document):
@@ -260,7 +260,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
             df = df_dates_str(df)
 
         # print("Before Sending")
-        print(df.dtypes)
+        # print(df.dtypes)
 
         transactions_array = json.loads(df.to_json(orient='records'))
 
