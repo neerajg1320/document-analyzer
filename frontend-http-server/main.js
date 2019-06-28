@@ -133,6 +133,9 @@ $("#btn_download").click(function() {
     // set_sample_transactions(g_tabulator_table);
 });
 
+$("#btn_download_excel").click(function () {
+    g_tabulator_table.download("csv", "trades.csv");
+})
 
 $("#btn_documentize").click(function() {
     var file_id = $("#input_file_id").val();
