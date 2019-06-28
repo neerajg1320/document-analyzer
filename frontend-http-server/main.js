@@ -1,5 +1,16 @@
-//create Tabulator on DOM element with id "example-table"
-let g_tabulator_table = new Tabulator("#document-transactions-table", {
+// Document table which shows transactions present in a document
+let g_document_table = new Tabulator("#document-transactions-table", {
+    height:300,
+    layout:"fitColumns", //fit columns to width of table (optional)
+    autoColumns:true,
+
+    rowClick: function(e, row){ //trigger an alert message when the row is clicked
+        alert('Row index ' + row.getPosition() + ' clicked');
+    },
+});
+
+// Account table which shows transactions in all the documents uploaded for an account
+let g_account_table = new Tabulator("#account-transactions-table", {
     height:300,
     layout:"fitColumns", //fit columns to width of table (optional)
     autoColumns:true,
@@ -123,18 +134,18 @@ function documentize_file(user_auth_token, file_id, result_elm) {
 
 
 $("#btn_load_file").click(function() {
-    g_tabulator_table.setDataFromLocalFile(".json");
+    g_document_table.setDataFromLocalFile(".json");
 });
 
 
 $("#btn_download").click(function() {
-    download_document_using_input(g_tabulator_table, g_user_auth_token);
+    download_document_using_input(g_document_table, g_user_auth_token);
 
-    // set_sample_transactions(g_tabulator_table);
+    // set_sample_transactions(g_document_table);
 });
 
 $("#btn_download_excel").click(function () {
-    g_tabulator_table.download("csv", "trades.csv");
+    g_document_table.download("csv", "trades.csv");
 });
 
 $("#btn_documentize").click(function() {
@@ -162,7 +173,8 @@ $("#btn_save_snowflake").click(function () {
             // console.log(typeof(response), response);
             //response is already a parsed JSON
 
-            alert("Transactions saved");
+            // alert("Transactions saved");
+            g_account_table.setData(response);
         }
     });
 
@@ -191,7 +203,7 @@ $("#fileinfo").submit(function(e) {
 });
 
 $(document).ready(function() {
-    download_document_using_input(g_tabulator_table, g_user_auth_token);
+    download_document_using_input(g_document_table, g_user_auth_token);
 });
 
 
