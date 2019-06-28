@@ -135,7 +135,7 @@ $("#btn_download").click(function() {
 
 $("#btn_download_excel").click(function () {
     g_tabulator_table.download("csv", "trades.csv");
-})
+});
 
 $("#btn_documentize").click(function() {
     var file_id = $("#input_file_id").val();
@@ -143,6 +143,30 @@ $("#btn_documentize").click(function() {
     documentize_file(g_user_auth_token, file_id, input_document_elm);
 });
 
+$("#btn_save_snowflake").click(function () {
+    // Get document id
+    let document_id = $("#input_document_id").val();
+
+    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
+    let document_transactions_save_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/transactions/save/';
+
+    console.log(document_transactions_save_url);
+
+    $.ajax({
+        url: document_transactions_save_url,
+        headers : {
+            'Authorization' : 'Token ' + g_user_auth_token,
+        },
+        dataType: 'json',
+        success: function(response) {
+            // console.log(typeof(response), response);
+            //response is already a parsed JSON
+
+            alert("Transactions saved");
+        }
+    });
+
+});
 
 $("#fileinfo").submit(function(e) {
     var formData = new FormData($(this)[0]);
