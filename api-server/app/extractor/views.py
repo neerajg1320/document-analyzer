@@ -150,23 +150,44 @@ snowflake_properties_json = """{
 }"""
 
 
-def save_to_snowflake(df):
+def save_to_snowflake(df, table_name):
     snowflake_properties_dict = hjson.loads(snowflake_properties_json)
 
     engine = create_engine(URL(**snowflake_properties_dict))
 
     try:
         connection = engine.connect()
-        results = connection.execute('select current_version()').fetchone()
-        print(results[0])
+        # results = connection.execute('select current_version()').fetchone()
+        # print(results[0])
 
-        print(df)
-        df.to_sql("USSTOCKS", engine, index=False, if_exists='append',)
+        # print(df)
+        df.to_sql(table_name, engine, index=False, if_exists='append',)
     except Exception as e:
         print("Operation Failed: " + str(e))
     finally:
         connection.close()
         engine.dispose()
+
+
+def load_from_snowflake(table_name):
+    snowflake_properties_dict = hjson.loads(snowflake_properties_json)
+
+    engine = create_engine(URL(**snowflake_properties_dict))
+
+    df = None
+    try:
+        connection = engine.connect()
+        # results = connection.execute('select current_version()').fetchone()
+        # print(results[0])
+
+        df = pd.read_sql_query("SELECT * FROM {}".format(table_name), engine)
+    except Exception as e:
+        print("Operation Failed: " + str(e))
+    finally:
+        connection.close()
+        engine.dispose()
+
+    return df
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
@@ -331,8 +352,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def transactions_dataframe(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
 
-
-
         transactions_pandas_str = str(df)
         return Response(transactions_pandas_str)
 
@@ -347,11 +366,13 @@ class DocumentViewSet(viewsets.ModelViewSet):
             groupby_dict = self.get_groupby_dict(document)
             df = transform_df_using_dict(df, groupby_dict)
 
-        save_to_snowflake(df)
+        snowflake_table_name = "USSTOCKS"
+        save_to_snowflake(df, snowflake_table_name)
 
-        transactions_pandas_str = str(df)
-        return Response(transactions_pandas_str)
+        df = load_from_snowflake(snowflake_table_name)
 
+        transactions_array = json.loads(df.to_json(orient='records'))
+        return Response(transactions_array)
 
 
 from rest_framework.response import Response
