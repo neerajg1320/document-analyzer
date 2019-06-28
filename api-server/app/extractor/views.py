@@ -94,6 +94,9 @@ class ExtractorViewSet(viewsets.ModelViewSet):
         return serializers.ExtractorListSerializer
 
 
+# Data mappers stored as string
+# TBD: This part will be made configurable
+#
 trade_groupby_json = """{
     'trade_date': 'TradeDate',
     'setl_date': 'SettleDate',
@@ -129,6 +132,41 @@ def text_extract_dataframe_json(institute_name, document_type, input_text):
     df = pd.DataFrame(transactions_array)
 
     return df.to_json(orient='records')
+
+
+# Store dataframe to snowflake
+# We don't need to create the Table in snowflake.
+# The first data transfer will create the table.
+# TBD: The database properties to be made configurable.
+#
+
+snowflake_properties_json = """{
+    'user' : 'finball',
+    'password' : 'Finball@2018',
+    'account' : 'yw56161',
+    'database' : 'Trades',
+    'schema' : 'public',
+    'warehouse' : 'compute_wh',
+}"""
+
+
+def save_to_snowflake(df):
+    snowflake_properties_dict = hjson.loads(snowflake_properties_json)
+
+    engine = create_engine(URL(**snowflake_properties_dict))
+
+    try:
+        connection = engine.connect()
+        results = connection.execute('select current_version()').fetchone()
+        print(results[0])
+
+        print(df)
+        df.to_sql("USSTOCKS", engine, index=False, if_exists='append',)
+    except Exception as e:
+        print("Operation Failed: " + str(e))
+    finally:
+        connection.close()
+        engine.dispose()
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
@@ -314,31 +352,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
         transactions_pandas_str = str(df)
         return Response(transactions_pandas_str)
 
-
-def save_to_snowflake(df):
-    # Ref: https://docs.snowflake.net/manuals/user-guide/sqlalchemy.html
-    engine = create_engine(URL(
-        user='finball',
-        password='Finball@2018',
-        account='yw56161',
-        database='Trades',
-        schema='public',
-        warehouse='compute_wh',
-    ))
-    try:
-        connection = engine.connect()
-        results = connection.execute('select current_version()').fetchone()
-        print(results[0])
-
-        # Write the dataframe df
-        # df = pd.read_sql_query("SELECT * FROM USStocks", engine)
-        print(df)
-        df.to_sql("USStocks", engine, index=False)
-    except Exception as e:
-        print("Operation Failed: " + str(e))
-    finally:
-        connection.close()
-        engine.dispose()
 
 
 from rest_framework.response import Response
