@@ -34,6 +34,10 @@ document_transactions_dataframe = views.DocumentViewSet.as_view({
     'get': 'transactions_dataframe'
 }, renderer_classes=[renderers.JSONRenderer])
 
+document_transactions_save = views.DocumentViewSet.as_view({
+    'get': 'transactions_save'
+}, renderer_classes=[renderers.JSONRenderer])
+
 
 file_textify = views.FileViewSet.as_view({
     'get': 'textify'
@@ -48,6 +52,8 @@ urlpatterns = [
     path('documents/<int:pk>/transactions/json/', document_transactions_json, name='document-transactions-json'),
     path('documents/<int:pk>/transactions/csv/', document_transactions_csv, name='document-transactions-csv'),
     path('documents/<int:pk>/transactions/dataframe/', document_transactions_dataframe, name='document-transactions-dataframe'),
+    path('documents/<int:pk>/transactions/save/', document_transactions_save,
+         name='document-transactions-save'),
 
     path('files/<int:pk>/textify/', file_textify, name='file-textify'),
 ]

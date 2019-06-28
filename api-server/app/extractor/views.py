@@ -17,6 +17,10 @@ import json
 import hjson
 from io import StringIO
 
+from snowflake.sqlalchemy import URL
+from sqlalchemy import create_engine
+
+
 from extractor.pandas_routines import transform_df_using_dict, df_dates_iso_format, \
     df_get_date_columns, df_dates_str
 from extractor import excel_routines
@@ -289,14 +293,52 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def transactions_dataframe(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
 
+
+
+        transactions_pandas_str = str(df)
+        return Response(transactions_pandas_str)
+
+    # Should use the reverse function
+    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
+    def transactions_save(self, request, *args, **kwargs):
+        document, df = self.get_or_create_transactions_dataframe()
+
         flag_process_data = g_flag_process_data
         if flag_process_data:
             # Need to be lookup based
             groupby_dict = self.get_groupby_dict(document)
             df = transform_df_using_dict(df, groupby_dict)
 
+        save_to_snowflake(df)
+
         transactions_pandas_str = str(df)
         return Response(transactions_pandas_str)
+
+
+def save_to_snowflake(df):
+    # Ref: https://docs.snowflake.net/manuals/user-guide/sqlalchemy.html
+    engine = create_engine(URL(
+        user='finball',
+        password='Finball@2018',
+        account='yw56161',
+        database='Trades',
+        schema='public',
+        warehouse='compute_wh',
+    ))
+    try:
+        connection = engine.connect()
+        results = connection.execute('select current_version()').fetchone()
+        print(results[0])
+
+        # Write the dataframe df
+        # df = pd.read_sql_query("SELECT * FROM USStocks", engine)
+        print(df)
+        df.to_sql("USStocks", engine, index=False)
+    except Exception as e:
+        print("Operation Failed: " + str(e))
+    finally:
+        connection.close()
+        engine.dispose()
 
 
 from rest_framework.response import Response
