@@ -28,9 +28,9 @@ let g_document_pandas_box = $("#document-pandas");
 // MacPro Docker
 let g_user_auth_token_docker = '307e60bcf5f1930b39a6ce5bc87b171ed0451323';
 // MacPro Local
-let g_user_auth_token_local = '219201bc10fb6baa4a4cbc36d318aedaa89f78b7';
+// let g_user_auth_token_local = '219201bc10fb6baa4a4cbc36d318aedaa89f78b7';
 // MacAir Local
-// let g_user_auth_token_local = '0676010d893a1e1cd15f5d8a3883b5ced174fdad';
+let g_user_auth_token_local = '0676010d893a1e1cd15f5d8a3883b5ced174fdad';
 
 
 
@@ -132,9 +132,25 @@ function documentize_file(user_auth_token, file_id, result_elm) {
     });
 }
 
+// Ref: https://stackoverflow.com/questions/5379120/get-the-highlighted-selected-text
+function getSelectionText() {
+    var text = "";
+    if (window.getSelection) {
+        text = window.getSelection().toString();
+    } else if (document.selection && document.selection.type != "Control") {
+        text = document.selection.createRange().text;
+    }
+    return text;
+}
 
 $("#btn_load_file").click(function() {
     g_document_table.setDataFromLocalFile(".json");
+});
+
+
+$("#btn_get_selection").click(function() {
+    var selected_text = getSelectionText()
+    console.log(selected_text);
 });
 
 
