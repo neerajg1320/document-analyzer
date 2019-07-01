@@ -190,6 +190,10 @@ def load_from_snowflake(table_name):
     return df
 
 
+def convert_to_regex(text):
+    return "(?:.*)"
+
+
 class DocumentViewSet(viewsets.ModelViewSet):
     """ Manage documents in database """
     queryset = Document.objects.all()
@@ -229,6 +233,25 @@ class DocumentViewSet(viewsets.ModelViewSet):
             document.highlighted = create_highlighted_text(document.text, title=document.title)
             super(Document, document).save()
         return Response(document.highlighted)
+
+    @action(detail=True, methods=['post'], renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
+    def row(self, request, *args, **kwargs):
+        document = self.get_object()
+
+        # Right now we can assume one document one table. But this is not necessarily true
+        print("row invoked")
+        selected_text = request.data.get("selection", None)
+
+        regex_str = ""
+        if selected_text is not None:
+            print(selected_text)
+            regex_str = convert_to_regex(selected_text)
+
+        response_dict = [{ "regex": regex_str}]
+
+        # Response should be a regex
+        return Response(response_dict)
+
 
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
     def transactions(self, request, *args, **kwargs):

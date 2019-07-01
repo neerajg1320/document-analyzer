@@ -17,6 +17,10 @@ document_highlight = views.DocumentViewSet.as_view({
     'get': 'highlight'
 }, renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
 
+document_row = views.DocumentViewSet.as_view({
+    'get': 'row'
+}, renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
+
 document_transactions = views.DocumentViewSet.as_view({
     'get': 'transactions'
 }, renderer_classes=[renderers.StaticHTMLRenderer])
@@ -48,6 +52,7 @@ urlpatterns = [
     path('', include(router.urls)),
 
     path('documents/<int:pk>/highlight/', document_highlight, name='document-highlight'),
+    path('documents/<int:pk>/row/', document_row, name='document-row'),
     path('documents/<int:pk>/transactions/', document_transactions, name='document-transactions'),
     path('documents/<int:pk>/transactions/json/', document_transactions_json, name='document-transactions-json'),
     path('documents/<int:pk>/transactions/csv/', document_transactions_csv, name='document-transactions-csv'),
