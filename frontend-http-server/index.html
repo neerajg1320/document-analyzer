@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.4.2/css/tabulator.min.css" rel="stylesheet">
 </head>
 <body>
@@ -51,7 +52,11 @@
 
         <div class="bordered">
             <button id="btn_get_selection">Get Selection</button>
-            <div id="document-text" class="bordered scrollable"></div>
+            <!--<div id="document-text" class="bordered scrollable"></div>-->
+            <textarea id="document-text"
+                      class="bordered scrollable"
+                      readonly="true">
+            </textarea>
         </div>
         <div id="document-pandas" class="bordered scrollable"></div>
         <div>
@@ -83,7 +88,6 @@
     i) Fetch document transactions using API
     ii) Display transactions received as json array in a table format using tabulator
 -->
-<link rel="stylesheet" href="style.css">
 <script type="text/javascript" src="sample_json_data.js"></script>
 <script type="text/javascript" src="main.js"></script>
 </body>

@@ -30,7 +30,12 @@ div#file-input, div#document-input {
     zoom: 1;
 }
 
-div#document-text, div#document-pandas {
+#document-text {
+    height: 300px;
+    width: 100%;
+}
+
+#document-pandas {
     height: 300px;
 }
 
