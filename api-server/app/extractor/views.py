@@ -190,8 +190,84 @@ def load_from_snowflake(table_name):
     return df
 
 
+import re
+
+
+def replace_chars(input_str, start_offset, end_offset, replace_char):
+    replace_len = end_offset - start_offset
+    new_str = input_str[:start_offset] + replace_char * replace_len + input_str[end_offset:]
+    # print(new_str)
+    return new_str
+
+def replace_substr(input_str, start_offset, end_offset, replace_substr):
+    replace_len = end_offset - start_offset
+    new_str = input_str[:start_offset] + "<" + replace_substr + ">" + input_str[end_offset:]
+    # print(new_str)
+    return new_str
+
+def replace_with_regex(match_queue, regex_str, input_str):
+    pattern = re.compile(regex_str, re.MULTILINE)
+    matches = pattern.finditer(input_str)
+
+    fields = sorted(pattern.groupindex.items(), key=lambda x: x[1])
+    field_name = fields[0][0]
+    print(fields)
+
+
+    new_str = input_str
+    for match_num, match in enumerate(matches):
+        match_num = match_num + 1
+
+        start = match.start()
+        end = match.end()
+        new_str = replace_chars(new_str, start, end, '-')
+        # new_str = replace_substr(new_str, start, end, field_name)
+        match_queue.append((field_name, start, end))
+
+        if False:
+            print("")
+            print("Match {match_num} was found at {start}-{end}:"
+                  .format(match_num = match_num,
+                          start = start,
+                          end = end))
+            print("{match}".format(match = match.group()))
+
+        for group_num in range(0, len(match.groups())):
+            group_num = group_num + 1
+            if False:
+                print("Group {group_num} found at {start}-{end}: {group}"
+                      .format(group_num = group_num,
+                              start = match.start(group_num),
+                              end = match.end(group_num),
+                              group = match.group(group_num)))
+
+    # print(new_str)
+    return new_str
+
+
+
 def convert_to_regex(text):
-    return "(?:.*)"
+    print(text)
+
+
+
+    date_regex_str = r"(?P<Date>\d{2}\/\d{2}\/\d{2})"
+    float_regex_str = r"(?P<Float>(?:[,\d]+)?(?:[.][\d]+))"
+    integer_regex_str = r"(?P<Integer>[,\d]+)"
+    string_regex_str = r"(?P<String>[\w]+)"
+
+    new_str = text
+    match_queue = []
+    new_str = replace_with_regex(match_queue, date_regex_str, new_str)
+    new_str = replace_with_regex(match_queue, float_regex_str, new_str)
+    new_str = replace_with_regex(match_queue, integer_regex_str, new_str)
+    # new_str = replace_with_regex(match_queue, string_regex_str, new_str)
+
+    print(new_str)
+
+    match_queue = sorted(match_queue, key=lambda x: x[1])
+    print(match_queue)
+    return new_str
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
@@ -239,12 +315,10 @@ class DocumentViewSet(viewsets.ModelViewSet):
         document = self.get_object()
 
         # Right now we can assume one document one table. But this is not necessarily true
-        print("row invoked")
         selected_text = request.data.get("selection", None)
 
         regex_str = ""
         if selected_text is not None:
-            print(selected_text)
             regex_str = convert_to_regex(selected_text)
 
         response_dict = [{ "regex": regex_str}]
