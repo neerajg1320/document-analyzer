@@ -205,12 +205,15 @@ def replace_substr(input_str, start_offset, end_offset, replace_substr):
     # print(new_str)
     return new_str
 
-def replace_with_regex(match_queue, regex_str, input_str):
+def replace_with_regex(match_queue, regex_str_dict, input_str, token_name):
+    regex_str = regex_str_dict[token_name]
     pattern = re.compile(regex_str, re.MULTILINE)
     matches = pattern.finditer(input_str)
 
     fields = sorted(pattern.groupindex.items(), key=lambda x: x[1])
     field_name = fields[0][0]
+
+    field_name = token_name
     print(fields)
 
 
@@ -222,7 +225,7 @@ def replace_with_regex(match_queue, regex_str, input_str):
         end = match.end()
         new_str = replace_chars(new_str, start, end, '-')
         # new_str = replace_substr(new_str, start, end, field_name)
-        match_queue.append((field_name, start, end))
+        match_queue.append((field_name, start, end, match.group()))
 
         if False:
             print("")
@@ -249,25 +252,65 @@ def replace_with_regex(match_queue, regex_str, input_str):
 def convert_to_regex(text):
     print(text)
 
+    optional_separator = r"[\s]{0,2}"
+    mandatory_separator = r"[\s]{1,2}"
 
-
+    currency = r"[\$]"
     date_regex_str = r"(?P<Date>\d{2}\/\d{2}\/\d{2})"
+
     float_regex_str = r"(?P<Float>(?:[,\d]+)?(?:[.][\d]+))"
+    amount_float_regex_str = currency + optional_separator + float_regex_str
+
     integer_regex_str = r"(?P<Integer>[,\d]+)"
-    string_regex_str = r"(?P<String>[\w]+)"
+    amount_integer_regex_str = currency + optional_separator + integer_regex_str
+
+    # r"(?P<String>[\w]+(?:<mandatory_separator>[\w]+)*)"
+    string_regex_str = r"(?P<String>[\w]+(?:" + mandatory_separator + "[\w]+)*)"
+
+
+    regex_str_dict = {}
+    regex_str_dict["Date"] = date_regex_str
+    regex_str_dict["AmountFloat"] = amount_float_regex_str
+    regex_str_dict["Float"] = float_regex_str
+    regex_str_dict["AmountInteger"] = amount_integer_regex_str
+    regex_str_dict["Integer"] = integer_regex_str
+    regex_str_dict["String"] = string_regex_str
+
 
     new_str = text
     match_queue = []
-    new_str = replace_with_regex(match_queue, date_regex_str, new_str)
-    new_str = replace_with_regex(match_queue, float_regex_str, new_str)
-    new_str = replace_with_regex(match_queue, integer_regex_str, new_str)
-    # new_str = replace_with_regex(match_queue, string_regex_str, new_str)
+    new_str = replace_with_regex(match_queue, regex_str_dict, new_str, "Date")
+
+    new_str = replace_with_regex(match_queue, regex_str_dict, new_str, "AmountFloat")
+    new_str = replace_with_regex(match_queue, regex_str_dict, new_str, "Float")
+
+    new_str = replace_with_regex(match_queue, regex_str_dict, new_str, "AmountInteger")
+    new_str = replace_with_regex(match_queue, regex_str_dict, new_str, "Integer")
+
+    new_str = replace_with_regex(match_queue, regex_str_dict, new_str, "String")
 
     print(new_str)
 
     match_queue = sorted(match_queue, key=lambda x: x[1])
-    print(match_queue)
-    return new_str
+
+    print('\n'.join(map(str, match_queue)))
+
+    complete_regex_str = regex_str_dict[match_queue[0][0]]
+    token_type_count_dict = {}
+    for i in range(1, len(match_queue)):
+        token_type = match_queue[i][0]
+        token_type_count = token_type_count_dict.get(token_type, None)
+        if token_type_count is None:
+            token_type_count = 0
+            token_type_count_dict[token_type] = token_type_count
+
+        regex_str_with_count = regex_str_dict[token_type].replace(token_type, token_type + str(token_type_count))
+        complete_regex_str += mandatory_separator + regex_str_with_count
+
+        token_type_count_dict[token_type] += 1
+
+    print(complete_regex_str)
+    return complete_regex_str
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
