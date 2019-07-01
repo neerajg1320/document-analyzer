@@ -256,16 +256,16 @@ def convert_to_regex(text):
     mandatory_separator = r"[\s]{1,2}"
 
     currency = r"[\$]"
-    date_regex_str = r"(?P<Date>\d{2}\/\d{2}\/\d{2})"
+    date_regex_str = r"(?P<Date>\d{2}\/\d{2}\/\d{2,4})"
 
     float_regex_str = r"(?P<Float>(?:[,\d]+)?(?:[.][\d]+))"
-    amount_float_regex_str = currency + optional_separator + float_regex_str
+    amount_float_regex_str = (currency + optional_separator + float_regex_str).replace("Float", "AmountFloat")
 
     integer_regex_str = r"(?P<Integer>[,\d]+)"
-    amount_integer_regex_str = currency + optional_separator + integer_regex_str
+    amount_integer_regex_str = (currency + optional_separator + integer_regex_str).replace("Integer", "AmountInteger")
 
     # r"(?P<String>[\w]+(?:<mandatory_separator>[\w]+)*)"
-    string_regex_str = r"(?P<String>[\w]+(?:" + mandatory_separator + "[\w]+)*)"
+    string_regex_str = r"(?P<String>[\w]+(?:" + mandatory_separator + "[\w\/]+){0,20})"
 
 
     regex_str_dict = {}
@@ -295,19 +295,25 @@ def convert_to_regex(text):
 
     print('\n'.join(map(str, match_queue)))
 
-    complete_regex_str = regex_str_dict[match_queue[0][0]]
+    flag_regex_with_comment = True
+    complete_regex_str = "(?#" if flag_regex_with_comment else ""
     token_type_count_dict = {}
-    for i in range(1, len(match_queue)):
+    for i in range(0, len(match_queue)):
         token_type = match_queue[i][0]
+        # print(str(i) + ": " + token_type)
         token_type_count = token_type_count_dict.get(token_type, None)
         if token_type_count is None:
             token_type_count = 0
             token_type_count_dict[token_type] = token_type_count
 
         regex_str_with_count = regex_str_dict[token_type].replace(token_type, token_type + str(token_type_count))
-        complete_regex_str += mandatory_separator + regex_str_with_count
+        complete_regex_str += "\n)" if flag_regex_with_comment else ""
+        complete_regex_str +=  (mandatory_separator if i > 0 else  "") + regex_str_with_count
+        complete_regex_str += "(?#" if flag_regex_with_comment else ""
 
         token_type_count_dict[token_type] += 1
+
+    complete_regex_str += "\n)" if flag_regex_with_comment else ""
 
     print(complete_regex_str)
     return complete_regex_str
