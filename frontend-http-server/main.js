@@ -28,9 +28,9 @@ let g_document_pandas_box = $("#document-pandas");
 // MacPro Docker
 let g_user_auth_token_docker = '307e60bcf5f1930b39a6ce5bc87b171ed0451323';
 // MacPro Local
-// let g_user_auth_token_local = '219201bc10fb6baa4a4cbc36d318aedaa89f78b7';
+let g_user_auth_token_local = '219201bc10fb6baa4a4cbc36d318aedaa89f78b7';
 // MacAir Local
-let g_user_auth_token_local = '0676010d893a1e1cd15f5d8a3883b5ced174fdad';
+// let g_user_auth_token_local = '0676010d893a1e1cd15f5d8a3883b5ced174fdad';
 
 
 
@@ -151,6 +151,34 @@ $("#btn_load_file").click(function() {
 $("#btn_get_selection").click(function() {
     var selected_text = getSelectionText()
     console.log(selected_text);
+
+    // Get document id
+    let document_id = $("#input_document_id").val();
+
+    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
+    let document_row_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/row/';
+
+    console.log(document_row_url);
+
+    $.ajax({
+        type: 'POST',
+        url: document_row_url,
+        headers : {
+            'Authorization' : 'Token ' + g_user_auth_token,
+        },
+        dataType: 'json',
+        data: {
+            "selection": selected_text,
+        },
+        success: function(response) {
+            // console.log(typeof(response), response);
+            //response is already a parsed JSON
+
+            // alert("Transactions saved");
+            g_account_table.setData(response);
+        }
+    });
+
 });
 
 
