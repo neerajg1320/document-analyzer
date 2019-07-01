@@ -214,7 +214,7 @@ def replace_with_regex(match_queue, regex_str_dict, input_str, token_name):
     field_name = fields[0][0]
 
     field_name = token_name
-    print(fields)
+    # print(fields)
 
 
     new_str = input_str
@@ -265,7 +265,7 @@ def convert_to_regex(text):
     amount_integer_regex_str = (currency + optional_separator + integer_regex_str).replace("Integer", "AmountInteger")
 
     # r"(?P<String>[\w]+(?:<mandatory_separator>[\w]+)*)"
-    string_regex_str = r"(?P<String>[\w]+(?:" + mandatory_separator + "[\w\/]+){0,20})"
+    string_regex_str = r"(?P<String>[\w]+(?:" + mandatory_separator + "[\w\/]+){0,99999})"
 
 
     regex_str_dict = {}
@@ -289,27 +289,35 @@ def convert_to_regex(text):
 
     new_str = replace_with_regex(match_queue, regex_str_dict, new_str, "String")
 
-    print(new_str)
+    # print(new_str)
 
     match_queue = sorted(match_queue, key=lambda x: x[1])
 
-    print('\n'.join(map(str, match_queue)))
+    # print('\n'.join(map(str, match_queue)))
 
     flag_regex_with_comment = True
     complete_regex_str = "(?#" if flag_regex_with_comment else ""
     token_type_count_dict = {}
     for i in range(0, len(match_queue)):
         token_type = match_queue[i][0]
+
         # print(str(i) + ": " + token_type)
         token_type_count = token_type_count_dict.get(token_type, None)
         if token_type_count is None:
             token_type_count = 0
             token_type_count_dict[token_type] = token_type_count
 
+
+
         regex_str_with_count = regex_str_dict[token_type].replace(token_type, token_type + str(token_type_count))
         complete_regex_str += "\n)" if flag_regex_with_comment else ""
         complete_regex_str +=  (mandatory_separator if i > 0 else  "") + regex_str_with_count
         complete_regex_str += "(?#" if flag_regex_with_comment else ""
+
+        if token_type == "String":
+            token_value = match_queue[i][3]
+            max = len(re.split(mandatory_separator, token_value))
+            complete_regex_str = complete_regex_str.replace("99999", str(max - 1))
 
         token_type_count_dict[token_type] += 1
 
