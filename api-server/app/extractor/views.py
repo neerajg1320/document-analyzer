@@ -369,7 +369,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         return Response(document.highlighted)
 
     @action(detail=True, methods=['post'], renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
-    def row(self, request, *args, **kwargs):
+    def regex_create_apply(self, request, *args, **kwargs):
         document = self.get_object()
 
         # Right now we can assume one document one table. But this is not necessarily true
@@ -399,6 +399,32 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # Response should be a regex
         return Response(response_dict)
 
+    @action(detail=True, methods=['post'], renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
+    def regex_apply(self, request, *args, **kwargs):
+        document = self.get_object()
+
+        # Right now we can assume one document one table. But this is not necessarily true
+        regex_str = request.data.get("regex_text", None)
+        complete_text = request.data.get("complete_text", None)
+
+        # print(regex_str)
+        # print(complete_text)
+
+        match_queue = []
+        regex_str_dict = {"Transaction": regex_str}
+        new_str = replace_regex_with_chars(match_queue, regex_str_dict, complete_text, "Transaction", "-")
+        # print(new_str)
+        print('\n'.join(map(str, match_queue)))
+
+        transactions_dict_array = create_transactions_dict_array_from_text(regex_str, complete_text)
+
+        response_dict = [{
+            "new_str": new_str,
+            "transactions": transactions_dict_array,
+        }]
+
+        # Response should be a regex
+        return Response(response_dict)
 
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
     def transactions(self, request, *args, **kwargs):

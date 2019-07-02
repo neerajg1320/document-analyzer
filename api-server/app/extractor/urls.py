@@ -17,8 +17,12 @@ document_highlight = views.DocumentViewSet.as_view({
     'get': 'highlight'
 }, renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
 
-document_row = views.DocumentViewSet.as_view({
-    'get': 'row'
+document_regex_create_apply = views.DocumentViewSet.as_view({
+    'post': 'regex_create_apply'
+}, renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
+
+document_regex_apply = views.DocumentViewSet.as_view({
+    'post': 'regex_apply'
 }, renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
 
 document_transactions = views.DocumentViewSet.as_view({
@@ -52,7 +56,8 @@ urlpatterns = [
     path('', include(router.urls)),
 
     path('documents/<int:pk>/highlight/', document_highlight, name='document-highlight'),
-    path('documents/<int:pk>/row/', document_row, name='document-row'),
+    path('documents/<int:pk>/regex/create/', document_regex_create_apply, name='document-regex-create'),
+    path('documents/<int:pk>/regex/apply/', document_regex_apply, name='document-regex-apply'),
     path('documents/<int:pk>/transactions/', document_transactions, name='document-transactions'),
     path('documents/<int:pk>/transactions/json/', document_transactions_json, name='document-transactions-json'),
     path('documents/<int:pk>/transactions/csv/', document_transactions_csv, name='document-transactions-csv'),

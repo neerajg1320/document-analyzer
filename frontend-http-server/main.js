@@ -35,6 +35,7 @@ let g_account_table = new Tabulator("#account-transactions-table", {
 let g_config_automate_flow = true;
 
 let g_document_text_box = $("#document-text");
+let g_regex_text_box = $("#regex-text");
 let g_document_pandas_box = $("#document-pandas");
 
 // MacPro Docker
@@ -45,6 +46,7 @@ let g_user_auth_token_local = '219201bc10fb6baa4a4cbc36d318aedaa89f78b7';
 // let g_user_auth_token_local = '0676010d893a1e1cd15f5d8a3883b5ced174fdad';
 
 
+var g_current_document = null;
 
 var flag_server_local = true;
 
@@ -76,6 +78,8 @@ function download_document_transactions(user_auth_token, document_id, tabulator_
         },
         dataType: 'json',
         success: function(document) {
+            g_current_document = document;
+
             // console.log(typeof(document), document);
             elm_text_box.empty().append(document.text);
         }
@@ -160,6 +164,15 @@ $("#btn_load_file").click(function() {
     g_document_table.setDataFromLocalFile(".json");
 });
 
+function replaceAll(str, find, replace) {
+    return str.replace(new RegExp(find, 'g'), replace);
+}
+
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.split(search).join(replacement);
+};
+
 
 $("#btn_create_regex").click(function() {
     var selected_text = getSelectionText()
@@ -169,7 +182,7 @@ $("#btn_create_regex").click(function() {
     let document_id = $("#input_document_id").val();
 
     // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
-    let document_row_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/row/';
+    let document_row_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/regex/create/';
 
     console.log(document_row_url);
 
@@ -186,6 +199,55 @@ $("#btn_create_regex").click(function() {
         dataType: 'json',
         data: {
             "selected_text": selected_text,
+            "complete_text": complete_text
+        },
+        success: function(response) {
+            console.log(typeof(response), response);
+            //response is already a parsed JSON
+
+            // alert("Transactions saved");
+            // g_account_table.setData(response);
+            var new_str = response[0]['new_str'];
+            g_document_text_box.empty().append(new_str);
+
+            var regex_str = response[0]['regex'];
+            // console.log(regex_str)
+            display_regex_str = regex_str.replaceAll("<", "{").replaceAll(">", "}");
+            // g_regex_text_box.value = display_regex_str;
+            document.getElementById('regex-text').value = display_regex_str;
+
+            var transactions = response[0]['transactions'];
+            g_regex_transactions_table.setData(transactions);
+        }
+    });
+
+});
+
+
+$("#btn_apply_regex").click(function() {
+    // Get document id
+    let document_id = $("#input_document_id").val();
+
+    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
+    let document_row_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/regex/apply/';
+
+    console.log(document_row_url);
+
+    var regex_text = g_regex_text_box.val();
+    // var complete_text = g_document_text_box.val();
+    var complete_text = g_current_document.text;
+
+    // console.log("Complete Text:\n" + complete_text);
+
+    $.ajax({
+        type: 'POST',
+        url: document_row_url,
+        headers : {
+            'Authorization' : 'Token ' + g_user_auth_token,
+        },
+        dataType: 'json',
+        data: {
+            "regex_text": regex_text,
             "complete_text": complete_text
         },
         success: function(response) {

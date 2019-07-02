@@ -30,7 +30,7 @@ div#file-input, div#document-input {
     zoom: 1;
 }
 
-#document-text {
+#document-text, #regex-text {
     height: 300px;
     width: 100%;
 }
