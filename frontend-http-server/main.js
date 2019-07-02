@@ -110,7 +110,8 @@ function download_document_transactions(user_auth_token, document_id, tabulator_
 function download_document_using_input(tabulator_table, user_auth_token) {
     let document_id = $("#input_document_id").val();
 
-    download_document_transactions(user_auth_token, document_id, tabulator_table, g_document_text_box, g_document_pandas_box);
+    download_document_transactions(user_auth_token,
+        document_id, tabulator_table, g_document_text_box, g_document_pandas_box);
 }
 
 function documentize_file(user_auth_token, file_id, result_elm) {
@@ -148,7 +149,7 @@ $("#btn_load_file").click(function() {
 });
 
 
-$("#btn_get_selection").click(function() {
+$("#btn_create_regex").click(function() {
     var selected_text = getSelectionText()
     console.log(selected_text);
 
@@ -171,11 +172,14 @@ $("#btn_get_selection").click(function() {
             "selection": selected_text,
         },
         success: function(response) {
-            // console.log(typeof(response), response);
+            console.log(typeof(response), response);
             //response is already a parsed JSON
 
             // alert("Transactions saved");
-            g_account_table.setData(response);
+            // g_account_table.setData(response);
+            var new_str = response[0]['new_str'];
+            console.log(new_str);
+            g_document_text_box.empty().append(new_str);
         }
     });
 
