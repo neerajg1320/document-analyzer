@@ -212,9 +212,9 @@ $("#btn_create_regex").click(function() {
 
             var regex_str = response[0]['regex'];
             // console.log(regex_str)
-            display_regex_str = regex_str.replaceAll("<", "{").replaceAll(">", "}");
+            // display_regex_str = regex_str.replaceAll("<", "{").replaceAll(">", "}");
             // g_regex_text_box.value = display_regex_str;
-            document.getElementById('regex-text').value = display_regex_str;
+            document.getElementById('regex-text').value = regex_str;
 
             var transactions = response[0]['transactions'];
             g_regex_transactions_table.setData(transactions);
