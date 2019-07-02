@@ -205,7 +205,7 @@ def replace_substr(input_str, start_offset, end_offset, replace_substr):
     # print(new_str)
     return new_str
 
-def replace_with_regex(match_queue, regex_str_dict, input_str, token_name):
+def replace_regex_with_chars(match_queue, regex_str_dict, input_str, token_name, replace_char):
     regex_str = regex_str_dict[token_name]
     pattern = re.compile(regex_str, re.MULTILINE)
     matches = pattern.finditer(input_str)
@@ -223,7 +223,7 @@ def replace_with_regex(match_queue, regex_str_dict, input_str, token_name):
 
         start = match.start()
         end = match.end()
-        new_str = replace_chars(new_str, start, end, '-')
+        new_str = replace_chars(new_str, start, end, replace_char)
         # new_str = replace_substr(new_str, start, end, field_name)
         match_queue.append((field_name, start, end, match.group()))
 
@@ -277,19 +277,20 @@ def convert_to_regex(text):
     regex_str_dict["String"] = string_regex_str
 
 
+    replace_char = '-'
     new_str = text
     match_queue = []
-    new_str = replace_with_regex(match_queue, regex_str_dict, new_str, "Date")
+    new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "Date", replace_char)
 
-    new_str = replace_with_regex(match_queue, regex_str_dict, new_str, "AmountFloat")
-    new_str = replace_with_regex(match_queue, regex_str_dict, new_str, "Float")
+    new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "AmountFloat", replace_char)
+    new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "Float", replace_char)
 
-    new_str = replace_with_regex(match_queue, regex_str_dict, new_str, "AmountInteger")
-    new_str = replace_with_regex(match_queue, regex_str_dict, new_str, "Integer")
+    new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "AmountInteger", replace_char)
+    new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "Integer", replace_char)
 
-    new_str = replace_with_regex(match_queue, regex_str_dict, new_str, "String")
+    new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "String", replace_char)
 
-    # print(new_str)
+    print(new_str)
 
     match_queue = sorted(match_queue, key=lambda x: x[1])
 
@@ -378,7 +379,16 @@ class DocumentViewSet(viewsets.ModelViewSet):
         if selected_text is not None:
             regex_str = convert_to_regex(selected_text)
 
-        response_dict = [{ "regex": regex_str}]
+        match_queue = []
+        regex_str_dict = {"Transaction": regex_str}
+        new_str = replace_regex_with_chars(match_queue, regex_str_dict, document.text, "Transaction", "-")
+        # print(new_str)
+        print('\n'.join(map(str, match_queue)))
+
+        response_dict = [{
+            "regex": regex_str,
+            "new_str": new_str,
+        }]
 
         # Response should be a regex
         return Response(response_dict)
