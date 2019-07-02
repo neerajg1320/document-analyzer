@@ -388,9 +388,12 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # print(new_str)
         print('\n'.join(map(str, match_queue)))
 
+        transactions_dict_array = create_transactions_dict_array_from_text(regex_str, complete_text)
+
         response_dict = [{
             "regex": regex_str,
             "new_str": new_str,
+            "transactions": transactions_dict_array,
         }]
 
         # Response should be a regex
