@@ -373,7 +373,10 @@ class DocumentViewSet(viewsets.ModelViewSet):
         document = self.get_object()
 
         # Right now we can assume one document one table. But this is not necessarily true
-        selected_text = request.data.get("selection", None)
+        selected_text = request.data.get("selected_text", None)
+        complete_text = request.data.get("complete_text", None)
+
+        # print(complete_text)
 
         regex_str = ""
         if selected_text is not None:
@@ -381,7 +384,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         match_queue = []
         regex_str_dict = {"Transaction": regex_str}
-        new_str = replace_regex_with_chars(match_queue, regex_str_dict, document.text, "Transaction", "-")
+        new_str = replace_regex_with_chars(match_queue, regex_str_dict, complete_text, "Transaction", "-")
         # print(new_str)
         print('\n'.join(map(str, match_queue)))
 
