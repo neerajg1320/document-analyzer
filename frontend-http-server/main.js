@@ -9,6 +9,18 @@ let g_document_table = new Tabulator("#document-transactions-table", {
     },
 });
 
+// Regex transactions table which shows transactions extracted by the generated regex
+let g_regex_transactions_table = new Tabulator("#regex-transactions-table", {
+    height:300,
+    layout:"fitColumns", //fit columns to width of table (optional)
+    autoColumns:true,
+
+    rowClick: function(e, row){ //trigger an alert message when the row is clicked
+        alert('Row index ' + row.getPosition() + ' clicked');
+    },
+});
+
+
 // Account table which shows transactions in all the documents uploaded for an account
 let g_account_table = new Tabulator("#account-transactions-table", {
     height:300,
@@ -186,7 +198,7 @@ $("#btn_create_regex").click(function() {
             g_document_text_box.empty().append(new_str);
 
             var transactions = response[0]['transactions'];
-            g_account_table.setData(transactions);
+            g_regex_transactions_table.setData(transactions);
         }
     });
 
