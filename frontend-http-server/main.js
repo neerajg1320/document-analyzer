@@ -161,6 +161,10 @@ $("#btn_create_regex").click(function() {
 
     console.log(document_row_url);
 
+    var complete_text = g_document_text_box.val();
+
+    // console.log("Complete Text:\n" + complete_text);
+
     $.ajax({
         type: 'POST',
         url: document_row_url,
@@ -169,7 +173,8 @@ $("#btn_create_regex").click(function() {
         },
         dataType: 'json',
         data: {
-            "selection": selected_text,
+            "selected_text": selected_text,
+            "complete_text": complete_text
         },
         success: function(response) {
             console.log(typeof(response), response);
@@ -178,7 +183,6 @@ $("#btn_create_regex").click(function() {
             // alert("Transactions saved");
             // g_account_table.setData(response);
             var new_str = response[0]['new_str'];
-            console.log(new_str);
             g_document_text_box.empty().append(new_str);
         }
     });
