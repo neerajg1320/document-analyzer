@@ -261,11 +261,12 @@ def convert_to_regex(text):
     float_regex_str = r"(?P<Float>(?:[,\d]+)?(?:[.][\d]+))"
     amount_float_regex_str = (currency + optional_separator + float_regex_str).replace("Float", "AmountFloat")
 
-    integer_regex_str = r"(?P<Integer>[,\d]+)"
+    # \b is for the word boundary
+    integer_regex_str = r"(?P<Integer>\b[,\d]+\b)"
     amount_integer_regex_str = (currency + optional_separator + integer_regex_str).replace("Integer", "AmountInteger")
 
     # r"(?P<String>[\w]+(?:<mandatory_separator>[\w]+)*)"
-    string_regex_str = r"(?P<String>[\w]+(?:" + mandatory_separator + "[\w\/]+){0,99999})"
+    string_regex_str = r"(?P<String>[\w\&\/\:\*]+(?:" + mandatory_separator + "[\w\&\/\:\*]+){0,99999})"
 
 
     regex_str_dict = {}
