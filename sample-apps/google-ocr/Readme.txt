@@ -8,7 +8,7 @@ gcloud auth application-default print-access-token
 # https://cloud.google.com/vision/docs/quickstart-cli
 # https://cloud.google.com/sdk/docs/
 wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-253.0.0-darwin-x86_64.tar.gz
-tar -zxvf google-cloud-sdk-253.0.0-darwin-x86_64.tar.gz 
+tar -zxf google-cloud-sdk-253.0.0-darwin-x86_64.tar.gz 
 ./google-cloud-sdk/install.sh 
 
 
