@@ -1,6 +1,6 @@
 # https://cloud.google.com/vision/docs/quickstart-client-libraries
 # Export the path to API credentials file
-export GOOGLE_APPLICATION_CREDENTIALS=/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/google-ocr/api.json
+export GOOGLE_APPLICATION_CREDENTIALS=/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/google-ocr/api-key.json
 # Following command should work. We need to install sdk as shown below
 gcloud auth application-default print-access-token
 
