@@ -11,8 +11,3 @@ wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk
 tar -zxf google-cloud-sdk-253.0.0-darwin-x86_64.tar.gz 
 ./google-cloud-sdk/install.sh 
 
-
-curl -X POST \
--H "Authorization: Bearer "$(gcloud auth application-default print-access-token) \
--H "Content-Type: application/json; charset=utf-8" \
-https://vision.googleapis.com/v1/images:annotate -d @request.json
