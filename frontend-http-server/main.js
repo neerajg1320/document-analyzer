@@ -47,6 +47,7 @@ let g_user_auth_token_local = '219201bc10fb6baa4a4cbc36d318aedaa89f78b7';
 
 
 var g_current_document = null;
+var g_current_document_local_cache = {};
 
 var flag_server_local = true;
 
@@ -215,12 +216,17 @@ $("#btn_create_regex").click(function() {
             // display_regex_str = regex_str.replaceAll("<", "{").replaceAll(">", "}");
             // g_regex_text_box.value = display_regex_str;
             document.getElementById('regex-text').value = regex_str;
+            g_current_document_local_cache['regex_str'] = regex_str;
 
             var transactions = response[0]['transactions'];
             g_regex_transactions_table.setData(transactions);
         }
     });
 
+});
+
+$("#btn_reset_text").click(function() {
+    g_document_text_box.empty().append(g_current_document.text);
 });
 
 
@@ -264,6 +270,10 @@ $("#btn_apply_regex").click(function() {
         }
     });
 
+});
+
+$("#btn_reset_regex").click(function() {
+    document.getElementById('regex-text').value = g_current_document_local_cache['regex_str'];
 });
 
 
