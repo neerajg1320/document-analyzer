@@ -214,14 +214,17 @@ def replace_regex_with_chars(match_queue, regex_str_dict, input_str, token_name,
     pattern = re.compile(regex_str, re.MULTILINE)
     matches = pattern.finditer(input_str)
 
+    new_str = input_str
     fields = sorted(pattern.groupindex.items(), key=lambda x: x[1])
+
+    if len(fields) < 1:
+        return new_str
+
     field_name = fields[0][0]
 
     field_name = token_name
     # print(fields)
 
-
-    new_str = input_str
     for match_num, match in enumerate(matches):
         match_num = match_num + 1
 
@@ -252,7 +255,6 @@ def replace_regex_with_chars(match_queue, regex_str_dict, input_str, token_name,
     return new_str
 
 
-
 def convert_to_regex(text):
     print(text)
 
@@ -269,10 +271,14 @@ def convert_to_regex(text):
     integer_regex_str = r"(?P<Integer>\b[,\d]+\b)"
     amount_integer_regex_str = (currency + optional_separator + integer_regex_str).replace("Integer", "AmountInteger")
 
+    # - is not working for TDAmeritrade. But it is needed for some strings
     # r"(?P<String>[\w]+(?:<mandatory_separator>[\w]+)*)"
-    string_regex_str = r"(?P<String>[\w\&\/\:\*\-]+(?:" + mandatory_separator + "[\w\&\/\:\*\-]+){0,99999})"
+    string_regex_str = r"(?P<String>[\w\&\/\:\*]+(?:" + mandatory_separator + "[\w\&\/\:\*]+){0,99999})"
 
-    string_max_len = 10
+    # set value to 1 to revert to the previous behaviour
+    # However the string value can vary based on the number of words contained.
+    # This should be non variable for the Strings at the beginning or at end of the regex
+    string_max_len = 1
 
     regex_str_dict = {}
     regex_str_dict["Date"] = date_regex_str
@@ -281,7 +287,6 @@ def convert_to_regex(text):
     regex_str_dict["AmountInteger"] = amount_integer_regex_str
     regex_str_dict["Integer"] = integer_regex_str
     regex_str_dict["String"] = string_regex_str
-
 
     replace_char = '-'
     new_str = text
@@ -313,8 +318,6 @@ def convert_to_regex(text):
         if token_type_count is None:
             token_type_count = 0
             token_type_count_dict[token_type] = token_type_count
-
-
 
         regex_str_with_count = regex_str_dict[token_type].replace(token_type, token_type + str(token_type_count))
         complete_regex_str += "\n)" if flag_regex_with_comment else ""
