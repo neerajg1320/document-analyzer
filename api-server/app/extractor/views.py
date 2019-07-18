@@ -24,6 +24,10 @@ from sqlalchemy import create_engine
 from extractor.pandas_routines import transform_df_using_dict, df_dates_iso_format, \
     df_get_date_columns, df_dates_str
 from extractor import excel_routines
+from extractor import image_routines
+
+# https://stackoverflow.com/questions/3056048/filename-and-line-number-of-python-script
+from inspect import currentframe, getframeinfo
 
 
 # Until supported keep the mapping false for Excel documents
@@ -266,8 +270,9 @@ def convert_to_regex(text):
     amount_integer_regex_str = (currency + optional_separator + integer_regex_str).replace("Integer", "AmountInteger")
 
     # r"(?P<String>[\w]+(?:<mandatory_separator>[\w]+)*)"
-    string_regex_str = r"(?P<String>[\w\&\/\:\*]+(?:" + mandatory_separator + "[\w\&\/\:\*]+){0,99999})"
+    string_regex_str = r"(?P<String>[\w\&\/\:\*\-]+(?:" + mandatory_separator + "[\w\&\/\:\*\-]+){0,99999})"
 
+    string_max_len = 10
 
     regex_str_dict = {}
     regex_str_dict["Date"] = date_regex_str
@@ -318,8 +323,8 @@ def convert_to_regex(text):
 
         if token_type == "String":
             token_value = match_queue[i][3]
-            max = len(re.split(mandatory_separator, token_value))
-            complete_regex_str = complete_regex_str.replace("99999", str(max - 1))
+            max_len = max(len(re.split(mandatory_separator, token_value)), string_max_len)
+            complete_regex_str = complete_regex_str.replace("99999", str(max_len - 1))
 
         token_type_count_dict[token_type] += 1
 
@@ -481,10 +486,13 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     def get_or_create_transactions_dataframe(self):
         document = self.get_object()
+        try:
+            df = pd.read_json(document.transactions_json)
+        except ValueError as e:
+            df = pd.DataFrame()
+            frameinfo = getframeinfo(currentframe())
+            print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
 
-        df = pd.read_json(document.transactions_json)
-
-        # print("225:"+str(df))
         return document, df
 
     def get_groupby_dict(self, document):
@@ -548,8 +556,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
     def transactions_dataframe(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
-
         transactions_pandas_str = str(df)
+
         return Response(transactions_pandas_str)
 
     # Should use the reverse function
@@ -649,6 +657,9 @@ class FileViewSet(viewsets.ModelViewSet):
                 file.text = excel_routines.excel_to_text(file_path)
                 file_transactions_json = excel_routines.excel_to_json(file_path)
                 g_flag_process_data = False
+            elif image_routines.is_file_extn_image(file_extn):
+                file.text = image_routines.image_to_text(file_path)
+                g_flag_process_data = True
             else :
                 file.text = "Format {} not supported".format(file_extn)
 
