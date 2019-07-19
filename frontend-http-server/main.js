@@ -9,6 +9,38 @@ let g_document_table = new Tabulator("#document-transactions-table", {
     },
 });
 
+
+// Document table which shows transactions present in a document
+let g_document_mapper_table = new Tabulator("#document-mapper-table", {
+    height:300,
+    layout:"fitColumns", //fit columns to width of table (optional)
+
+    columns:[
+        {title:"SourceColumn", field:"src"},
+        {title:"Select", field:"select", editor:"tick", formatter:"tick", editable:true},
+        {title:"DestinationColumn", field:"dst", editor:"input", editable:true},
+
+        {title:"DestinationType", field:"dsttype", editor:"select", editorParams:{
+                "int":"Integer",
+                "float":"Float",
+                "string":"String",
+            }
+        },
+    ],
+});
+
+
+
+let g_document_mapped_table = new Tabulator("#document-mapped-transactions-table", {
+    height:300,
+    layout:"fitColumns", //fit columns to width of table (optional)
+    autoColumns:true,
+
+    rowClick: function(e, row){ //trigger an alert message when the row is clicked
+        alert('Row index ' + row.getPosition() + ' clicked');
+    },
+});
+
 // Regex transactions table which shows transactions extracted by the generated regex
 let g_regex_transactions_table = new Tabulator("#regex-transactions-table", {
     height:300,
@@ -36,7 +68,9 @@ let g_config_automate_flow = true;
 
 let g_document_text_box = $("#document-text");
 let g_regex_text_box = $("#regex-text");
-let g_document_pandas_box = $("#document-pandas");
+
+let g_document_dataframe_box = $("#document-dataframe");
+let g_document_mapped_dataframe_box = $("#document-mapped-dataframe");
 
 // MacPro Docker
 let g_user_auth_token_docker = '307e60bcf5f1930b39a6ce5bc87b171ed0451323';
@@ -63,7 +97,7 @@ function set_sample_transactions(tabulator_table) {
     tabulator_table.setData(credit_card_data);
 }
 
-function download_document_transactions(user_auth_token, document_id, tabulator_table, elm_text_box, elm_pandas_box) {
+function download_document_transactions(user_auth_token, document_id, tabulator_table, elm_text_box, elm_dataframe_box) {
     if (document_id == "") {
         alert("Please provide a valid document Id");
         return;
@@ -71,6 +105,7 @@ function download_document_transactions(user_auth_token, document_id, tabulator_
 
     // http://localhost:8000/api/docminer/documents/<document_id>/
     let document_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/';
+    g_current_document_local_cache['document_url'] = document_url;
 
     $.ajax({
         url: document_url,
@@ -78,11 +113,11 @@ function download_document_transactions(user_auth_token, document_id, tabulator_
             'Authorization' : 'Token ' + user_auth_token,
         },
         dataType: 'json',
-        success: function(document) {
-            g_current_document = document;
+        success: function(response) {
+            g_current_document = response;
 
-            // console.log(typeof(document), document);
-            elm_text_box.empty().append(document.text);
+            document.getElementById("document-text-url").innerHTML = document_url;
+            elm_text_box.empty().append(response.text);
         }
     });
 
@@ -98,16 +133,21 @@ function download_document_transactions(user_auth_token, document_id, tabulator_
         success: function(response) {
             // console.log(typeof(response), response);
             //response is already a parsed JSON
-
+            document.getElementById("document-transactions-json-url").innerHTML = document_transactions_json_url;
             tabulator_table.setData(response);
+
+            var json_data_str = '[{"src":"0", "dst":"Col1", "select": "true", "dsttype":"int"}, {"src":"1", "dst":"Col2", "select": "true", "dsttype":"float"}]'
+            // var json_data = jQuery.parseJSON(json_data_str);
+            // console.log(json_data);
+            g_document_mapper_table.setData(json_data_str);
         }
     });
 
-    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
-    let document_transactions_pandas_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/transactions/dataframe/';
+    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/dataframe/
+    let document_transactions_dataframe_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/transactions/dataframe/';
 
     $.ajax({
-        url: document_transactions_pandas_url,
+        url: document_transactions_dataframe_url,
         headers : {
             'Authorization' : 'Token ' + user_auth_token,
         },
@@ -115,8 +155,8 @@ function download_document_transactions(user_auth_token, document_id, tabulator_
         success: function(response) {
             // console.log(typeof(response), response);
             //response is already a parsed JSON
-
-            elm_pandas_box.empty().append(response);
+            document.getElementById("document-transactions-dataframe-url").innerHTML = document_transactions_dataframe_url;
+            elm_dataframe_box.empty().append(response);
         }
     });
 }
@@ -128,7 +168,7 @@ function download_document_using_input(tabulator_table, user_auth_token) {
     let document_id = $("#input_document_id").val();
 
     download_document_transactions(user_auth_token,
-        document_id, tabulator_table, g_document_text_box, g_document_pandas_box);
+        document_id, tabulator_table, g_document_text_box, g_document_dataframe_box);
 }
 
 function documentize_file(user_auth_token, file_id, result_elm) {
@@ -184,8 +224,7 @@ $("#btn_create_regex").click(function() {
 
     // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
     let document_row_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/regex/create/';
-
-    console.log(document_row_url);
+    document.getElementById("document-create_regex-url").innerHTML = document_row_url;
 
     var complete_text = g_document_text_box.val();
 
@@ -209,6 +248,7 @@ $("#btn_create_regex").click(function() {
             // alert("Transactions saved");
             // g_account_table.setData(response);
             var new_str = response[0]['new_str'];
+            document.getElementById("document-text-url").innerHTML = document_row_url;
             g_document_text_box.empty().append(new_str);
 
             var regex_str = response[0]['regex'];
@@ -226,6 +266,7 @@ $("#btn_create_regex").click(function() {
 });
 
 $("#btn_reset_text").click(function() {
+    document.getElementById("document-text-url").innerHTML = g_current_document_local_cache['document_url'];
     g_document_text_box.empty().append(g_current_document.text);
 });
 
@@ -234,7 +275,6 @@ $("#btn_apply_regex").click(function() {
     // Get document id
     let document_id = $("#input_document_id").val();
 
-    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
     let document_row_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/regex/apply/';
 
     console.log(document_row_url);
@@ -279,13 +319,23 @@ $("#btn_reset_regex").click(function() {
 
 $("#btn_download").click(function() {
     download_document_using_input(g_document_table, g_user_auth_token);
-
-    // set_sample_transactions(g_document_table);
 });
 
 $("#btn_download_excel").click(function () {
     g_document_table.download("csv", "trades.csv");
 });
+
+$("#btn_download_mapped_table_excel").click(function () {
+    g_document_mapped_table.download("csv", "mapped_trades.csv");
+});
+
+
+$("#btn_download_mapper_excel").click(function () {
+    g_document_mapper_table.download("json", "mapper.json");
+    // g_document_mapper_table.download("csv", "mapper.csv");
+    console.log(g_document_mapper_table.getData("json"));
+});
+
 
 $("#btn_documentize").click(function() {
     var file_id = $("#input_file_id").val();

@@ -23,13 +23,13 @@
 
         <div id="file-input" class="bordered">
             <span>File ID</span>
-            <input id="input_file_id" type="text" name="file_id" value="45"/>
+            <input id="input_file_id" type="text" name="file_id" value=""/>
             <button id="btn_documentize">Documentize File</button>
             <!-- <button id="btn_load_file">Load File</button>-->
         </div>
         <div id="document-input" class="bordered">
             <span>Document ID</span>
-            <input id="input_document_id" type="text" name="document_id" value="102"/>
+            <input id="input_document_id" type="text" name="document_id" value=""/>
             <button id="btn_download">Get Transactions</button>
             <!-- <button id="btn_load_file">Load File</button>-->
         </div>
@@ -38,6 +38,7 @@
 
     <div id="document-info">
 
+        <p id="document-text-url">Url for regex</p>
         <div class="bordered">
             <!--<div id="document-text" class="bordered scrollable"></div>-->
             <textarea id="document-text"
@@ -46,6 +47,8 @@
             <button id="btn_create_regex">Create Regex</button>
             <button id="btn_reset_text">Reset Text</button>
         </div>
+
+        <p id="document-create_regex-url">Url for regex</p>
         <div class="bordered">
             <textarea id="regex-text"
                       class="bordered scrollable">
@@ -55,11 +58,31 @@
         </div>
         <div id="regex-transactions-table"></div>
 
-        <div id="document-pandas" class="bordered scrollable"></div>
+        <!-- Raw Table -->
+        <p id="document-transactions-dataframe-url">Url for transactions-dataframe</p>
+        <div id="document-dataframe" class="bordered scrollable"></div>
         <div>
             <button id="btn_download_excel">Download Excel</button>
         </div>
+        <p id="document-transactions-json-url">Url for transactions-json</p>
         <div id="document-transactions-table"></div>
+
+        <!-- Mapper -->
+        <p id="document-mapper">Mapper</p>
+        <div id="document-mapper-table"></div>
+        <div>
+            <button id="btn_download_mapper_excel">Download Mapper Excel</button>
+        </div>
+
+        <!-- Mapped Table -->
+        <p id="document-mapped-transactions-dataframe-url">Url for mapped-transactions-dataframe</p>
+        <div id="document-mapped-dataframe" class="bordered scrollable"></div>
+
+        <p id="document-mapped-transactions-json-url">Url for mapped-transactions-json</p>
+        <div id="document-mapped-transactions-table"></div>
+        <div>
+            <button id="btn_download_mapped_table_excel">Download Mapped Excel</button>
+        </div>
     </div>
 
     <div id="database-info" class="bordered">
