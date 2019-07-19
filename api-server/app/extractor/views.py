@@ -601,10 +601,13 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         # print(df.iloc[:,:5])
 
-        columns_df = get_columns_info_dataframe(df)
-        columns_array = json.loads(columns_df.to_json(orient='records'))
+        response_dict = [{
+            "mapped_df": str(df),
+            "mapped_df_json": df.to_json(orient='records'),
+        }]
 
-        return Response(columns_array)
+        # Response should be a regex
+        return Response(response_dict)
 
     # Should use the reverse function
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
