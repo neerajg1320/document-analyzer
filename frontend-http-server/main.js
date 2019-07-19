@@ -21,9 +21,9 @@ let g_document_mapper_table = new Tabulator("#document-mapper-table", {
         {title:"DestinationColumn", field:"dst", editor:"input", editable:true},
 
         {title:"DestinationType", field:"dsttype", editor:"select", editorParams:{
-                "int":"Integer",
-                "float":"Float",
-                "string":"String",
+                "int64":"int64",
+                "float64":"float64",
+                "object":"object",
             }
         },
     ],
@@ -136,10 +136,6 @@ function download_document_transactions(user_auth_token, document_id, tabulator_
             document.getElementById("document-transactions-json-url").innerHTML = document_transactions_json_url;
             tabulator_table.setData(response);
 
-            var json_data_str = '[{"src":"0", "dst":"Col1", "select": "true", "dsttype":"int"}, {"src":"1", "dst":"Col2", "select": "true", "dsttype":"float"}]'
-            // var json_data = jQuery.parseJSON(json_data_str);
-            // console.log(json_data);
-            g_document_mapper_table.setData(json_data_str);
         }
     });
 
@@ -341,6 +337,65 @@ $("#btn_documentize").click(function() {
     var file_id = $("#input_file_id").val();
     input_document_elm = $("#input_document_id");
     documentize_file(g_user_auth_token, file_id, input_document_elm);
+});
+
+$("#btn_get_mapper").click(function () {
+    // Get document id
+    let document_id = $("#input_document_id").val();
+
+    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
+    let document_transactions_get_mapper_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/transactions/mapper/';
+
+    console.log(document_transactions_get_mapper_url);
+
+    $.ajax({
+        url: document_transactions_get_mapper_url,
+        headers : {
+            'Authorization' : 'Token ' + g_user_auth_token,
+        },
+        dataType: 'json',
+        success: function(response) {
+            console.log(typeof(response), response);
+            //response is already a parsed JSON
+
+            // alert("Transactions saved");
+            g_document_mapper_table.setData(response);
+        }
+    });
+
+});
+
+$("#btn_save_mapper").click(function () {
+    // Get document id
+    let document_id = $("#input_document_id").val();
+
+    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
+    let document_transactions_get_mapper_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/transactions/mapper/';
+
+    console.log(document_transactions_get_mapper_url);
+    var table_data_json_str = JSON.stringify(g_document_mapper_table.getData("json"));
+    console.log(typeof(table_data_json_str), table_data_json_str);
+
+    $.ajax({
+        type: 'POST',
+        data: {
+            "msg": "hello",
+            "mapper": table_data_json_str
+        },
+        url: document_transactions_get_mapper_url,
+        headers : {
+            'Authorization' : 'Token ' + g_user_auth_token,
+        },
+        dataType: 'json',
+        success: function(response) {
+            console.log(typeof(response), response);
+            //response is already a parsed JSON
+
+            // alert("Transactions saved");
+            // g_document_mapper_table.setData(response);
+        }
+    });
+
 });
 
 $("#btn_save_snowflake").click(function () {
