@@ -98,5 +98,23 @@ def transform_df_using_dict(df, mapper_dict):
     return df
 
 
+# Currently we need to have following columns
+# src, select, dst, type
+def get_columns_info_dataframe(src_df):
+    columns = ["src", "select", "dst", "dsttype"]
+
+    columns_df = pd.DataFrame(columns=columns)
+
+    index = 0
+    src_columns = src_df.columns.values.tolist()
+    src_dtypes = src_df.dtypes
+
+    for src_column in src_columns:
+        column_row = [str(src_column), "true", str(src_column), str(src_dtypes[index])]
+        # print(column_row)
+        columns_df.loc[index] = column_row
+        index += 1
+
+    return columns_df
 
 

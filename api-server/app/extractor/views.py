@@ -22,7 +22,8 @@ from sqlalchemy import create_engine
 
 
 from extractor.pandas_routines import transform_df_using_dict, df_dates_iso_format, \
-    df_get_date_columns, df_dates_str
+    df_get_date_columns, df_dates_str, get_columns_info_dataframe
+
 from extractor import excel_routines
 from extractor import image_routines
 
@@ -556,12 +557,54 @@ class DocumentViewSet(viewsets.ModelViewSet):
         return Response(buf.getvalue())
 
     # Should use the reverse function
-    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
+    @action(detail=True, renderer_classes=[renderers.JSONRenderer])
     def transactions_dataframe(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
         transactions_pandas_str = str(df)
 
         return Response(transactions_pandas_str)
+
+    @action(detail=True, renderer_classes=[renderers.JSONRenderer])
+    def transactions_get_mapper(self, request, *args, **kwargs):
+        document, df = self.get_or_create_transactions_dataframe()
+
+        columns_df = get_columns_info_dataframe(df)
+        columns_array = json.loads(columns_df.to_json(orient='records'))
+
+        return Response(columns_array)
+
+    @action(detail=True, renderer_classes=[renderers.JSONRenderer])
+    def transactions_post_mapper(self, request, *args, **kwargs):
+        document, df = self.get_or_create_transactions_dataframe()
+
+        new_mapper = request.data.get("mapper", None)
+        new_columns_df = pd.DataFrame(json.loads(new_mapper))
+
+        # First we have to do the aggregations
+        # Then we have to rename the columns
+        # In similar way we should be handling the creation of new columns
+
+        # Apply df transformations based on the new_mapper
+        new_column_names = new_columns_df['dst'].tolist()
+        df.columns = new_column_names
+
+        # Then we assign the new column types
+        # https://stackoverflow.com/questions/21197774/assign-pandas-dataframe-column-dtypes
+        # Create dictionary from two columns
+        # https://stackoverflow.com/questions/17426292/what-is-the-most-efficient-way-to-create-a-dictionary-of-two-pandas-dataframe-co
+        new_dtypes_dict = pd.Series(new_columns_df.dsttype.values, index=new_columns_df.dst).to_dict()
+        # print(new_dtypes_dict)
+        try:
+            df = df.astype(dtype=new_dtypes_dict)
+        except ValueError as e:
+            print(e)
+
+        # print(df.iloc[:,:5])
+
+        columns_df = get_columns_info_dataframe(df)
+        columns_array = json.loads(columns_df.to_json(orient='records'))
+
+        return Response(columns_array)
 
     # Should use the reverse function
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])

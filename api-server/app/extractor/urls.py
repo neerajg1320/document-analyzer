@@ -42,6 +42,12 @@ document_transactions_dataframe = views.DocumentViewSet.as_view({
     'get': 'transactions_dataframe'
 }, renderer_classes=[renderers.JSONRenderer])
 
+document_transactions_mapper = views.DocumentViewSet.as_view({
+    'get': 'transactions_get_mapper',
+    'post': 'transactions_post_mapper'
+}, renderer_classes=[renderers.JSONRenderer])
+
+
 document_transactions_save = views.DocumentViewSet.as_view({
     'get': 'transactions_save'
 }, renderer_classes=[renderers.JSONRenderer])
@@ -56,12 +62,18 @@ urlpatterns = [
     path('', include(router.urls)),
 
     path('documents/<int:pk>/highlight/', document_highlight, name='document-highlight'),
+
     path('documents/<int:pk>/regex/create/', document_regex_create_apply, name='document-regex-create'),
     path('documents/<int:pk>/regex/apply/', document_regex_apply, name='document-regex-apply'),
+
     path('documents/<int:pk>/transactions/', document_transactions, name='document-transactions'),
     path('documents/<int:pk>/transactions/json/', document_transactions_json, name='document-transactions-json'),
     path('documents/<int:pk>/transactions/csv/', document_transactions_csv, name='document-transactions-csv'),
     path('documents/<int:pk>/transactions/dataframe/', document_transactions_dataframe, name='document-transactions-dataframe'),
+    path('documents/<int:pk>/transactions/mapper/', document_transactions_mapper, name='document-transactions-mapper'),
+
+    # This will create the transactions in the transactions table
+    # Currently we are saving to snowflake
     path('documents/<int:pk>/transactions/save/', document_transactions_save,
          name='document-transactions-save'),
 
