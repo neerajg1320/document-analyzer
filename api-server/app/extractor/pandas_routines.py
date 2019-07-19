@@ -67,7 +67,7 @@ def df_map_columns_by_groupbydict(df, mapper_dict):
     return df
 
 
-def df_clean_amounts(df):
+def df_clean_assign_type_for_amounts(df):
     # Map the amount columns as float
     amount_cols = df_get_amount_columns(df)
     df = df_clean_amount_columns(df, amount_cols)
@@ -75,7 +75,7 @@ def df_clean_amounts(df):
     return df
 
 
-def df_clean_dates(df):
+def df_clean_assign_type_for_dates(df):
     # Serialize the date columns to a format of our choice
     # First we convert then to datetime format using pd.to_datetime function
     date_cols = df_get_date_columns(df)
@@ -91,9 +91,9 @@ def transform_df_using_dict(df, mapper_dict):
     df = df_map_columns_by_groupbydict(df, mapper_dict)
 
     # The following methods are dependent on the above method. So they have to follow
-    df = df_clean_amounts(df)
+    df = df_clean_assign_type_for_amounts(df)
 
-    df = df_clean_dates(df)
+    df = df_clean_assign_type_for_dates(df)
 
     return df
 
