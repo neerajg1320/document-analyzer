@@ -365,7 +365,7 @@ $("#btn_get_mapper").click(function () {
 
 });
 
-$("#btn_save_mapper").click(function () {
+$("#btn_apply_mapper").click(function () {
     // Get document id
     let document_id = $("#input_document_id").val();
 
@@ -391,8 +391,12 @@ $("#btn_save_mapper").click(function () {
             console.log(typeof(response), response);
             //response is already a parsed JSON
 
-            // alert("Transactions saved");
-            // g_document_mapper_table.setData(response);
+            var mapped_dataframe = response[0]['mapped_df'];
+            console.log(typeof(mapped_dataframe), mapped_dataframe);
+            g_document_mapped_dataframe_box.empty().append(mapped_dataframe);
+
+            var mapped_transactions = response[0]['mapped_df_json'];
+            g_document_mapped_table.setData(mapped_transactions);
         }
     });
 
