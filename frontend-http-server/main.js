@@ -325,11 +325,12 @@ $("#btn_download_mapped_table_excel").click(function () {
     g_document_mapped_table.download("csv", "mapped_trades.csv");
 });
 
+$("#btn_upload_mapper").click(function () {
+    g_document_mapper_table.setDataFromLocalFile();
+});
 
-$("#btn_download_mapper_excel").click(function () {
+$("#btn_download_mapper").click(function () {
     g_document_mapper_table.download("json", "mapper.json");
-    // g_document_mapper_table.download("csv", "mapper.csv");
-    console.log(g_document_mapper_table.getData("json"));
 });
 
 
