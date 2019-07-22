@@ -1,13 +1,13 @@
 [
 	{
 		"src": "0",
-		"select": "true",
+		"select": true,
 		"dst": "TradeDate",
 		"dsttype": "object"
 	},
 	{
 		"src": "1",
-		"select": "true",
+		"select": true,
 		"dst": "Symbol",
 		"dsttype": "object"
 	},
@@ -19,31 +19,31 @@
 	},
 	{
 		"src": "3",
-		"select": "true",
+		"select": true,
 		"dst": "TradeQty",
 		"dsttype": "int64"
 	},
 	{
 		"src": "4",
-		"select": "true",
+		"select": true,
 		"dst": "PrincipalAmount",
 		"dsttype": "float64"
 	},
 	{
 		"src": "5",
-		"select": "true",
+		"select": true,
 		"dst": "Commission",
 		"dsttype": "float64"
 	},
 	{
 		"src": "6",
-		"select": "true",
+		"select": true,
 		"dst": "Fees",
 		"dsttype": "float64"
 	},
 	{
 		"src": "7",
-		"select": "true",
+		"select": true,
 		"dst": "NetAmount",
 		"dsttype": "float64"
 	},
@@ -55,7 +55,7 @@
 	},
 	{
 		"src": "9",
-		"select": "true",
+		"select": true,
 		"dst": "Summary",
 		"dsttype": "object"
 	}
