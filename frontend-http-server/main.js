@@ -42,16 +42,16 @@ let g_document_mapped_table = new Tabulator("#document-mapped-transactions-table
 });
 
 // Regex transactions table which shows transactions extracted by the generated regex
-let g_regex_transactions_table = new Tabulator("#regex-transactions-table", {
-    height:300,
-    layout:"fitColumns", //fit columns to width of table (optional)
-    autoColumns:true,
-
-    rowClick: function(e, row){ //trigger an alert message when the row is clicked
-        alert('Row index ' + row.getPosition() + ' clicked');
-    },
-});
-
+// let g_regex_transactions_table = new Tabulator("#regex-transactions-table", {
+//     height:300,
+//     layout:"fitColumns", //fit columns to width of table (optional)
+//     autoColumns:true,
+//
+//     rowClick: function(e, row){ //trigger an alert message when the row is clicked
+//         alert('Row index ' + row.getPosition() + ' clicked');
+//     },
+// });
+//
 
 // Account table which shows transactions in all the documents uploaded for an account
 let g_account_table = new Tabulator("#account-transactions-table", {
@@ -64,7 +64,7 @@ let g_account_table = new Tabulator("#account-transactions-table", {
     },
 });
 
-let g_config_automate_flow = true;
+let g_config_automate_flow = false;
 
 let g_document_text_box = $("#document-text");
 let g_regex_text_box = $("#regex-text");
@@ -253,9 +253,6 @@ $("#btn_create_regex").click(function() {
             // g_regex_text_box.value = display_regex_str;
             document.getElementById('regex-text').value = regex_str;
             g_current_document_local_cache['regex_str'] = regex_str;
-
-            var transactions = response[0]['transactions'];
-            g_regex_transactions_table.setData(transactions);
         }
     });
 
@@ -301,8 +298,11 @@ $("#btn_apply_regex").click(function() {
             var new_str = response[0]['new_str'];
             g_document_text_box.empty().append(new_str);
 
+            var dataframe = response[0]['dataframe'];
+            g_document_dataframe_box.empty().append(dataframe);
+
             var transactions = response[0]['transactions'];
-            g_regex_transactions_table.setData(transactions);
+            g_document_table.setData(transactions);
         }
     });
 
@@ -313,7 +313,7 @@ $("#btn_reset_regex").click(function() {
 });
 
 
-$("#btn_download").click(function() {
+$("#btn_get_transactions").click(function() {
     download_document_using_input(g_document_table, g_user_auth_token);
 });
 
