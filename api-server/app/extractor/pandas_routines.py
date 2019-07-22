@@ -127,7 +127,13 @@ def get_columns_info_dataframe(src_df):
 
     float_columns = df_get_column_by_substr_case_insensitive(src_df, "float")
     for col in float_columns:
-        src_df[col] = src_df[col].str.replace(',', '').astype(float)
+        try:
+            src_df[col] = src_df[col].str.replace(',', '').astype(float)
+        except AttributeError as e:
+            frameinfo = getframeinfo(currentframe())
+            print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno))
+            print("Col {} is not string".format(col))
+
 
     frameinfo = getframeinfo(currentframe())
     print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), src_df)
