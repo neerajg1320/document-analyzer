@@ -168,7 +168,8 @@ def save_to_snowflake(df, table_name):
         # print(df)
         df.to_sql(table_name, engine, index=False, if_exists='append',)
     except Exception as e:
-        print("Operation Failed: " + str(e))
+        frameinfo = getframeinfo(currentframe())
+        print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
     finally:
         connection.close()
         engine.dispose()
@@ -187,7 +188,8 @@ def load_from_snowflake(table_name):
 
         df = pd.read_sql_query("SELECT * FROM {}".format(table_name), engine)
     except Exception as e:
-        print("Operation Failed: " + str(e))
+        frameinfo = getframeinfo(currentframe())
+        print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
     finally:
         connection.close()
         engine.dispose()
@@ -578,32 +580,37 @@ class DocumentViewSet(viewsets.ModelViewSet):
         document, df = self.get_or_create_transactions_dataframe()
 
         new_mapper = request.data.get("mapper", None)
-        new_columns_df = pd.DataFrame(json.loads(new_mapper))
+        column_mapper_df = pd.DataFrame(json.loads(new_mapper))
 
-        # First we have to do the aggregations
-        # Then we have to rename the columns
-        # In similar way we should be handling the creation of new columns
+        # New dataframe will only contain columns which are selected
+        column_mapper_df = column_mapper_df.loc[column_mapper_df["select"] == True]
+        selected_old_column_names = [int(i) for i in column_mapper_df['src'].tolist()]
+        new_df = df[selected_old_column_names]
 
         # Apply df transformations based on the new_mapper
-        new_column_names = new_columns_df['dst'].tolist()
-        df.columns = new_column_names
+        # The following will work only if we don't have column aggregation
+        new_column_names = column_mapper_df['dst'].tolist()
+        new_df.columns = new_column_names
 
         # Then we assign the new column types
         # https://stackoverflow.com/questions/21197774/assign-pandas-dataframe-column-dtypes
         # Create dictionary from two columns
         # https://stackoverflow.com/questions/17426292/what-is-the-most-efficient-way-to-create-a-dictionary-of-two-pandas-dataframe-co
-        new_dtypes_dict = pd.Series(new_columns_df.dsttype.values, index=new_columns_df.dst).to_dict()
+        new_dtypes_dict = pd.Series(column_mapper_df.dsttype.values, index=column_mapper_df.dst).to_dict()
         # print(new_dtypes_dict)
-        try:
-            df = df.astype(dtype=new_dtypes_dict)
-        except ValueError as e:
-            print(e)
 
-        # print(df.iloc[:,:5])
+        print(new_df)
+        new_df = new_df.fillna('')
+
+        try:
+            new_df = new_df.astype(dtype=new_dtypes_dict)
+        except ValueError as e:
+            frameinfo = getframeinfo(currentframe())
+            print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
 
         response_dict = [{
-            "mapped_df": str(df),
-            "mapped_df_json": df.to_json(orient='records'),
+            "mapped_df": str(new_df),
+            "mapped_df_json": new_df.to_json(orient='records'),
         }]
 
         # Response should be a regex
