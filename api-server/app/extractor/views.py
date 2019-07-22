@@ -259,13 +259,15 @@ def replace_regex_with_chars(match_queue, regex_str_dict, input_str, token_name,
 
 
 def convert_to_regex(text):
-    print(text)
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), text)
 
     optional_separator = r"[\s]{0,2}"
     mandatory_separator = r"[\s]{1,2}"
 
     currency = r"[\$]"
-    date_regex_str = r"(?P<Date>\d{2}\/\d{2}\/\d{2,4})"
+    date_regex_str_slash_separator = r"(?P<DateSlash>\d{2}\/\d{2}\/\d{2,4})"
+    date_regex_str_hyphen_separator = r"(?P<DateHyphen>\d{2}-\d{2}-\d{2,4})"
 
     float_regex_str = r"(?P<Float>(?:[,\d]+)?(?:[.][\d]+))"
     amount_float_regex_str = (currency + optional_separator + float_regex_str).replace("Float", "AmountFloat")
@@ -284,17 +286,23 @@ def convert_to_regex(text):
     string_max_len = 1
 
     regex_str_dict = {}
-    regex_str_dict["Date"] = date_regex_str
+
+    regex_str_dict["DateSlash"] = date_regex_str_slash_separator
+    regex_str_dict["DateHyphen"] = date_regex_str_hyphen_separator
+
     regex_str_dict["AmountFloat"] = amount_float_regex_str
     regex_str_dict["Float"] = float_regex_str
+
     regex_str_dict["AmountInteger"] = amount_integer_regex_str
     regex_str_dict["Integer"] = integer_regex_str
+
     regex_str_dict["String"] = string_regex_str
 
     replace_char = '-'
     new_str = text
     match_queue = []
-    new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "Date", replace_char)
+    new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "DateSlash", replace_char)
+    new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "DateHyphen", replace_char)
 
     new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "AmountFloat", replace_char)
     new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "Float", replace_char)
@@ -304,7 +312,8 @@ def convert_to_regex(text):
 
     new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "String", replace_char)
 
-    print(new_str)
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), new_str)
 
     match_queue = sorted(match_queue, key=lambda x: x[1])
 
@@ -323,6 +332,7 @@ def convert_to_regex(text):
             token_type_count_dict[token_type] = token_type_count
 
         regex_str_with_count = regex_str_dict[token_type].replace(token_type, token_type + str(token_type_count))
+        # print(regex_str_with_count)
         complete_regex_str += "\n)" if flag_regex_with_comment else ""
         complete_regex_str +=  (mandatory_separator if i > 0 else  "") + regex_str_with_count
         complete_regex_str += "(?#" if flag_regex_with_comment else ""
@@ -336,7 +346,9 @@ def convert_to_regex(text):
 
     complete_regex_str += "\n)" if flag_regex_with_comment else ""
 
-    print(complete_regex_str)
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), complete_regex_str)
+
     return complete_regex_str
 
 
@@ -398,7 +410,9 @@ class DocumentViewSet(viewsets.ModelViewSet):
         regex_str_dict = {"Transaction": regex_str}
         new_str = replace_regex_with_chars(match_queue, regex_str_dict, complete_text, "Transaction", "-")
         # print(new_str)
-        print('\n'.join(map(str, match_queue)))
+
+        frameinfo = getframeinfo(currentframe())
+        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), '\n'.join(map(str, match_queue)))
 
         transactions_dict_array = create_transactions_dict_array_from_text(regex_str, complete_text)
 
