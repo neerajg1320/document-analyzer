@@ -66,8 +66,11 @@ def df_get_date_columns(df):
 def df_get_column_by_substr_case_insensitive(df, substr):
     cols = []
     for column in df.columns:
-        if substr.lower() in column.lower():
-            cols.append(column)
+        try:
+            if substr.lower() in column.lower():
+                cols.append(column)
+        except AttributeError as e:
+            pass
 
     return cols
 
@@ -147,7 +150,7 @@ def get_columns_info_dataframe(src_df):
     columns_df = pd.DataFrame(columns=columns)
     index = 0
     for src_column in src_columns:
-        column_row = [str(src_column), "true", str(src_column), str(src_dtypes[index])]
+        column_row = [str(src_column), True, str(src_column), str(src_dtypes[index])]
         # print(column_row)
         columns_df.loc[index] = column_row
         index += 1

@@ -608,7 +608,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # print(column_mapper_df.dtypes)
 
         # New dataframe will only contain columns which are selected
-        column_mapper_df = column_mapper_df.loc[column_mapper_df["select"] == "true"]
+        column_mapper_df = column_mapper_df.loc[column_mapper_df["select"] == True]
 
         # frameinfo = getframeinfo(currentframe())
         # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), column_mapper_df.dtypes)
