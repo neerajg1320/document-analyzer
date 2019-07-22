@@ -393,7 +393,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         return Response(document.highlighted)
 
     @action(detail=True, methods=['post'], renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
-    def regex_create_apply(self, request, *args, **kwargs):
+    def regex_create(self, request, *args, **kwargs):
         document = self.get_object()
 
         # Right now we can assume one document one table. But this is not necessarily true
@@ -411,15 +411,17 @@ class DocumentViewSet(viewsets.ModelViewSet):
         new_str = replace_regex_with_chars(match_queue, regex_str_dict, complete_text, "Transaction", "-")
         # print(new_str)
 
-        frameinfo = getframeinfo(currentframe())
-        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), '\n'.join(map(str, match_queue)))
-
-        transactions_dict_array = create_transactions_dict_array_from_text(regex_str, complete_text)
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), '\n'.join(map(str, match_queue)))
+        #
+        # transactions_dict_array = create_transactions_dict_array_from_text(regex_str, complete_text)
+        # document.transactions_json = json.dumps(transactions_dict_array)
+        # super(Document, document).save()
 
         response_dict = [{
             "regex": regex_str,
             "new_str": new_str,
-            "transactions": transactions_dict_array,
+            # "transactions": transactions_dict_array,
         }]
 
         # Response should be a regex
@@ -443,9 +445,14 @@ class DocumentViewSet(viewsets.ModelViewSet):
         print('\n'.join(map(str, match_queue)))
 
         transactions_dict_array = create_transactions_dict_array_from_text(regex_str, complete_text)
+        # We update the transactions dataframe stored as json
+        document.transactions_json = json.dumps(transactions_dict_array)
+        super(Document, document).save()
 
         response_dict = [{
             "new_str": new_str,
+            # "dataframe": str(self.get_or_create_transactions_dataframe()),
+            "dataframe": str(pd.DataFrame(transactions_dict_array)),
             "transactions": transactions_dict_array,
         }]
 
@@ -596,10 +603,33 @@ class DocumentViewSet(viewsets.ModelViewSet):
         new_mapper = request.data.get("mapper", None)
         column_mapper_df = pd.DataFrame(json.loads(new_mapper))
 
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), column_mapper_df)
+        # print(column_mapper_df.dtypes)
+
         # New dataframe will only contain columns which are selected
-        column_mapper_df = column_mapper_df.loc[column_mapper_df["select"] == True]
-        selected_old_column_names = [int(i) for i in column_mapper_df['src'].tolist()]
-        new_df = df[selected_old_column_names]
+        column_mapper_df = column_mapper_df.loc[column_mapper_df["select"] == "true"]
+
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), column_mapper_df.dtypes)
+
+        selected_old_column_names = column_mapper_df['src'].tolist()
+
+        # This was needed when column names were integers. Need to avoid this case
+        try:
+            new_df = df[selected_old_column_names]
+        except KeyError as e:
+            # This happens in case of excel with no headers
+            # The column names are integers instead of strings
+            selected_old_column_names = [int(i) for i in column_mapper_df['src'].tolist()]
+            new_df = df[selected_old_column_names]
+
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), selected_old_column_names)
+        #
+        #
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), new_df)
 
         # Apply df transformations based on the new_mapper
         # The following will work only if we don't have column aggregation
@@ -613,8 +643,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
         new_dtypes_dict = pd.Series(column_mapper_df.dsttype.values, index=column_mapper_df.dst).to_dict()
         # print(new_dtypes_dict)
 
-        print(new_df)
-        new_df = new_df.fillna('')
+        # frameinfo = getframeinfo(currentframe())
+        # print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), new_df)
 
         try:
             new_df = new_df.astype(dtype=new_dtypes_dict)

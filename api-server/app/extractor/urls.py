@@ -17,8 +17,8 @@ document_highlight = views.DocumentViewSet.as_view({
     'get': 'highlight'
 }, renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
 
-document_regex_create_apply = views.DocumentViewSet.as_view({
-    'post': 'regex_create_apply'
+document_regex_create = views.DocumentViewSet.as_view({
+    'post': 'regex_create'
 }, renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
 
 document_regex_apply = views.DocumentViewSet.as_view({
@@ -63,7 +63,7 @@ urlpatterns = [
 
     path('documents/<int:pk>/highlight/', document_highlight, name='document-highlight'),
 
-    path('documents/<int:pk>/regex/create/', document_regex_create_apply, name='document-regex-create'),
+    path('documents/<int:pk>/regex/create/', document_regex_create, name='document-regex-create'),
     path('documents/<int:pk>/regex/apply/', document_regex_apply, name='document-regex-apply'),
 
     path('documents/<int:pk>/transactions/', document_transactions, name='document-transactions'),

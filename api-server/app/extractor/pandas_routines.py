@@ -1,6 +1,7 @@
 import pandas as pd
 from datetime import datetime, timezone
 
+from inspect import currentframe, getframeinfo
 
 def df_map_columns(df, mapper_dict):
     # https://www.geeksforgeeks.org/combining-multiple-columns-in-pandas-groupby-with-dictionary/
@@ -62,6 +63,23 @@ def df_get_date_columns(df):
     return date_cols
 
 
+def df_get_column_by_substr_case_insensitive(df, substr):
+    cols = []
+    for column in df.columns:
+        if substr.lower() in column.lower():
+            cols.append(column)
+
+    return cols
+
+
+def df_get_column_by_substr(df, substr):
+    cols = []
+    for column in df.columns:
+        if substr in column:
+            cols.append(column)
+
+    return cols
+
 def df_map_columns_by_groupbydict(df, mapper_dict):
     df = df_map_columns(df, mapper_dict)
     return df
@@ -101,14 +119,27 @@ def transform_df_using_dict(df, mapper_dict):
 # Currently we need to have following columns
 # src, select, dst, type
 def get_columns_info_dataframe(src_df):
-    columns = ["src", "select", "dst", "dsttype"]
 
-    columns_df = pd.DataFrame(columns=columns)
-
-    index = 0
     src_columns = src_df.columns.values.tolist()
+
+    frameinfo = getframeinfo(currentframe())
+    print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), src_df)
+
+    float_columns = df_get_column_by_substr_case_insensitive(src_df, "float")
+    for col in float_columns:
+        src_df[col] = src_df[col].str.replace(',', '').astype(float)
+
+    frameinfo = getframeinfo(currentframe())
+    print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), src_df)
+
     src_dtypes = src_df.dtypes
 
+    frameinfo = getframeinfo(currentframe())
+    print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), src_dtypes)
+
+    columns = ["src", "select", "dst", "dsttype"]
+    columns_df = pd.DataFrame(columns=columns)
+    index = 0
     for src_column in src_columns:
         column_row = [str(src_column), "true", str(src_column), str(src_dtypes[index])]
         # print(column_row)
