@@ -16,40 +16,59 @@ let g_destination_header_table = new Tabulator("#destination-header-table", {
 
     columns:[
         {title:"Name", field:"name", editor:"input", editable:true},
-        {title:"Type", field:"type", editor:"select", editorParams:{
-                "int64":"int64",
-                "float64":"float64",
-                "object":"object",
+        {title:"Type", field:"type", editor:"select", editorParams: function(cell) {
+                let hardcoded_values = {
+                    "int64":"int64",
+                    "float64":"float64",
+                    "date":"date",
+                    "object":"object",
+                };
+
+                return {"values": hardcoded_values};
+            }
+        },
+        {title:"Aggregation", field:"aggregation", editor:"select", editorParams: function(cell) {
+                let hardcoded_values = {
+                    "none":"none",
+                    "sum":"sum",
+                    "mean":"mean",
+                    "concat":"concat",
+                    "min":"min",
+                    "max":"max",
+                };
+
+                return {"values": hardcoded_values};
             }
         },
     ],
 });
 
 let g_table_data_bank_statement = [
-    {"name": "TransactionDate", "type": "object"},
-    {"name": "Description", "type": "object"},
-    {"name": "Type", "type": "object"},
-    {"name": "Amount", "type": "float64"},
+    {"name": "TransactionDate", "type": "object", "aggregation": "none"},
+    {"name": "Description", "type": "object", "aggregation": "concat"},
+    {"name": "Type", "type": "object", "aggregation": "none"},
+    {"name": "Amount", "type": "float64", "aggregation": "sum"},
 ];
 
 let g_table_data_contract_note = [
-    {"name": "TransactionDate", "type": "object"},
-    {"name": "Description", "type": "object"},
-    {"name": "Quantity", "type": "int64"},
-    {"name": "Rate", "type": "float64"},
-    {"name": "PrincipalAmount", "type": "float64"},
-    {"name": "Commission", "type": "float64"},
-    {"name": "Fees", "type": "float64"},
-    {"name": "NetAmount", "type": "float64"},
-    {"name": "Summary", "type": "object"},
+    {"name": "TransactionDate", "type": "object", "aggregation": "none"},
+    {"name": "Description", "type": "object", "aggregation": "concat"},
+    {"name": "Quantity", "type": "int64", "aggregation": "sum"},
+    {"name": "TradeType", "type": "object", "aggregation": "none"},
+    {"name": "Rate", "type": "float64", "aggregation": "none"},
+    {"name": "PrincipalAmount", "type": "float64", "aggregation": "sum"},
+    {"name": "Commission", "type": "float64", "aggregation": "sum"},
+    {"name": "Fees", "type": "float64", "aggregation": "sum"},
+    {"name": "NetAmount", "type": "float64", "aggregation": "sum"},
+    {"name": "Summary", "type": "object", "aggregation": "concat"},
 ];
 
 let g_table_data_receipt = [
-    {"name": "Date", "type": "object"},
-    {"name": "Description", "type": "object"},
-    {"name": "Quantity", "type": "int64"},
-    {"name": "Rate", "type": "float64"},
-    {"name": "Amount", "type": "float64"},
+    {"name": "Date", "type": "object", "aggregation": "none"},
+    {"name": "Description", "type": "object", "aggregation": "concat"},
+    {"name": "Quantity", "type": "int64", "aggregation": "sum"},
+    {"name": "Rate", "type": "float64", "aggregation": "none"},
+    {"name": "Amount", "type": "float64", "aggregation": "sum"},
 ];
 
 
@@ -67,12 +86,31 @@ let g_document_mapper_table = new Tabulator("#document-mapper-table", {
     columns:[
         {title:"SourceColumn", field:"src"},
         {title:"Select", field:"select", editor:"tick", formatter:"tick", editable:true},
-        {title:"DestinationColumn", field:"dst", editor:"input", editable:true},
 
-        {title:"DestinationType", field:"dsttype", editor:"select", editorParams:{
-                "int64":"int64",
-                "float64":"float64",
-                "object":"object",
+        {title:"DestinationColumn", field:"dst", editor:"select", editorParams: function(cell) {
+                let destination_table = $("#sel-destination-header-table").val();
+                let fields_array = g_table_data_dict[destination_table];
+                let destination_fields = fields_array.map(a => a.name);
+
+                const values = {};
+                destination_fields.forEach(function(field_name) {
+                        values[field_name] = field_name;
+                    }
+                );
+
+                return {"values": values};
+            }
+        },
+
+        {title:"DestinationType", field:"dsttype", editor:"select", editorParams: function(cell) {
+                let hardcoded_values = {
+                    "int64":"int64",
+                    "float64":"float64",
+                    "date":"date",
+                    "object":"object",
+                };
+
+                return {"values": hardcoded_values};
             }
         },
     ],
