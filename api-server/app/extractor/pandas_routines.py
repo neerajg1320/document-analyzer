@@ -135,7 +135,8 @@ def get_columns_info_dataframe(src_df):
         except AttributeError as e:
             frameinfo = getframeinfo(currentframe())
             print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno))
-            print("Col {} is not string".format(col))
+            print("Column {} is not string".format(col))
+            print(src_df[col])
 
     # frameinfo = getframeinfo(currentframe())
     # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), src_df)

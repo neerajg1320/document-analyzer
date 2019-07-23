@@ -360,6 +360,36 @@ def convert_to_regex(text):
     return complete_regex_str
 
 
+destination_tables_schema_json = """
+    "bank_statement": [
+        {"name": "TransactionDate", "type": "object", "aggregation": "none"},
+        {"name": "Description", "type": "object", "aggregation": "concat"},
+        {"name": "Type", "type": "object", "aggregation": "none"},
+        {"name": "Amount", "type": "float64", "aggregation": "sum"},
+    ],
+    "contract_note": [
+        {"name": "TransactionDate", "type": "object", "aggregation": "none"},
+        {"name": "SettlementDate", "type": "object", "aggregation": "none"},
+        {"name": "Scrip", "type": "object", "aggregation": "concat"},
+        {"name": "Quantity", "type": "int64", "aggregation": "sum"},
+        {"name": "TradeType", "type": "object", "aggregation": "none"},
+        {"name": "Rate", "type": "float64", "aggregation": "none"},
+        {"name": "PrincipalAmount", "type": "float64", "aggregation": "sum"},
+        {"name": "Commission", "type": "float64", "aggregation": "sum"},
+        {"name": "Fees", "type": "float64", "aggregation": "sum"},
+        {"name": "NetAmount", "type": "float64", "aggregation": "sum"},
+        {"name": "Summary", "type": "object", "aggregation": "concat"},
+    ],
+    "receipt": [
+        {"name": "Date", "type": "object", "aggregation": "none"},
+        {"name": "Description", "type": "object", "aggregation": "concat"},
+        {"name": "Quantity", "type": "int64", "aggregation": "sum"},
+        {"name": "Rate", "type": "float64", "aggregation": "none"},
+        {"name": "Amount", "type": "float64", "aggregation": "sum"},
+    ]
+"""
+
+
 class DocumentViewSet(viewsets.ModelViewSet):
     """ Manage documents in database """
     queryset = Document.objects.all()
@@ -605,73 +635,28 @@ class DocumentViewSet(viewsets.ModelViewSet):
         return Response(columns_array)
 
     @action(detail=True, renderer_classes=[renderers.JSONRenderer])
-    def transactions_post_mapper_without_aggregation(self, request, *args, **kwargs):
-        document, df = self.get_or_create_transactions_dataframe()
-
-        new_mapper = request.data.get("mapper", None)
-        column_mapper_df = pd.DataFrame(json.loads(new_mapper))
-
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), column_mapper_df)
-        # print(column_mapper_df.dtypes)
-
-        # New dataframe will only contain columns which are selected
-        column_mapper_df = column_mapper_df.loc[column_mapper_df["select"] == True]
-
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), column_mapper_df.dtypes)
-
-        selected_old_column_names = column_mapper_df['src'].tolist()
-
-        # This was needed when column names were integers. Need to avoid this case
-        try:
-            new_df = df[selected_old_column_names]
-        except KeyError as e:
-            # This happens in case of excel with no headers
-            # The column names are integers instead of strings
-            selected_old_column_names = [int(i) for i in column_mapper_df['src'].tolist()]
-            new_df = df[selected_old_column_names]
-
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), selected_old_column_names)
-        #
-        #
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), new_df)
-
-        # Apply df transformations based on the new_mapper
-        # The following will work only if we don't have column aggregation
-        new_column_names = column_mapper_df['dst'].tolist()
-        new_df.columns = new_column_names
-
-        # Then we assign the new column types
-        # https://stackoverflow.com/questions/21197774/assign-pandas-dataframe-column-dtypes
-        # Create dictionary from two columns
-        # https://stackoverflow.com/questions/17426292/what-is-the-most-efficient-way-to-create-a-dictionary-of-two-pandas-dataframe-co
-        new_dtypes_dict = pd.Series(column_mapper_df.dsttype.values, index=column_mapper_df.dst).to_dict()
-        # print(new_dtypes_dict)
-
-        # frameinfo = getframeinfo(currentframe())
-        # print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), new_df)
-
-        try:
-            new_df = new_df.astype(dtype=new_dtypes_dict)
-        except ValueError as e:
-            frameinfo = getframeinfo(currentframe())
-            print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
-
-        response_dict = [{
-            "mapped_df": str(new_df),
-            "mapped_df_json": new_df.to_json(orient='records'),
-        }]
-
-        # Response should be a regex
-        return Response(response_dict)
-
-
-    @action(detail=True, renderer_classes=[renderers.JSONRenderer])
     def transactions_post_mapper(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
+
+        destination_tables_schema_dict = hjson.loads(destination_tables_schema_json)
+
+        destination_table_name = request.data.get("destination_table", None)
+
+        try:
+            destination_table = destination_tables_schema_dict[destination_table_name]
+        except KeyError as e:
+            frameinfo = getframeinfo(currentframe())
+            print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno),
+                  "Key {} does not exist".format(e))
+            return Response([])
+
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno),
+        #     json.dumps(destination_table, indent=4))
+
+        dst_sch_df = pd.DataFrame(destination_table)
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), str(dst_sch_df))
 
         new_mapper = request.data.get("mapper", None)
         column_mapper_df = pd.DataFrame(json.loads(new_mapper))
@@ -711,13 +696,28 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # https://stackoverflow.com/questions/21197774/assign-pandas-dataframe-column-dtypes
         # Create dictionary from two columns
         # https://stackoverflow.com/questions/17426292/what-is-the-most-efficient-way-to-create-a-dictionary-of-two-pandas-dataframe-co
-        new_dtypes_dict = pd.Series(column_mapper_df.dsttype.values, index=column_mapper_df.dst).to_dict()
+        new_dtypes_dict = pd.Series(dst_sch_df.type.values, index=dst_sch_df.name).to_dict()
         # frameinfo = getframeinfo(currentframe())
         # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), new_dtypes_dict)
+
+        numeric_columns = []
+        numeric_columns += dst_sch_df.loc[dst_sch_df['type'] == 'float64']['name'].tolist()
+        numeric_columns += dst_sch_df.loc[dst_sch_df['type'] == 'int64']['name'].tolist()
+
+        # numeric_columns.append(dst_sch_df.loc[dst_sch_df['type'] == 'int64'].name)
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), numeric_columns)
+
+        for col in numeric_columns:
+            if agg_df[col].dtype == 'object':
+                agg_df[col] = agg_df[col].str.replace(',', '')
 
         try:
             agg_df = agg_df.astype(dtype=new_dtypes_dict)
         except ValueError as e:
+            frameinfo = getframeinfo(currentframe())
+            print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
+        except KeyError as e:
             frameinfo = getframeinfo(currentframe())
             print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
 
