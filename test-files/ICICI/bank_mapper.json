@@ -1,0 +1,44 @@
+[
+	{
+		"src": "DateHyphen0",
+		"select": true,
+		"dst": "TransactionDate",
+		"dsttype": "object"
+	},
+	{
+		"src": "DateHyphen1",
+		"select": false,
+		"dst": "DateHyphen1",
+		"dsttype": "object"
+	},
+	{
+		"src": "Float0",
+		"select": true,
+		"dst": "Amount",
+		"dsttype": "float64"
+	},
+	{
+		"src": "Float1",
+		"select": false,
+		"dst": "Float1",
+		"dsttype": "float64"
+	},
+	{
+		"src": "String0",
+		"select": true,
+		"dst": "Description",
+		"dsttype": "object"
+	},
+	{
+		"src": "String2",
+		"select": true,
+		"dst": "Type",
+		"dsttype": "object"
+	},
+	{
+		"src": "String3",
+		"select": false,
+		"dst": "Type",
+		"dsttype": "object"
+	}
+]

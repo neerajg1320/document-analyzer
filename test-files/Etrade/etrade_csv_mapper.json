@@ -1,0 +1,62 @@
+[
+	{
+		"src": "Col0",
+		"select": true,
+		"dst": "TransactionDate",
+		"dsttype": "object"
+	},
+	{
+		"src": "Col1",
+		"select": true,
+		"dst": "Description",
+		"dsttype": "object"
+	},
+	{
+		"src": "Col2",
+		"select": true,
+		"dst": "TradeType",
+		"dsttype": "object"
+	},
+	{
+		"src": "Col3",
+		"select": true,
+		"dst": "Quantity",
+		"dsttype": "int64"
+	},
+	{
+		"src": "Col4",
+		"select": true,
+		"dst": "PrincipalAmount",
+		"dsttype": "float64"
+	},
+	{
+		"src": "Col5",
+		"select": true,
+		"dst": "Commission",
+		"dsttype": "float64"
+	},
+	{
+		"src": "Col6",
+		"select": true,
+		"dst": "Fees",
+		"dsttype": "float64"
+	},
+	{
+		"src": "Col7",
+		"select": true,
+		"dst": "NetAmount",
+		"dsttype": "float64"
+	},
+	{
+		"src": "Col8",
+		"select": false,
+		"dst": "Col8",
+		"dsttype": "float64"
+	},
+	{
+		"src": "Col9",
+		"select": true,
+		"dst": "Summary",
+		"dsttype": "object"
+	}
+]

@@ -1,0 +1,116 @@
+[
+	{
+		"src": "AmountFloat0",
+		"select": true,
+		"dst": "Rate",
+		"dsttype": "float64"
+	},
+	{
+		"src": "AmountFloat1",
+		"select": true,
+		"dst": "PrincipalAmount",
+		"dsttype": "int64"
+	},
+	{
+		"src": "AmountFloat2",
+		"select": true,
+		"dst": "Commission",
+		"dsttype": "float64"
+	},
+	{
+		"src": "AmountFloat3",
+		"select": true,
+		"dst": "Fees",
+		"dsttype": "float64"
+	},
+	{
+		"src": "AmountFloat4",
+		"select": true,
+		"dst": "NetAmount",
+		"dsttype": "float64"
+	},
+	{
+		"src": "DateSlash0",
+		"select": true,
+		"dst": "TransactionDate",
+		"dsttype": "object"
+	},
+	{
+		"src": "DateSlash1",
+		"select": false,
+		"dst": "DateSlash1",
+		"dsttype": "object"
+	},
+	{
+		"src": "DateSlash2",
+		"select": false,
+		"dst": "DateSlash2",
+		"dsttype": "object"
+	},
+	{
+		"src": "Float0",
+		"select": true,
+		"dst": "Fees",
+		"dsttype": "float64"
+	},
+	{
+		"src": "Integer0",
+		"select": false,
+		"dst": "Integer0",
+		"dsttype": "int64"
+	},
+	{
+		"src": "Integer1",
+		"select": false,
+		"dst": "Integer1",
+		"dsttype": "int64"
+	},
+	{
+		"src": "Integer2",
+		"select": true,
+		"dst": "Quantity",
+		"dsttype": "int64"
+	},
+	{
+		"src": "Integer3",
+		"select": false,
+		"dst": "Integer3",
+		"dsttype": "int64"
+	},
+	{
+		"src": "String0",
+		"select": true,
+		"dst": "TradeType",
+		"dsttype": "object"
+	},
+	{
+		"src": "String1",
+		"select": false,
+		"dst": "String1",
+		"dsttype": "object"
+	},
+	{
+		"src": "String2",
+		"select": true,
+		"dst": "Summary",
+		"dsttype": "object"
+	},
+	{
+		"src": "String3",
+		"select": true,
+		"dst": "Summary",
+		"dsttype": "object"
+	},
+	{
+		"src": "String4",
+		"select": false,
+		"dst": "String4",
+		"dsttype": "object"
+	},
+	{
+		"src": "String5",
+		"select": false,
+		"dst": "String5",
+		"dsttype": "object"
+	}
+]
