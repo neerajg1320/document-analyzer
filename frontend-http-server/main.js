@@ -52,7 +52,8 @@ let g_table_data_bank_statement = [
 
 let g_table_data_contract_note = [
     {"name": "TransactionDate", "type": "object", "aggregation": "none"},
-    {"name": "Description", "type": "object", "aggregation": "concat"},
+    {"name": "SettlementDate", "type": "object", "aggregation": "none"},
+    {"name": "Scrip", "type": "object", "aggregation": "concat"},
     {"name": "Quantity", "type": "int64", "aggregation": "sum"},
     {"name": "TradeType", "type": "object", "aggregation": "none"},
     {"name": "Rate", "type": "float64", "aggregation": "none"},
@@ -468,6 +469,8 @@ $("#btn_apply_mapper").click(function () {
     // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
     let document_transactions_get_mapper_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/transactions/mapper/';
 
+    let destination_table = $("#sel-destination-header-table").val();
+
     console.log(document_transactions_get_mapper_url);
     var table_data_json_str = JSON.stringify(g_document_mapper_table.getData("json"));
     console.log(typeof(table_data_json_str), table_data_json_str);
@@ -475,7 +478,7 @@ $("#btn_apply_mapper").click(function () {
     $.ajax({
         type: 'POST',
         data: {
-            "msg": "hello",
+            "destination_table": destination_table,
             "mapper": table_data_json_str
         },
         url: document_transactions_get_mapper_url,
