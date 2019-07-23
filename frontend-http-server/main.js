@@ -10,6 +10,54 @@ let g_document_table = new Tabulator("#document-transactions-table", {
 });
 
 
+let g_destination_header_table = new Tabulator("#destination-header-table", {
+    height:300,
+    layout:"fitColumns", //fit columns to width of table (optional)
+
+    columns:[
+        {title:"Name", field:"name", editor:"input", editable:true},
+        {title:"Type", field:"type", editor:"select", editorParams:{
+                "int64":"int64",
+                "float64":"float64",
+                "object":"object",
+            }
+        },
+    ],
+});
+
+let g_table_data_bank_statement = [
+    {"name": "TransactionDate", "type": "object"},
+    {"name": "Description", "type": "object"},
+    {"name": "Amount", "type": "float64"},
+];
+
+let g_table_data_contract_note = [
+    {"name": "TransactionDate", "type": "object"},
+    {"name": "Description", "type": "object"},
+    {"name": "Quantity", "type": "int64"},
+    {"name": "Rate", "type": "float64"},
+    {"name": "PrincipalAmount", "type": "float64"},
+    {"name": "Commission", "type": "float64"},
+    {"name": "Fees", "type": "float64"},
+    {"name": "NetAmount", "type": "float64"},
+    {"name": "Summary", "type": "object"},
+];
+
+let g_table_data_receipt = [
+    {"name": "Date", "type": "object"},
+    {"name": "Description", "type": "object"},
+    {"name": "Quantity", "type": "int64"},
+    {"name": "Rate", "type": "float64"},
+    {"name": "Amount", "type": "float64"},
+];
+
+
+let g_table_data_dict = {
+    "bank_statement": g_table_data_bank_statement,
+    "contract_note": g_table_data_contract_note,
+    "receipt": g_table_data_receipt
+}
+
 // Document table which shows transactions present in a document
 let g_document_mapper_table = new Tabulator("#document-mapper-table", {
     height:300,
@@ -340,6 +388,13 @@ $("#btn_documentize").click(function() {
     documentize_file(g_user_auth_token, file_id, input_document_elm);
 });
 
+
+$("#sel-destination-header-table").on('change', function() {
+    console.log(this.value);
+    g_destination_header_table.setData(g_table_data_dict[this.value]);
+});
+
+
 $("#btn_get_mapper").click(function () {
     // Get document id
     let document_id = $("#input_document_id").val();
@@ -365,6 +420,7 @@ $("#btn_get_mapper").click(function () {
     });
 
 });
+
 
 $("#btn_apply_mapper").click(function () {
     // Get document id
