@@ -28,6 +28,7 @@ let g_destination_header_table = new Tabulator("#destination-header-table", {
 let g_table_data_bank_statement = [
     {"name": "TransactionDate", "type": "object"},
     {"name": "Description", "type": "object"},
+    {"name": "Type", "type": "object"},
     {"name": "Amount", "type": "float64"},
 ];
 
