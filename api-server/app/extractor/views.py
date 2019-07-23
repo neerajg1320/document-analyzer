@@ -13,6 +13,9 @@ from extractor.text_routines import create_highlighted_text, \
 
 import pandas as pd
 
+# Used for checking the dtypes
+import numpy as np
+
 import json
 import hjson
 from io import StringIO
@@ -602,7 +605,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         return Response(columns_array)
 
     @action(detail=True, renderer_classes=[renderers.JSONRenderer])
-    def transactions_post_mapper(self, request, *args, **kwargs):
+    def transactions_post_mapper_without_aggregation(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
 
         new_mapper = request.data.get("mapper", None)
@@ -661,6 +664,70 @@ class DocumentViewSet(viewsets.ModelViewSet):
             "mapped_df": str(new_df),
             "mapped_df_json": new_df.to_json(orient='records'),
         }]
+
+        # Response should be a regex
+        return Response(response_dict)
+
+
+    @action(detail=True, renderer_classes=[renderers.JSONRenderer])
+    def transactions_post_mapper(self, request, *args, **kwargs):
+        document, df = self.get_or_create_transactions_dataframe()
+
+        new_mapper = request.data.get("mapper", None)
+        column_mapper_df = pd.DataFrame(json.loads(new_mapper))
+
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), column_mapper_df)
+
+        # New dataframe will only contain columns which are selected
+        column_mapper_df = column_mapper_df.loc[column_mapper_df["select"] == True]
+
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), column_mapper_df.dtypes)
+
+        # Find out dst_column to src_column mappings
+        dst_column_dict = {}
+        for index, row in column_mapper_df.iterrows():
+            key = row['dst']
+            if dst_column_dict.get(key, None) is None:
+                dst_column_dict[key] = []
+            dst_column_dict[key].append(row['src'])
+
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), json.dumps(dst_column_dict, indent=2))
+
+        # Aggregate multiple src_columns mapped to same dst_column
+        agg_df = pd.DataFrame()
+        for dst_col, src_col_list in dst_column_dict.items():
+            if len(src_col_list) > 1:
+                agg_df[dst_col] = df[src_col_list].agg('sum', axis="columns")
+            else:
+                agg_df[dst_col] = df[src_col_list[0]]
+
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), agg_df)
+
+        # Then we assign the new column types
+        # https://stackoverflow.com/questions/21197774/assign-pandas-dataframe-column-dtypes
+        # Create dictionary from two columns
+        # https://stackoverflow.com/questions/17426292/what-is-the-most-efficient-way-to-create-a-dictionary-of-two-pandas-dataframe-co
+        new_dtypes_dict = pd.Series(column_mapper_df.dsttype.values, index=column_mapper_df.dst).to_dict()
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), new_dtypes_dict)
+
+        try:
+            agg_df = agg_df.astype(dtype=new_dtypes_dict)
+        except ValueError as e:
+            frameinfo = getframeinfo(currentframe())
+            print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
+
+        try:
+            response_dict = [{
+                "mapped_df": str(agg_df),
+                "mapped_df_json": agg_df.to_json(orient='records'),
+            }]
+        except Exception as e:
+            response_dict = []
 
         # Response should be a regex
         return Response(response_dict)

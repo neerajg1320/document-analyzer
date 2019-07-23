@@ -74,6 +74,21 @@ class Extractor(models.Model):
         return self.title
 
 
+class Schema(models.Model):
+    """ Extractor object """
+    title = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        # We could have user User below, but using settings is a better way
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+
+    fields_json = models.CharField(max_length=2048, blank=False)
+
+    def __str__(self):
+        return self.title
+
+
 class Document(models.Model):
     """ Extractor object """
     title = models.CharField(max_length=255)

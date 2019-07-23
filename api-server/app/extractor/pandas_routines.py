@@ -125,8 +125,8 @@ def get_columns_info_dataframe(src_df):
 
     src_columns = src_df.columns.values.tolist()
 
-    frameinfo = getframeinfo(currentframe())
-    print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), src_df)
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), src_df)
 
     float_columns = df_get_column_by_substr_case_insensitive(src_df, "float")
     for col in float_columns:
@@ -137,14 +137,13 @@ def get_columns_info_dataframe(src_df):
             print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno))
             print("Col {} is not string".format(col))
 
-
-    frameinfo = getframeinfo(currentframe())
-    print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), src_df)
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), src_df)
 
     src_dtypes = src_df.dtypes
 
-    frameinfo = getframeinfo(currentframe())
-    print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), src_dtypes)
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), src_dtypes)
 
     columns = ["src", "select", "dst", "dsttype"]
     columns_df = pd.DataFrame(columns=columns)
