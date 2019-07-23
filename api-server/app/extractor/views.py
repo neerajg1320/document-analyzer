@@ -278,7 +278,12 @@ def convert_to_regex(text):
 
     # - is not working for TDAmeritrade. But it is needed for some strings
     # r"(?P<String>[\w]+(?:<mandatory_separator>[\w]+)*)"
-    string_regex_str = r"(?P<String>[\w\&\/\:\*]+(?:" + mandatory_separator + "[\w\&\/\:\*]+){0,99999})"
+
+    # string_chars = "\w\&\/\:\*-"
+    string_chars = "\S"
+
+    # (?P<String0>[\w\&\/\:\*]+(?:[\s]{1,2}[\w\&\/\:\*]+){0,1})
+    string_regex_str = r"(?P<String>[" + string_chars + "]+(?:" + mandatory_separator + "[" + string_chars + "]+){0,99999})"
 
     # set value to 1 to revert to the previous behaviour
     # However the string value can vary based on the number of words contained.
@@ -298,7 +303,7 @@ def convert_to_regex(text):
 
     regex_str_dict["String"] = string_regex_str
 
-    replace_char = '-'
+    replace_char = ' '
     new_str = text
     match_queue = []
     new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "DateSlash", replace_char)

@@ -3,7 +3,7 @@ from io import StringIO
 
 
 def is_file_extn_excel(file_extn):
-    return file_extn == ".xlsx"
+    return file_extn == ".xlsx" or file_extn == ".xls"
 
 
 def excel_to_text(file_path):
