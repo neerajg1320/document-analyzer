@@ -363,14 +363,14 @@ def convert_to_regex(text):
 destination_tables_schema_json = """
     "bank_statement": [
         {"name": "TransactionDate", "type": "object", "aggregation": "none"},
-        {"name": "Description", "type": "object", "aggregation": "concat"},
+        {"name": "Description", "type": "object", "aggregation": "sum"},
         {"name": "Type", "type": "object", "aggregation": "none"},
         {"name": "Amount", "type": "float64", "aggregation": "sum"},
     ],
     "contract_note": [
         {"name": "TransactionDate", "type": "object", "aggregation": "none"},
         {"name": "SettlementDate", "type": "object", "aggregation": "none"},
-        {"name": "Scrip", "type": "object", "aggregation": "concat"},
+        {"name": "Scrip", "type": "object", "aggregation": "sum"},
         {"name": "Quantity", "type": "int64", "aggregation": "sum"},
         {"name": "TradeType", "type": "object", "aggregation": "none"},
         {"name": "Rate", "type": "float64", "aggregation": "none"},
@@ -378,11 +378,11 @@ destination_tables_schema_json = """
         {"name": "Commission", "type": "float64", "aggregation": "sum"},
         {"name": "Fees", "type": "float64", "aggregation": "sum"},
         {"name": "NetAmount", "type": "float64", "aggregation": "sum"},
-        {"name": "Summary", "type": "object", "aggregation": "concat"},
+        {"name": "Summary", "type": "object", "aggregation": "sum"},
     ],
     "receipt": [
         {"name": "Date", "type": "object", "aggregation": "none"},
-        {"name": "Description", "type": "object", "aggregation": "concat"},
+        {"name": "Description", "type": "object", "aggregation": "sum"},
         {"name": "Quantity", "type": "int64", "aggregation": "sum"},
         {"name": "Rate", "type": "float64", "aggregation": "none"},
         {"name": "Amount", "type": "float64", "aggregation": "sum"},
@@ -681,16 +681,25 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # frameinfo = getframeinfo(currentframe())
         # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), json.dumps(dst_column_dict, indent=2))
 
+        #
         # Aggregate multiple src_columns mapped to same dst_column
+        #
         agg_df = pd.DataFrame()
         for dst_col, src_col_list in dst_column_dict.items():
             if len(src_col_list) > 1:
-                agg_df[dst_col] = df[src_col_list].agg('sum', axis="columns")
+                # https://stackoverflow.com/questions/17071871/select-rows-from-a-dataframe-based-on-values-in-a-column-in-pandas
+                subset_df = dst_sch_df.loc[dst_sch_df['name'] == dst_col]
+                # frameinfo = getframeinfo(currentframe())
+                # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), subset_df)
+
+                # aggregate_fn = 'sum'
+                aggregate_fn = subset_df.iloc[0]['aggregation']
+                agg_df[dst_col] = df[src_col_list].agg(aggregate_fn, axis="columns")
             else:
                 agg_df[dst_col] = df[src_col_list[0]]
 
         # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), agg_df)
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), agg_df.columns)
 
         # Then we assign the new column types
         # https://stackoverflow.com/questions/21197774/assign-pandas-dataframe-column-dtypes
@@ -698,7 +707,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # https://stackoverflow.com/questions/17426292/what-is-the-most-efficient-way-to-create-a-dictionary-of-two-pandas-dataframe-co
         new_dtypes_dict = pd.Series(dst_sch_df.type.values, index=dst_sch_df.name).to_dict()
         # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), new_dtypes_dict)
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), new_dtypes_dict.keys())
 
         numeric_columns = []
         numeric_columns += dst_sch_df.loc[dst_sch_df['type'] == 'float64']['name'].tolist()
@@ -709,8 +718,13 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), numeric_columns)
 
         for col in numeric_columns:
-            if agg_df[col].dtype == 'object':
-                agg_df[col] = agg_df[col].str.replace(',', '')
+            try:
+                if agg_df[col].dtype == 'object':
+                    agg_df[col] = agg_df[col].str.replace(',', '')
+            except KeyError as e:
+                frameinfo = getframeinfo(currentframe())
+                print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno),
+                      "KeyError:" + str(e))
 
         try:
             agg_df = agg_df.astype(dtype=new_dtypes_dict)
