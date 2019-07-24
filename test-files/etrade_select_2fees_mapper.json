@@ -37,8 +37,8 @@
 	},
 	{
 		"src": "DateSlash1",
-		"select": false,
-		"dst": "DateSlash1",
+		"select": true,
+		"dst": "SettlementDate",
 		"dsttype": "object"
 	},
 	{
@@ -98,7 +98,7 @@
 	{
 		"src": "String3",
 		"select": true,
-		"dst": "Summary",
+		"dst": "Scrip",
 		"dsttype": "object"
 	},
 	{

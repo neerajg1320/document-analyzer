@@ -32,18 +32,18 @@
 	{
 		"src": "DateSlash0",
 		"select": true,
-		"dst": "DateSlash0",
+		"dst": "TransactionDate",
 		"dsttype": "object"
 	},
 	{
 		"src": "DateSlash1",
 		"select": true,
-		"dst": "DateSlash1",
+		"dst": "SettlementDate",
 		"dsttype": "object"
 	},
 	{
 		"src": "DateSlash2",
-		"select": true,
+		"select": false,
 		"dst": "DateSlash2",
 		"dsttype": "object"
 	},
@@ -62,43 +62,43 @@
 	{
 		"src": "Integer0",
 		"select": true,
-		"dst": "Integer0",
+		"dst": "Quantity",
 		"dsttype": "int64"
 	},
 	{
 		"src": "Integer1",
-		"select": true,
+		"select": false,
 		"dst": "Integer1",
 		"dsttype": "int64"
 	},
 	{
 		"src": "Integer2",
-		"select": true,
+		"select": false,
 		"dst": "Integer2",
 		"dsttype": "int64"
 	},
 	{
 		"src": "Integer3",
-		"select": true,
+		"select": false,
 		"dst": "Integer3",
 		"dsttype": "int64"
 	},
 	{
 		"src": "String0",
 		"select": true,
-		"dst": "String0",
+		"dst": "TradeType",
 		"dsttype": "object"
 	},
 	{
 		"src": "String1",
 		"select": true,
-		"dst": "String1",
+		"dst": "Scrip",
 		"dsttype": "object"
 	},
 	{
 		"src": "String2",
 		"select": true,
-		"dst": "String2",
+		"dst": "Summary",
 		"dsttype": "object"
 	},
 	{
@@ -109,13 +109,13 @@
 	},
 	{
 		"src": "String4",
-		"select": true,
+		"select": false,
 		"dst": "String4",
 		"dsttype": "object"
 	},
 	{
 		"src": "String5",
-		"select": true,
+		"select": false,
 		"dst": "String5",
 		"dsttype": "object"
 	}
