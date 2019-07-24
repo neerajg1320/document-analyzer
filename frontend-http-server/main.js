@@ -32,7 +32,6 @@ let g_destination_header_table = new Tabulator("#destination-header-table", {
                     "none":"none",
                     "sum":"sum",
                     "mean":"mean",
-                    "concat":"concat",
                     "min":"min",
                     "max":"max",
                 };
@@ -45,7 +44,7 @@ let g_destination_header_table = new Tabulator("#destination-header-table", {
 
 let g_table_data_bank_statement = [
     {"name": "TransactionDate", "type": "object", "aggregation": "none"},
-    {"name": "Description", "type": "object", "aggregation": "concat"},
+    {"name": "Description", "type": "object", "aggregation": "sum"},
     {"name": "Type", "type": "object", "aggregation": "none"},
     {"name": "Amount", "type": "float64", "aggregation": "sum"},
 ];
@@ -53,7 +52,7 @@ let g_table_data_bank_statement = [
 let g_table_data_contract_note = [
     {"name": "TransactionDate", "type": "object", "aggregation": "none"},
     {"name": "SettlementDate", "type": "object", "aggregation": "none"},
-    {"name": "Scrip", "type": "object", "aggregation": "concat"},
+    {"name": "Scrip", "type": "object", "aggregation": "sum"},
     {"name": "Quantity", "type": "int64", "aggregation": "sum"},
     {"name": "TradeType", "type": "object", "aggregation": "none"},
     {"name": "Rate", "type": "float64", "aggregation": "none"},
@@ -61,12 +60,12 @@ let g_table_data_contract_note = [
     {"name": "Commission", "type": "float64", "aggregation": "sum"},
     {"name": "Fees", "type": "float64", "aggregation": "sum"},
     {"name": "NetAmount", "type": "float64", "aggregation": "sum"},
-    {"name": "Summary", "type": "object", "aggregation": "concat"},
+    {"name": "Summary", "type": "object", "aggregation": "sum"},
 ];
 
 let g_table_data_receipt = [
     {"name": "Date", "type": "object", "aggregation": "none"},
-    {"name": "Description", "type": "object", "aggregation": "concat"},
+    {"name": "Description", "type": "object", "aggregation": "sum"},
     {"name": "Quantity", "type": "int64", "aggregation": "sum"},
     {"name": "Rate", "type": "float64", "aggregation": "none"},
     {"name": "Amount", "type": "float64", "aggregation": "sum"},
@@ -103,17 +102,20 @@ let g_document_mapper_table = new Tabulator("#document-mapper-table", {
             }
         },
 
-        {title:"DestinationType", field:"dsttype", editor:"select", editorParams: function(cell) {
-                let hardcoded_values = {
-                    "int64":"int64",
-                    "float64":"float64",
-                    "date":"date",
-                    "object":"object",
-                };
-
-                return {"values": hardcoded_values};
-            }
-        },
+        // NG 2019-07-24 9:54am
+        // Kept for one day in case we need to revert
+        //
+        // {title:"DestinationType", field:"dsttype", editor:"select", editorParams: function(cell) {
+        //         let hardcoded_values = {
+        //             "int64":"int64",
+        //             "float64":"float64",
+        //             "date":"date",
+        //             "object":"object",
+        //         };
+        //
+        //         return {"values": hardcoded_values};
+        //     }
+        // },
     ],
 });
 
