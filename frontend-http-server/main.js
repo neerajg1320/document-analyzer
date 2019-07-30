@@ -735,8 +735,8 @@ $("#sel-datastore").on('change', function() {
            return {"parameter": parameter.name, "value": ""};
         });
 
-        g_account_parameters_value_table.setData(g_table_datastore_parameters_values_array);
         g_account_parameters_description_table.setData(g_table_datastore_parameters_description_dict[this.value]);
+        g_account_parameters_value_table.setData(g_table_datastore_parameters_values_array);
     }
 });
 
