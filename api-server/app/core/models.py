@@ -191,3 +191,16 @@ class Operation(models.Model):
     title = models.CharField(max_length=128, blank=False)
     type = models.CharField(max_length=32, choices=OPERATIONS_CHOICES, blank=False)
     parameters = models.CharField(max_length=2048)
+
+
+# This table witll
+class Datastore(models.Model):
+    user = models.ForeignKey(
+        # We could have user User below, but using settings is a better way
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        blank=True,
+        default="alice@abc.com",
+    )
+    title = models.CharField(max_length=128, blank=False)
+    parameters = models.CharField(max_length=2048)

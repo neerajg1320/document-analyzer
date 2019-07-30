@@ -4,7 +4,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 
-from core.models import Tag, Extractor, Document, File, Transaction, Schema, Operation
+from core.models import Tag, Extractor, Document, File, Transaction, Schema, Operation, Datastore
 
 from extractor import serializers
 
@@ -150,13 +150,31 @@ def text_extract_dataframe_json(institute_name, document_type, input_text):
 # TBD: The database properties to be made configurable.
 #
 
+[
+    {"name":"user", "mandatory":"true", "type":"object" },
+    {"name":"password", "mandatory":"true", "type":"object" },
+    {"name":"account", "mandatory":"true", "type":"object" },
+    {"name":"database", "mandatory":"true", "type":"object" },
+    {"name":"schema", "mandatory":"true", "type":"object" },
+    {"name":"warehouse", "mandatory":"true", "type":"object" }
+]
+
+snowflake_properties_blank_json = """{
+    'user' : '',
+    'password' : '',
+    'account' : '',
+    'database' : '',
+    'schema' : '',
+    'warehouse' : ''
+}"""
+
 snowflake_properties_json = """{
     'user' : 'finball',
     'password' : 'Finball@2018',
     'account' : 'yw56161',
     'database' : 'Trades',
     'schema' : 'public',
-    'warehouse' : 'compute_wh',
+    'warehouse' : 'compute_wh'
 }"""
 
 
@@ -969,3 +987,34 @@ class OperationViewSet(viewsets.ModelViewSet):
         return serializers.OperationListSerializer
 
 
+class DatastoreViewSet(viewsets.ModelViewSet):
+    """ Manage documents in database """
+    queryset = Datastore.objects.all()
+
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        """ Return objects for current user only """
+        return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        """ Create a new document """
+        # TBD: Here we should perform is_staff check
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        """ Create a new document """
+        # TBD: Here we should perform is_staff check
+        # print(serializer.validated_data)
+        serializer.save(user=self.request.user)
+
+    def get_serializer_class(self):
+        """ Return appropriate serializer class """
+        if self.action == 'retrieve' \
+                or self.action == 'update' \
+                or self.action == 'create':
+            return serializers.DatastoreDetailSerializer
+
+        # return self.serializer_class
+        return serializers.DatastoreListSerializer

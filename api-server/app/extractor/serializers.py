@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core.models import Tag, Extractor, Document, File, Transaction, Schema, Operation
+from core.models import Tag, Extractor, Document, File, Transaction, Schema, Operation, Datastore
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -110,4 +110,18 @@ class OperationDetailSerializer(serializers.ModelSerializer):
     class Meta():
         model = Operation
         fields = ('id', 'title', 'type', 'parameters')
+        read_only_fields = ('id',)
+
+
+class DatastoreListSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = Datastore
+        fields = ('id', 'title', 'parameters')
+        read_only_fields = ('id',)
+
+
+class DatastoreDetailSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = Datastore
+        fields = ('id', 'title', 'parameters')
         read_only_fields = ('id',)
