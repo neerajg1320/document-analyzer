@@ -730,9 +730,9 @@ $("#sel-datastore").on('change', function() {
         let parameter_names = parameters.map(a => a.name);
         console.log(parameter_names);
 
-        g_table_datastore_parameters_values_array = [];
-        parameter_names.forEach(function(name) {
-            g_table_datastore_parameters_values_array.push({"parameter": name, "value": ""});
+        // In the value we can provide the default value
+        g_table_datastore_parameters_values_array = parameters.map(function(parameter) {
+           return {"parameter": parameter.name, "value": ""};
         });
 
         g_account_parameters_value_table.setData(g_table_datastore_parameters_values_array);
