@@ -1,3 +1,6 @@
 .idea
 .DS_Store
 sample-apps/venv
+api-server/libpostal
+third-party-tools
+training-courses
