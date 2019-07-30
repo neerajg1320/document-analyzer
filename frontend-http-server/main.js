@@ -72,11 +72,14 @@ let g_table_data_receipt = [
 ];
 
 
-let g_table_data_dict = {
-    "bank_statement": g_table_data_bank_statement,
-    "contract_note": g_table_data_contract_note,
-    "receipt": g_table_data_receipt
-}
+// let g_table_data_dict = {
+//     "bank_statement": g_table_data_bank_statement,
+//     "contract_note": g_table_data_contract_note,
+//     "receipt": g_table_data_receipt
+// };
+
+
+let g_table_dynamic_data_dict = {};
 
 // Document table which shows transactions present in a document
 let g_document_mapper_table = new Tabulator("#document-mapper-table", {
@@ -88,8 +91,13 @@ let g_document_mapper_table = new Tabulator("#document-mapper-table", {
         {title:"Select", field:"select", editor:"tick", formatter:"tick", editable:true},
 
         {title:"DestinationColumn", field:"dst", editor:"select", editorParams: function(cell) {
+                console.log(g_table_dynamic_data_dict);
                 let destination_table = $("#sel-destination-header-table").val();
-                let fields_array = g_table_data_dict[destination_table];
+                console.log(destination_table);
+                let dynamic_fields_array = g_table_dynamic_data_dict[destination_table];
+                console.log(dynamic_fields_array);
+
+                let fields_array = JSON.parse(g_table_dynamic_data_dict[destination_table]);
                 let destination_fields = fields_array.map(a => a.name);
 
                 const values = {};
@@ -433,7 +441,16 @@ $("#btn_documentize").click(function() {
 
 $("#sel-destination-header-table").on('change', function() {
     console.log(this.value);
-    g_destination_header_table.setData(g_table_data_dict[this.value]);
+
+    if (this.value == "new") {
+        document.getElementById('input_new_schema').style.display = "";
+        g_destination_header_table.setData('[]')
+    } else {
+        document.getElementById('input_new_schema').style.display = "none";
+        // g_destination_header_table.setData(g_table_data_dict[this.value]);
+        g_destination_header_table.setData(g_table_dynamic_data_dict[this.value]);
+
+    }
 });
 
 
@@ -502,6 +519,50 @@ $("#btn_apply_mapper").click(function () {
     });
 
 });
+
+
+$("#btn_get_schema_list").click(function () {
+
+    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
+    let schema_get_url = 'http://localhost:8000/api/docminer/schemas/';
+
+    console.log(schema_get_url);
+
+    $.ajax({
+        url: schema_get_url,
+        headers : {
+            'Authorization' : 'Token ' + g_user_auth_token,
+        },
+        dataType: 'json',
+        success: function(response) {
+            console.log(typeof(response), response);
+
+
+            // Find the title elements of the json array received
+            // e.g. schemas = ["receipt", "contract_nt", "bank_stmt"]
+            let schemas = response.map(a => a.title);
+
+            console.log(schemas);
+
+            let destination_select = $("#sel-destination-header-table");
+            destination_select.empty();
+
+            let new_entry_str = "new";
+            destination_select.append($('<option></option>').attr('value', new_entry_str).text(new_entry_str));
+
+            $.each(response, function (key, entry) {
+                destination_select.append($('<option></option>').attr('value', entry.title).text(entry.title));
+                // Create the global dictionary
+                g_table_dynamic_data_dict[entry.title] = entry.fields_json;
+            });
+
+            document.getElementById('input_new_schema').style.display = "";
+
+            // console.log(g_table_dynamic_data_dict);
+        }
+    });
+});
+
 
 $("#btn_save_snowflake").click(function () {
     // Get document id
