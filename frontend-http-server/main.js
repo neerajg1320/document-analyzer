@@ -407,33 +407,24 @@ $("#btn_apply_regex").click(function() {
 });
 
 
-$("#btn_save_regex").click(function() {
-    // Get document id
-    let regex_name = $("#input_regex_name").val();
-    if (regex_name == "") {
-        alert('Please provide regex name!');
-        return;
-    }
+function save_operation(title, type, parameters) {
+    let operation_save_url = 'http://localhost:8000/api/docminer/operations/';
 
-    let document_save_regex_url = 'http://localhost:8000/api/docminer/operations/';
-
-    console.log(document_save_regex_url);
-
-    var regex_text = g_regex_text_box.val();
+    console.log(operation_save_url);
 
     // console.log("Complete Text:\n" + complete_text);
 
     $.ajax({
         type: 'POST',
-        url: document_save_regex_url,
+        url: operation_save_url,
         headers : {
             'Authorization' : 'Token ' + g_user_auth_token,
         },
         dataType: 'json',
         data: {
-            "title": regex_name,
-            "type": "Extract",
-            "parameters": regex_text
+            "title": title,
+            "type": type,
+            "parameters": parameters
         },
         success: function(response) {
             console.log(typeof(response), response);
@@ -442,7 +433,24 @@ $("#btn_save_regex").click(function() {
             // alert("Regex saved");
         }
     });
+}
 
+
+$("#btn_save_regex").click(function() {
+    // Get document id
+    let regex_name = $("#input_regex_name").val();
+    if (regex_name == "") {
+        alert('Please provide regex name!');
+        return;
+    }
+
+    var regex_text = g_regex_text_box.val();
+    if (regex_text == "") {
+        alert('Please provide regular expression!');
+        return;
+    }
+
+    save_operation(regex_name, "Extract", regex_text);
 });
 
 
@@ -560,6 +568,22 @@ $("#btn_apply_mapper").click(function () {
 
 });
 
+$("#btn_save_mapper").click(function() {
+    // Get document id
+    let mapper_name = $("#input_mapper_name").val();
+    if (mapper_name == "") {
+        alert('Please provide mapper name!');
+        return;
+    }
+
+    var mapper_json = JSON.stringify(g_document_mapper_table.getData("json"));
+    if (mapper_json == "") {
+        alert('Please provide regular expression!');
+        return;
+    }
+
+    save_operation(mapper_name, "Transform", mapper_json);
+});
 
 $("#btn_get_schema_list").click(function () {
 
