@@ -81,6 +81,8 @@ let g_table_data_receipt = [
 
 let g_table_dynamic_data_dict = {};
 
+let g_table_datastore_dict = {};
+
 // Document table which shows transactions present in a document
 let g_document_mapper_table = new Tabulator("#document-mapper-table", {
     height:300,
@@ -150,6 +152,28 @@ let g_document_mapped_table = new Tabulator("#document-mapped-transactions-table
 //     },
 // });
 //
+
+// Credentials to be used for loading data into account
+let g_account_parameters_table = new Tabulator("#account-parameters-table", {
+    height:300,
+    layout:"fitColumns", //fit columns to width of table (optional)
+
+    columns:[
+        {title:"Name", field:"name", editor:"input", editable:true},
+        {title:"Mandatory", field:"mandatory", editor:"tick", formatter:"tick", editable:true},
+        {title:"Type", field:"type", editor:"select", editorParams: function(cell) {
+                let hardcoded_values = {
+                    "int64":"int64",
+                    "float64":"float64",
+                    "date":"date",
+                    "object":"object",
+                };
+
+                return {"values": hardcoded_values};
+            }
+        },
+    ],
+});
 
 // Account table which shows transactions in all the documents uploaded for an account
 let g_account_table = new Tabulator("#account-transactions-table", {
@@ -625,6 +649,75 @@ $("#btn_get_schema_list").click(function () {
             // console.log(g_table_dynamic_data_dict);
         }
     });
+});
+
+
+$("#btn_get_datastore_list").click(function () {
+
+    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
+    let datastore_get_url = 'http://localhost:8000/api/docminer/datastores/';
+
+    console.log(datastore_get_url);
+
+    $.ajax({
+        url: datastore_get_url,
+        headers : {
+            'Authorization' : 'Token ' + g_user_auth_token,
+        },
+        dataType: 'json',
+        success: function(response) {
+            console.log(typeof(response), response);
+
+
+            // Find the title elements of the json array received
+            // e.g. schemas = ["receipt", "contract_nt", "bank_stmt"]
+            let schemas = response.map(a => a.title);
+
+            console.log(schemas);
+
+            let destination_select = $("#sel-datastore");
+            destination_select.empty();
+
+            let new_entry_str = "new";
+            destination_select.append($('<option></option>').attr('value', new_entry_str).text(new_entry_str));
+
+            $.each(response, function (key, entry) {
+                destination_select.append($('<option></option>').attr('value', entry.title).text(entry.title));
+                // Create the global dictionary
+                g_table_datastore_dict[entry.title] = entry.parameters;
+            });
+
+            document.getElementById('input_new_schema').style.display = "";
+
+            // console.log(g_table_dynamic_data_dict);
+        }
+    });
+});
+
+
+$("#sel-datastore").on('change', function() {
+    console.log(this.value);
+
+    if (this.value == "new") {
+        document.getElementById('input_new_datastore').style.display = "";
+        g_account_parameters_table.setData('[]')
+    } else {
+        document.getElementById('input_new_datastore').style.display = "none";
+
+        console.log(g_table_datastore_dict[this.value]);
+
+        // var hardcoded_data = '';
+        // // g_destination_header_table.setData(g_table_data_dict[this.value]);
+        // if (this.value == "SnowFlake") {
+        //     hardcoded_data = '[{"name":"F1", "mandatory":"true", "type":"int64" }]';
+        // } else {
+        //     hardcoded_data = '[{"name":"F2", "mandatory":"true", "type":"int64" }]';
+        // }
+        // g_table_datastore_dict[this.value] = hardcoded_data;
+
+
+        g_account_parameters_table.setData(g_table_datastore_dict[this.value]);
+    }
 });
 
 

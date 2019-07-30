@@ -92,7 +92,7 @@
 
             <div id="destination-header-table"></div>
             <button id="btn_post_schema">Save Schema</button>
-            <button id="btn_get_schema_list">Get Schema</button>
+            <button id="btn_get_schema_list">Get Schemas</button>
         </div>
 
         <!-- Mapped Table -->
@@ -107,7 +107,12 @@
     </div>
 
     <div id="database-info" class="bordered">
+        <button id="btn_get_datastore_list">Get Datastores</button>
+        <select id="sel-datastore" />
+        <input id="input_new_datastore" type="text" value="" style="display:none"/>
+
         <button id="btn_save_snowflake">Save to Snowflake</button>
+        <div id="account-parameters-table"></div>
         <div id="account-transactions-table"></div>
     </div>
 </div>
