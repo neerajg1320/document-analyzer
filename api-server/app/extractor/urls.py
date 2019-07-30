@@ -10,8 +10,12 @@ router.register('extractors', views.ExtractorViewSet)
 router.register('documents', views.DocumentViewSet)
 router.register('files', views.FileViewSet)
 router.register('transactions', views.TransactionViewSet)
+router.register('schemas', views.SchemaViewSet)
+router.register('operations', views.OperationViewSet)
+
 
 app_name = 'extractor'
+
 
 document_highlight = views.DocumentViewSet.as_view({
     'get': 'highlight'

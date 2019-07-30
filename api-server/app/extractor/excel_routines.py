@@ -3,7 +3,7 @@ from io import StringIO
 
 
 def is_file_extn_excel(file_extn):
-    return file_extn == ".xlsx" or file_extn == ".xls"
+    return file_extn == ".xlsx" or file_extn == ".xls" or file_extn == ".csv"
 
 
 def excel_to_dataframe(file_path):

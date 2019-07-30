@@ -171,3 +171,23 @@ class Transaction(models.Model):
 
     def __str__(self):
         return '%d: %s' % (self.id, self.Scrip)
+
+
+OPERATIONS_CHOICES = (
+    ('E', 'Extract'),
+    ('T', 'Transform'),
+    ('L', 'Load')
+)
+
+
+class Operation(models.Model):
+    user = models.ForeignKey(
+        # We could have user User below, but using settings is a better way
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        blank=True,
+        default="alice@abc.com",
+    )
+    title = models.CharField(max_length=128, blank=False)
+    type = models.CharField(max_length=32, choices=OPERATIONS_CHOICES, blank=False)
+    parameters = models.CharField(max_length=2048)

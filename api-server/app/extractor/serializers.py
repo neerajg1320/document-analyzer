@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core.models import Tag, Extractor, Document, File, Transaction
+from core.models import Tag, Extractor, Document, File, Transaction, Schema, Operation
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -85,3 +85,29 @@ class FileDetailSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'text')
 
 
+class SchemaListSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = Schema
+        fields = ('id', 'title', 'fields_json',)
+        read_only_fields = ('id',)
+
+
+class SchemaDetailSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = Schema
+        fields = ('id', 'title', 'fields_json',)
+        read_only_fields = ('id',)
+
+
+class OperationListSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = Operation
+        fields = ('id', 'title', 'type',)
+        read_only_fields = ('id',)
+
+
+class OperationDetailSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = Operation
+        fields = ('id', 'title', 'type', 'parameters')
+        read_only_fields = ('id',)

@@ -4,7 +4,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 
-from core.models import Tag, Extractor, Document, File, Transaction
+from core.models import Tag, Extractor, Document, File, Transaction, Schema, Operation
 
 from extractor import serializers
 
@@ -32,6 +32,8 @@ from extractor import image_routines
 
 # https://stackoverflow.com/questions/3056048/filename-and-line-number-of-python-script
 from inspect import currentframe, getframeinfo
+
+import pyap
 
 
 # Until supported keep the mapping false for Excel documents
@@ -365,7 +367,7 @@ destination_tables_schema_json = """
         {"name": "TransactionDate", "type": "object", "aggregation": "none"},
         {"name": "Description", "type": "object", "aggregation": "sum"},
         {"name": "Type", "type": "object", "aggregation": "none"},
-        {"name": "Amount", "type": "float64", "aggregation": "sum"},
+        {"name": "Amount", "type": "float64", "aggregation": "sum"}
     ],
     "contract_note": [
         {"name": "TransactionDate", "type": "object", "aggregation": "none"},
@@ -378,16 +380,56 @@ destination_tables_schema_json = """
         {"name": "Commission", "type": "float64", "aggregation": "sum"},
         {"name": "Fees", "type": "float64", "aggregation": "sum"},
         {"name": "NetAmount", "type": "float64", "aggregation": "sum"},
-        {"name": "Summary", "type": "object", "aggregation": "sum"},
+        {"name": "Summary", "type": "object", "aggregation": "sum"}
     ],
     "receipt": [
         {"name": "Date", "type": "object", "aggregation": "none"},
         {"name": "Description", "type": "object", "aggregation": "sum"},
         {"name": "Quantity", "type": "int64", "aggregation": "sum"},
         {"name": "Rate", "type": "float64", "aggregation": "none"},
-        {"name": "Amount", "type": "float64", "aggregation": "sum"},
+        {"name": "Amount", "type": "float64", "aggregation": "sum"}
+    ],
+    "receipt_sno": [
+        {"name": "SerialNo", "type": "int64", "aggregation": "none"},
+        {"name": "Description", "type": "object", "aggregation": "sum"},
+        {"name": "Quantity", "type": "int64", "aggregation": "sum"},
+        {"name": "Rate", "type": "float64", "aggregation": "none"},
+        {"name": "Amount", "type": "float64", "aggregation": "sum"}
     ]
 """
+
+
+class SchemaViewSet(viewsets.ModelViewSet):
+    """ Manage documents in database """
+    queryset = Schema.objects.all()
+
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        """ Return objects for current user only """
+        return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        """ Create a new document """
+        # TBD: Here we should perform is_staff check
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        """ Create a new document """
+        # TBD: Here we should perform is_staff check
+        # print(serializer.validated_data)
+        serializer.save(user=self.request.user)
+
+    def get_serializer_class(self):
+        """ Return appropriate serializer class """
+        if self.action == 'retrieve' \
+                or self.action == 'update' \
+                or self.action == 'create':
+            return serializers.SchemaDetailSerializer
+
+        # return self.serializer_class
+        return serializers.SchemaListSerializer
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
@@ -851,6 +893,12 @@ class FileViewSet(viewsets.ModelViewSet):
 
             super(File, file).save()
 
+        addresses = pyap.parse(file.text, country='US')
+        for address in addresses:
+            frameinfo = getframeinfo(currentframe())
+            print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno),
+                  json.dumps(address.as_dict(), indent=4))
+
         document = Document.objects.create(user=file.user,
                                            title=file.title,
                                            institute_name=file.institute_name,
@@ -886,3 +934,38 @@ class TransactionViewSet(viewsets.ModelViewSet):
         # TBD: Here we should perform is_staff check
         # print(serializer.validated_data)
         serializer.save(user=self.request.user)
+
+
+class OperationViewSet(viewsets.ModelViewSet):
+    """ Manage documents in database """
+    queryset = Operation.objects.all()
+
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        """ Return objects for current user only """
+        return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        """ Create a new document """
+        # TBD: Here we should perform is_staff check
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        """ Create a new document """
+        # TBD: Here we should perform is_staff check
+        # print(serializer.validated_data)
+        serializer.save(user=self.request.user)
+
+    def get_serializer_class(self):
+        """ Return appropriate serializer class """
+        if self.action == 'retrieve' \
+                or self.action == 'update' \
+                or self.action == 'create':
+            return serializers.OperationDetailSerializer
+
+        # return self.serializer_class
+        return serializers.OperationListSerializer
+
+
