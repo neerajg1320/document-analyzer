@@ -1,0 +1,27 @@
+[
+	{
+		"src": "Float0",
+		"select": true,
+		"dst": "Rate"
+	},
+	{
+		"src": "Float1",
+		"select": true,
+		"dst": "Amount"
+	},
+	{
+		"src": "Integer0",
+		"select": true,
+		"dst": "SerialNo"
+	},
+	{
+		"src": "Integer1",
+		"select": true,
+		"dst": "Quantity"
+	},
+	{
+		"src": "String0",
+		"select": true,
+		"dst": "Description"
+	}
+]
