@@ -366,9 +366,9 @@ $("#btn_apply_regex").click(function() {
     // Get document id
     let document_id = $("#input_document_id").val();
 
-    let document_row_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/regex/apply/';
+    let document_apply_regex_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/regex/apply/';
 
-    console.log(document_row_url);
+    console.log(document_apply_regex_url);
 
     var regex_text = g_regex_text_box.val();
     // var complete_text = g_document_text_box.val();
@@ -378,7 +378,7 @@ $("#btn_apply_regex").click(function() {
 
     $.ajax({
         type: 'POST',
-        url: document_row_url,
+        url: document_apply_regex_url,
         headers : {
             'Authorization' : 'Token ' + g_user_auth_token,
         },
@@ -405,6 +405,46 @@ $("#btn_apply_regex").click(function() {
     });
 
 });
+
+
+$("#btn_save_regex").click(function() {
+    // Get document id
+    let regex_name = $("#input_regex_name").val();
+    if (regex_name == "") {
+        alert('Please provide regex name!');
+        return;
+    }
+
+    let document_save_regex_url = 'http://localhost:8000/api/docminer/operations/';
+
+    console.log(document_save_regex_url);
+
+    var regex_text = g_regex_text_box.val();
+
+    // console.log("Complete Text:\n" + complete_text);
+
+    $.ajax({
+        type: 'POST',
+        url: document_save_regex_url,
+        headers : {
+            'Authorization' : 'Token ' + g_user_auth_token,
+        },
+        dataType: 'json',
+        data: {
+            "title": regex_name,
+            "type": "Extract",
+            "parameters": regex_text
+        },
+        success: function(response) {
+            console.log(typeof(response), response);
+            //response is already a parsed JSON
+
+            // alert("Regex saved");
+        }
+    });
+
+});
+
 
 $("#btn_reset_regex").click(function() {
     document.getElementById('regex-text').value = g_current_document_local_cache['regex_str'];
