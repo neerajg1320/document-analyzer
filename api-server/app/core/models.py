@@ -174,9 +174,9 @@ class Transaction(models.Model):
 
 
 OPERATIONS_CHOICES = (
-    ('E', 'Extract'),
-    ('T', 'Transform'),
-    ('L', 'Load')
+    ('Extract', 'Extract'),
+    ('Transform', 'Transform'),
+    ('Load', 'Load')
 )
 
 
