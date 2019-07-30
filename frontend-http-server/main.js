@@ -81,7 +81,10 @@ let g_table_data_receipt = [
 
 let g_table_dynamic_data_dict = {};
 
-let g_table_datastore_dict = {};
+let g_table_datastore_parameters_description_dict = {};
+
+let g_table_datastore_parameters_values_array = []
+
 
 // Document table which shows transactions present in a document
 let g_document_mapper_table = new Tabulator("#document-mapper-table", {
@@ -154,7 +157,18 @@ let g_document_mapped_table = new Tabulator("#document-mapped-transactions-table
 //
 
 // Credentials to be used for loading data into account
-let g_account_parameters_table = new Tabulator("#account-parameters-table", {
+let g_account_parameters_value_table = new Tabulator("#account-parameters-value-table", {
+    height:300,
+    layout:"fitColumns", //fit columns to width of table (optional)
+
+    columns:[
+        {title:"Parameter", field:"parameter", editor:"input", editable:true},
+        {title:"Value", field:"value", editor:"input", editable:true},
+    ],
+});
+
+// Credentials to be used for loading data into account
+let g_account_parameters_description_table = new Tabulator("#account-parameters-description-table", {
     height:300,
     layout:"fitColumns", //fit columns to width of table (optional)
 
@@ -684,10 +698,15 @@ $("#btn_get_datastore_list").click(function () {
             $.each(response, function (key, entry) {
                 destination_select.append($('<option></option>').attr('value', entry.title).text(entry.title));
                 // Create the global dictionary
-                g_table_datastore_dict[entry.title] = entry.parameters;
+
+                g_table_datastore_parameters_description_dict[entry.title] = entry.parameters;
+
+                console.log(typeof (entry.parameters), entry.parameters);
+                // g_table_datastore_parameters_values_array
             });
 
             document.getElementById('input_new_schema').style.display = "";
+
 
             // console.log(g_table_dynamic_data_dict);
         }
@@ -700,23 +719,24 @@ $("#sel-datastore").on('change', function() {
 
     if (this.value == "new") {
         document.getElementById('input_new_datastore').style.display = "";
-        g_account_parameters_table.setData('[]')
+        g_account_parameters_description_table.setData('[]')
     } else {
         document.getElementById('input_new_datastore').style.display = "none";
 
-        console.log(g_table_datastore_dict[this.value]);
+        let parameters_array_json = g_table_datastore_parameters_description_dict[this.value];
+        console.log(parameters_array_json);
 
-        // var hardcoded_data = '';
-        // // g_destination_header_table.setData(g_table_data_dict[this.value]);
-        // if (this.value == "SnowFlake") {
-        //     hardcoded_data = '[{"name":"F1", "mandatory":"true", "type":"int64" }]';
-        // } else {
-        //     hardcoded_data = '[{"name":"F2", "mandatory":"true", "type":"int64" }]';
-        // }
-        // g_table_datastore_dict[this.value] = hardcoded_data;
+        let parameters = JSON.parse(parameters_array_json);
+        let parameter_names = parameters.map(a => a.name);
+        console.log(parameter_names);
 
+        g_table_datastore_parameters_values_array = [];
+        parameter_names.forEach(function(name) {
+            g_table_datastore_parameters_values_array.push({"parameter": name, "value": ""});
+        });
 
-        g_account_parameters_table.setData(g_table_datastore_dict[this.value]);
+        g_account_parameters_value_table.setData(g_table_datastore_parameters_values_array);
+        g_account_parameters_description_table.setData(g_table_datastore_parameters_description_dict[this.value]);
     }
 });
 
