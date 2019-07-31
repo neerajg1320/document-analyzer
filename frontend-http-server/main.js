@@ -713,6 +713,24 @@ $("#btn_get_datastore_list").click(function () {
     });
 });
 
+// Keep this for later
+$("#btn_save_datastore").click(function() {
+    // Get document id
+    let datastore_name = $("#input_new_datastore").val();
+    if (datastore_name == "") {
+        alert('Please provide datastore name!');
+        return;
+    }
+
+    var datastore_values_json = g_account_parameters_value_table.getData("json");
+    if (datastore_values == "") {
+        alert('Please provide datastore values expression!');
+        return;
+    }
+
+    save_operation(mapper_name, "Transform", mapper_json);
+});
+
 
 $("#sel-datastore").on('change', function() {
     console.log(this.value);
@@ -740,8 +758,16 @@ $("#sel-datastore").on('change', function() {
     }
 });
 
+$("#btn_upload_datastore").click(function () {
+    g_account_parameters_value_table.setDataFromLocalFile();
+});
 
-$("#btn_save_snowflake").click(function () {
+$("#btn_download_datastore").click(function () {
+    g_account_parameters_value_table.download("json", "datastore.json");
+});
+
+
+$("#btn_load_to_datastore").click(function () {
     // Get document id
     let document_id = $("#input_document_id").val();
 
@@ -750,12 +776,37 @@ $("#btn_save_snowflake").click(function () {
 
     console.log(document_transactions_save_url);
 
+    let store_type = $("#sel-datastore").val();
+    if (store_type == "new") {
+        alert('Please provide datastore type!');
+        return;
+    }
+
+    let store_parameters_table_values = g_account_parameters_value_table.getData("json");
+
+    let final_store_parameters_values = {}
+    store_parameters_table_values.forEach(function(entry) {
+        final_store_parameters_values[entry.parameter] = entry.value;
+    });
+    console.log(final_store_parameters_values);
+
+    // let store_parameters_values = JSON.stringify(g_account_parameters_value_table.getData("json"));
+    // if (store_type == "new") {
+    //     alert('Please provide datastore type!');
+    //     return;
+    // }
+
     $.ajax({
+        type: 'POST',
         url: document_transactions_save_url,
         headers : {
             'Authorization' : 'Token ' + g_user_auth_token,
         },
         dataType: 'json',
+        data: {
+            "store_type": store_type,
+            "parameter_values": JSON.stringify(final_store_parameters_values)
+        },
         success: function(response) {
             // console.log(typeof(response), response);
             //response is already a parsed JSON
