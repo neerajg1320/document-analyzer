@@ -1,0 +1,26 @@
+[
+	{
+		"parameter": "username",
+		"value": "finball"
+	},
+	{
+		"parameter": "password",
+		"value": "Finball@2018"
+	},
+	{
+		"parameter": "account",
+		"value": "yw56161"
+	},
+	{
+		"parameter": "database",
+		"value": "Trades"
+	},
+	{
+		"parameter": "table",
+		"value": "public"
+	},
+	{
+		"parameter": "section",
+		"value": "compute_wh"
+	}
+]
