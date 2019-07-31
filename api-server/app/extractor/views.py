@@ -172,20 +172,34 @@ snowflake_properties_json = """{
 
 
 def save_to_snowflake(df, snowflake_parameters):
-    # snowflake_properties_dict_hardcoded = hjson.loads(snowflake_properties_json)
-
     table_name = snowflake_parameters.pop('table')
     snowflake_properties_dict = snowflake_parameters
-    engine = create_engine(URL(**snowflake_properties_dict))
+    db_url = URL(**snowflake_properties_dict)
 
+    save_to_sql(df, db_url, table_name)
+
+
+def save_to_postgres(df, postgres_parameters):
+    table_name = postgres_parameters.pop('table')
+
+    db_url = 'postgresql://' \
+             + postgres_parameters['username'] \
+             + ':' + postgres_parameters['password'] \
+             + '@' + postgres_parameters['host'] \
+             + ':' + postgres_parameters['port'] \
+             + '/' + postgres_parameters['database']
+
+    save_to_sql(df, db_url, table_name)
+
+
+def save_to_sql(df, db_url, table_name):
+    print(str(db_url))
+    engine = create_engine(db_url)
     try:
         connection = engine.connect()
-        # results = connection.execute('select current_version()').fetchone()
-        # print(results[0])
 
-        # print(df)
         print("Loading to: ", table_name)
-        df.to_sql(table_name, engine, index=False, if_exists='append',)
+        df.to_sql(table_name, engine, index=False, if_exists='append', )
     except Exception as e:
         frameinfo = getframeinfo(currentframe())
         print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
@@ -814,15 +828,17 @@ class DocumentViewSet(viewsets.ModelViewSet):
                 datastore_parameters = json.loads(datastore_parameters_json)
 
         if str(datastore_type).lower() == 'snowflake':
-            flag_process_data = g_flag_process_data
-            if flag_process_data:
-                # Need to be lookup based
-                groupby_dict = self.get_groupby_dict(document)
-                df = transform_df_using_dict(df, groupby_dict)
-
-            # save_to_snowflake(df, datastore_parameters)
-
-            df = load_from_snowflake(datastore_parameters)
+            #  This is the mapping according to the hardcoded regex extractor
+            #
+            # flag_process_data = g_flag_process_data
+            # if flag_process_data:
+            #     # Need to be lookup based
+            #     groupby_dict = self.get_groupby_dict(document)
+            #     df = transform_df_using_dict(df, groupby_dict)
+            save_to_snowflake(df, datastore_parameters)
+            # df = load_from_snowflake(datastore_parameters)
+        elif str(datastore_type).lower() == 'postgres':
+            save_to_postgres(df, datastore_parameters)
 
         transactions_array = json.loads(df.to_json(orient='records'))
         return Response(transactions_array)
