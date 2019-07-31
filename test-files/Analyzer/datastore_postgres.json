@@ -1,0 +1,26 @@
+[
+	{
+		"parameter": "user",
+		"value": "postgres"
+	},
+	{
+		"parameter": "password",
+		"value": "Postgres123"
+	},
+	{
+		"parameter": "host",
+		"value": "localhost"
+	},
+	{
+		"parameter": "port",
+		"value": "5432"
+	},
+	{
+		"parameter": "database",
+		"value": "app"
+	},
+	{
+		"parameter": "table",
+		"value": "Trades"
+	}
+]
