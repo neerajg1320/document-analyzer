@@ -150,14 +150,14 @@ def text_extract_dataframe_json(institute_name, document_type, input_text):
 # TBD: The database properties to be made configurable.
 #
 
-[
+# The following is stored in the datastores table
+post_parameters_schema = [
     {"name":"user", "mandatory":"true", "type":"object" },
     {"name":"password", "mandatory":"true", "type":"object" },
-    {"name":"account", "mandatory":"true", "type":"object" },
+    {"name":"host", "mandatory":"true", "type":"object" },
+    {"name":"port", "mandatory":"true", "type":"int64" },
     {"name":"database", "mandatory":"true", "type":"object" },
-    {"name":"table", "mandatory":"true", "type":"object" },
-    {"name":"schema", "mandatory":"true", "type":"object" },
-    {"name":"warehouse", "mandatory":"true", "type":"object" }
+    {"name":"table", "mandatory":"true", "type":"object" }
 ]
 
 snowflake_properties_json = """{
@@ -180,10 +180,10 @@ def save_to_snowflake(df, snowflake_parameters):
 
 
 def save_to_postgres(df, postgres_parameters):
-    table_name = postgres_parameters.pop('table')
+    table_name = str(postgres_parameters.pop('table')).lower()
 
     db_url = 'postgresql://' \
-             + postgres_parameters['username'] \
+             + postgres_parameters['user'] \
              + ':' + postgres_parameters['password'] \
              + '@' + postgres_parameters['host'] \
              + ':' + postgres_parameters['port'] \
@@ -198,8 +198,13 @@ def save_to_sql(df, db_url, table_name):
     try:
         connection = engine.connect()
 
-        print("Loading to: ", table_name)
-        df.to_sql(table_name, engine, index=False, if_exists='append', )
+        frameinfo = getframeinfo(currentframe())
+        print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), "Loading to: %s" % table_name)
+
+        df.to_sql(table_name, engine, index=False, if_exists='append')
+        # new_df = pd.read_sql_query('select * from %s' % table_name, con=engine)
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), new_df)
     except Exception as e:
         frameinfo = getframeinfo(currentframe())
         print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
