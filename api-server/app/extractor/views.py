@@ -155,32 +155,27 @@ def text_extract_dataframe_json(institute_name, document_type, input_text):
     {"name":"password", "mandatory":"true", "type":"object" },
     {"name":"account", "mandatory":"true", "type":"object" },
     {"name":"database", "mandatory":"true", "type":"object" },
+    {"name":"table", "mandatory":"true", "type":"object" },
     {"name":"schema", "mandatory":"true", "type":"object" },
     {"name":"warehouse", "mandatory":"true", "type":"object" }
 ]
-
-snowflake_properties_blank_json = """{
-    'user' : '',
-    'password' : '',
-    'account' : '',
-    'database' : '',
-    'schema' : '',
-    'warehouse' : ''
-}"""
 
 snowflake_properties_json = """{
     'user' : 'finball',
     'password' : 'Finball@2018',
     'account' : 'yw56161',
     'database' : 'Trades',
+    'table' : 'USSTOCKS',
     'schema' : 'public',
     'warehouse' : 'compute_wh'
 }"""
 
 
-def save_to_snowflake(df, table_name):
-    snowflake_properties_dict = hjson.loads(snowflake_properties_json)
+def save_to_snowflake(df, snowflake_parameters):
+    # snowflake_properties_dict_hardcoded = hjson.loads(snowflake_properties_json)
 
+    table_name = snowflake_parameters.pop('table')
+    snowflake_properties_dict = snowflake_parameters
     engine = create_engine(URL(**snowflake_properties_dict))
 
     try:
@@ -189,6 +184,7 @@ def save_to_snowflake(df, table_name):
         # print(results[0])
 
         # print(df)
+        print("Loading to: ", table_name)
         df.to_sql(table_name, engine, index=False, if_exists='append',)
     except Exception as e:
         frameinfo = getframeinfo(currentframe())
@@ -198,10 +194,8 @@ def save_to_snowflake(df, table_name):
         engine.dispose()
 
 
-def load_from_snowflake(table_name):
-    snowflake_properties_dict = hjson.loads(snowflake_properties_json)
-
-    engine = create_engine(URL(**snowflake_properties_dict))
+def load_from_snowflake(snowflake_parameters):
+    engine = create_engine(URL(**snowflake_parameters))
 
     df = None
     try:
@@ -811,16 +805,24 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def transactions_save(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
 
-        flag_process_data = g_flag_process_data
-        if flag_process_data:
-            # Need to be lookup based
-            groupby_dict = self.get_groupby_dict(document)
-            df = transform_df_using_dict(df, groupby_dict)
+        datastore_parameters = []
+        # print(json.dumps(request.data, indent=4));
+        datastore_type = request.data.get("store_type", None)
+        if datastore_type is not None:
+            datastore_parameters_json = request.data.get("parameter_values", None)
+            if datastore_parameters_json is not None:
+                datastore_parameters = json.loads(datastore_parameters_json)
 
-        snowflake_table_name = "USSTOCKS"
-        save_to_snowflake(df, snowflake_table_name)
+        if str(datastore_type).lower() == 'snowflake':
+            flag_process_data = g_flag_process_data
+            if flag_process_data:
+                # Need to be lookup based
+                groupby_dict = self.get_groupby_dict(document)
+                df = transform_df_using_dict(df, groupby_dict)
 
-        df = load_from_snowflake(snowflake_table_name)
+            # save_to_snowflake(df, datastore_parameters)
+
+            df = load_from_snowflake(datastore_parameters)
 
         transactions_array = json.loads(df.to_json(orient='records'))
         return Response(transactions_array)

@@ -54,7 +54,8 @@ document_transactions_mapper = views.DocumentViewSet.as_view({
 
 
 document_transactions_save = views.DocumentViewSet.as_view({
-    'get': 'transactions_save'
+    'get': 'transactions_save',
+    'post': 'transactions_save'
 }, renderer_classes=[renderers.JSONRenderer])
 
 
