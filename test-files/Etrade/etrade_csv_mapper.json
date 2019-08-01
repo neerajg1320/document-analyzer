@@ -8,7 +8,7 @@
 	{
 		"src": "Col1",
 		"select": true,
-		"dst": "Description",
+		"dst": "Scrip",
 		"dsttype": "object"
 	},
 	{
