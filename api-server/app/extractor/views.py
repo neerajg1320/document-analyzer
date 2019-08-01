@@ -826,28 +826,41 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def transactions_save(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
 
-        datastore_parameters = []
+        datastore_parameters = None
         # print(json.dumps(request.data, indent=4));
+
         datastore_type = request.data.get("store_type", None)
         if datastore_type is not None:
             datastore_parameters_json = request.data.get("parameter_values", None)
             if datastore_parameters_json is not None:
                 datastore_parameters = json.loads(datastore_parameters_json)
 
-        if str(datastore_type).lower() == 'snowflake':
-            #  This is the mapping according to the hardcoded regex extractor
-            #
-            # flag_process_data = g_flag_process_data
-            # if flag_process_data:
-            #     # Need to be lookup based
-            #     groupby_dict = self.get_groupby_dict(document)
-            #     df = transform_df_using_dict(df, groupby_dict)
-            save_to_snowflake(df, datastore_parameters)
-            # df = load_from_snowflake(datastore_parameters)
-        elif str(datastore_type).lower() == 'postgres':
-            save_to_postgres(df, datastore_parameters)
+        mapped_df = None
+        mapped_df_json = request.data.get("dataframe_json", None)
+        if mapped_df_json is not None:
+            # The pd.read_json() is compatible with JSON.stringify()
+            mapped_df = pd.read_json(mapped_df_json)
+            # TBD: We need to assign types from the Destination Header Table
+            # In cache this problem won't be there as we are already assigning types
 
-        transactions_array = json.loads(df.to_json(orient='records'))
+
+        transactions_array = []
+        if datastore_parameters is not None and mapped_df is not None:
+            if str(datastore_type).lower() == 'snowflake':
+                #  This is the mapping according to the hardcoded regex extractor
+                #
+                # flag_process_data = g_flag_process_data
+                # if flag_process_data:
+                #     # Need to be lookup based
+                #     groupby_dict = self.get_groupby_dict(document)
+                #     df = transform_df_using_dict(df, groupby_dict)
+                save_to_snowflake(mapped_df, datastore_parameters)
+                # df = load_from_snowflake(datastore_parameters)
+            elif str(datastore_type).lower() == 'postgres':
+                save_to_postgres(mapped_df, datastore_parameters)
+
+            transactions_array = json.loads(mapped_df.to_json(orient='records'))
+
         return Response(transactions_array)
 
 

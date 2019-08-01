@@ -723,12 +723,12 @@ $("#btn_save_datastore").click(function() {
     }
 
     var datastore_values_json = g_account_parameters_value_table.getData("json");
-    if (datastore_values == "") {
+    if (datastore_values_json == "") {
         alert('Please provide datastore values expression!');
         return;
     }
 
-    save_operation(mapper_name, "Transform", mapper_json);
+    save_operation(datastore_name, "Load", datastore_values_json);
 });
 
 
@@ -790,6 +790,9 @@ $("#btn_load_to_datastore").click(function () {
     });
     console.log(final_store_parameters_values);
 
+    let dataframe_json_str = JSON.stringify(g_document_mapped_table.getData("json"));
+    console.log(typeof(dataframe_json_str), dataframe_json_str);
+
     // let store_parameters_values = JSON.stringify(g_account_parameters_value_table.getData("json"));
     // if (store_type == "new") {
     //     alert('Please provide datastore type!');
@@ -805,7 +808,8 @@ $("#btn_load_to_datastore").click(function () {
         dataType: 'json',
         data: {
             "store_type": store_type,
-            "parameter_values": JSON.stringify(final_store_parameters_values)
+            "parameter_values": JSON.stringify(final_store_parameters_values),
+            "dataframe_json":dataframe_json_str
         },
         success: function(response) {
             // console.log(typeof(response), response);
