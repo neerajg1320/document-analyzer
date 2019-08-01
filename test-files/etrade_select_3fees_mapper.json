@@ -104,7 +104,7 @@
 	{
 		"src": "String3",
 		"select": true,
-		"dst": "String3",
+		"dst": "Summary",
 		"dsttype": "object"
 	},
 	{
