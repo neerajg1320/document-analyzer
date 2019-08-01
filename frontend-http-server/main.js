@@ -162,7 +162,7 @@ let g_account_parameters_value_table = new Tabulator("#account-parameters-value-
     layout:"fitColumns", //fit columns to width of table (optional)
 
     columns:[
-        {title:"Parameter", field:"parameter", editor:"input", editable:true},
+        {title:"Parameter", field:"parameter"},
         {title:"Value", field:"value", editor:"input", editable:true},
     ],
 });
