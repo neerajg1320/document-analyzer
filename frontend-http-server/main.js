@@ -722,13 +722,14 @@ $("#btn_save_datastore").click(function() {
         return;
     }
 
-    var datastore_values_json = g_account_parameters_value_table.getData("json");
-    if (datastore_values_json == "") {
+    var datastore_values_json_str = JSON.stringify(g_account_parameters_value_table.getData("json"));
+    if (datastore_values_json_str == "") {
         alert('Please provide datastore values expression!');
         return;
     }
 
-    save_operation(datastore_name, "Load", datastore_values_json);
+    // save_operation("S1", "Load", "{}");
+    save_operation(datastore_name, "Load", datastore_values_json_str);
 });
 
 
@@ -736,10 +737,10 @@ $("#sel-datastore").on('change', function() {
     console.log(this.value);
 
     if (this.value == "new") {
-        document.getElementById('input_new_datastore').style.display = "";
+        // document.getElementById('input_new_datastore').style.display = "";
         g_account_parameters_description_table.setData('[]')
     } else {
-        document.getElementById('input_new_datastore').style.display = "none";
+        // document.getElementById('input_new_datastore').style.display = "none";
 
         let parameters_array_json = g_table_datastore_parameters_description_dict[this.value];
         console.log(parameters_array_json);
