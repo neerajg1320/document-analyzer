@@ -193,13 +193,15 @@ def save_to_postgres(df, postgres_parameters):
 
 
 def save_to_sql(df, db_url, table_name):
-    print(str(db_url))
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), str(db_url))
+
     engine = create_engine(db_url)
     try:
         connection = engine.connect()
 
-        frameinfo = getframeinfo(currentframe())
-        print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), "Loading to: %s" % table_name)
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), "Loading to: %s" % table_name)
 
         df.to_sql(table_name, engine, index=False, if_exists='append')
         # new_df = pd.read_sql_query('select * from %s' % table_name, con=engine)

@@ -497,7 +497,7 @@ $("#btn_reset_regex").click(function() {
 });
 
 
-$("#btn_get_transactions").click(function() {
+$("#btn_get_text").click(function() {
     download_document_using_input(g_document_table, g_user_auth_token);
 });
 
