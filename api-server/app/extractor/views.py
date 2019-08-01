@@ -4,7 +4,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 
-from core.models import Tag, Extractor, Document, File, Transaction, Schema, Operation, Datastore
+from core.models import Tag, Extractor, Document, File, Transaction, Schema, Operation, Datastore, Pipeline
 
 from extractor import serializers
 
@@ -1056,3 +1056,36 @@ class DatastoreViewSet(viewsets.ModelViewSet):
 
         # return self.serializer_class
         return serializers.DatastoreListSerializer
+
+
+class PipelineViewSet(viewsets.ModelViewSet):
+    """ Manage recipes in database """
+    queryset = Pipeline.objects.all()
+    serializer_class = serializers.PipelineSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def _params_to_int(self, qs):
+        """ Convert a list of string IDs to a list of integers """
+        return [int(str_id) for str_id in qs.split(',')]
+
+    def get_queryset(self):
+        """ Return objects for current user only """
+        operations = self.request.query_params.get('operations')
+        queryset = self.queryset
+
+        if operations:
+            operations_ids = self._params_to_int(operations)
+            queryset = queryset.filter(operations__id__in=operations_ids)
+
+        return queryset.filter(user=self.request.user)
+
+    def get_serializer_class(self):
+        """ Return appropriate serializer class """
+        if self.action == 'retrieve':
+            return serializers.PipelineDetailSerializer
+        return self.serializer_class
+
+    def perform_create(self, serializer):
+        """ Create a new recipe """
+        serializer.save(user=self.request.user)

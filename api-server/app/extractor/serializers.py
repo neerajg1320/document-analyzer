@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core.models import Tag, Extractor, Document, File, Transaction, Schema, Operation, Datastore
+from core.models import Tag, Extractor, Document, File, Transaction, Schema, Operation, Datastore, Pipeline
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -125,3 +125,21 @@ class DatastoreDetailSerializer(serializers.ModelSerializer):
         model = Datastore
         fields = ('id', 'title', 'parameters')
         read_only_fields = ('id',)
+
+
+class PipelineSerializer(serializers.ModelSerializer):
+    """ Serializer for Recipe objects """
+    operations = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Operation.objects.all()
+    )
+
+    class Meta:
+        model = Pipeline
+        fields = ('id', 'title', 'operations')
+        read_only_fields = ('id',)
+
+
+class PipelineDetailSerializer(PipelineSerializer):
+    """ Serialize a recipe detail """
+    operations = OperationListSerializer(many=True, read_only=True)

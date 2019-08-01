@@ -13,6 +13,7 @@ router.register('transactions', views.TransactionViewSet)
 router.register('schemas', views.SchemaViewSet)
 router.register('operations', views.OperationViewSet)
 router.register('datastores', views.DatastoreViewSet)
+router.register('pipelines', views.PipelineViewSet)
 
 
 app_name = 'extractor'
