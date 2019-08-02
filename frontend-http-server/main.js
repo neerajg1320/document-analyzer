@@ -200,7 +200,7 @@ let g_account_table = new Tabulator("#account-transactions-table", {
     },
 });
 
-let g_config_automate_flow = false;
+let g_config_automate_flow = true;
 
 let g_document_text_box = $("#document-text");
 let g_regex_text_box = $("#regex-text");
@@ -225,6 +225,33 @@ var g_user_auth_token = g_user_auth_token_docker;
 if (flag_server_local) {
     g_user_auth_token = g_user_auth_token_local;
 }
+
+var g_file_info = {};
+
+$("#fileinfo").submit(function(e) {
+    var formData = new FormData($(this)[0]);
+    
+    $.ajax({
+        url: $(this).attr('action'),
+        type: $(this).attr('method'),
+        data: formData,
+        headers: {'Authorization': 'Token ' + g_user_auth_token},
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function(response) {
+            g_file_info = response;
+            console.log(g_file_info);
+
+            // alert('File upload successful (id = ' + response.id + ')');
+            $("#input_file_id").val(response.id);
+            if (g_config_automate_flow) {
+                $("#btn_documentize").click();
+            }
+        },
+    });
+    e.preventDefault();
+});
 
 
 // These functions should have no knowledge of elements extractions
@@ -316,7 +343,7 @@ function documentize_file(user_auth_token, file_id, result_elm) {
         success: function(response) {
             result_elm.val(response.id);
             if (g_config_automate_flow) {
-                $("#btn_download").click();
+                $("#btn_get_text").click();
             }
         }
     });
@@ -444,6 +471,7 @@ $("#btn_apply_regex").click(function() {
 
 });
 
+let g_operation_pipeline_array = [];
 
 function save_operation(title, type, parameters) {
     let operation_save_url = 'http://localhost:8000/api/docminer/operations/';
@@ -469,6 +497,10 @@ function save_operation(title, type, parameters) {
             //response is already a parsed JSON
 
             // alert("Regex saved");
+            // g_operation_pipeline_array.push(response.id);
+            g_operation_pipeline_array.push(response.id);
+
+            console.log("Pipeline_array:", g_operation_pipeline_array);
         }
     });
 }
@@ -823,27 +855,47 @@ $("#btn_load_to_datastore").click(function () {
 
 });
 
-$("#fileinfo").submit(function(e) {
-    var formData = new FormData($(this)[0]);
+$("#btn_save_pipeline").click(function () {
+    // Get document id
+    let pipeline_name = $("#input_new_pipeline").val();
+
+    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
+    let pipeline_save_url = 'http://localhost:8000/api/docminer/pipelines/';
+    console.log(pipeline_save_url);
+
+    // g_operation_pipeline_array = [19,20,21];
+
+    if (g_operation_pipeline_array.length < 1) {
+        alert("Please save ETL operations before saving pipeline");
+        return;
+    }
+
+    let json_data = JSON.stringify({
+        "title": pipeline_name,
+        "institute_name": g_file_info.institute_name,
+        "document_type": g_file_info.document_type,
+        "operations": g_operation_pipeline_array
+    });
 
     $.ajax({
-        url: $(this).attr('action'),
-        type: $(this).attr('method'),
-        data: formData,
-        headers: {'Authorization': 'Token ' + g_user_auth_token},
-        cache: false,
-        contentType: false,
-        processData: false,
-        success: function(response) {
-            // alert('File upload successful (id = ' + response.id + ')');
-            $("#input_file_id").val(response.id);
-            if (g_config_automate_flow) {
-                $("#btn_documentize").click();
-            }
+        type: 'POST',
+        url: pipeline_save_url,
+        data: json_data,
+        dataType: 'json',
+        contentType: "application/json",
+        headers : {
+            'Authorization' : 'Token ' + g_user_auth_token,
         },
+
+        success: function(response) {
+            console.log(typeof(response), response);
+            //response is already a parsed JSON
+
+        }
     });
-    e.preventDefault();
+
 });
+
 
 $(document).ready(function() {
     download_document_using_input(g_document_table, g_user_auth_token);
