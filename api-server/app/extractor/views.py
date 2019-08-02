@@ -1096,6 +1096,35 @@ def file_to_text(file_path, password="password"):
     return text
 
 
+def apply_pipeline_on_text(file_text, pipeline):
+    current_df = pd.DataFrame()
+    for operation in pipeline.operations.all():
+        if operation.type == "Extract":
+            regex_str = operation.parameters
+            new_str, table_dict = apply_regex_on_text(file_text, regex_str)
+            current_df = pd.DataFrame(table_dict)
+            print(current_df)
+
+        elif operation.type == "Transform":
+            parameters = json.loads(operation.parameters)
+            destination_table = parameters["destination_table"]
+            mapper = parameters["mapper"]
+            print("Transform:", operation.parameters)
+            current_df = apply_mapper_on_dataframe(destination_table, mapper, current_df)
+            print(current_df)
+
+        elif operation.type == "Load":
+            parameters = json.loads(operation.parameters)
+            type = parameters["type"]
+            properties = json.loads(parameters["properties"])
+            apply_loader_on_dataframe(type, properties, current_df)
+
+        else:
+            raise RuntimeError("Operation %s not found" % operation.type)
+
+    return current_df
+
+
 class PipelineViewSet(viewsets.ModelViewSet):
     """ Manage recipes in database """
     queryset = Pipeline.objects.all()
@@ -1150,32 +1179,10 @@ class PipelineViewSet(viewsets.ModelViewSet):
             pipeline = Pipeline.objects.get(user=request.user, pk=pipeline_id)
             print(pipeline)
 
-            current_df = pd.DataFrame()
-            for operation in pipeline.operations.all():
-                if operation.type == "Extract":
-                    regex_str = operation.parameters
-                    new_str, table_dict = apply_regex_on_text(file_text, regex_str)
-                    current_df = pd.DataFrame(table_dict)
-                    print(current_df)
-
-                elif operation.type == "Transform":
-                    parameters = json.loads(operation.parameters)
-                    destination_table = parameters["destination_table"]
-                    mapper = parameters["mapper"]
-                    print("Transform:", operation.parameters)
-                    current_df = apply_mapper_on_dataframe(destination_table, mapper, current_df)
-                    print(current_df)
-
-                elif operation.type == "Load":
-                    parameters = json.loads(operation.parameters)
-                    type = parameters["type"]
-                    properties = json.loads(parameters["properties"])
-                    apply_loader_on_dataframe(type, properties, current_df)
-                    
-                else:
-                    response["error"] = "Operation %s not found" % operation.type
+            current_df = apply_pipeline_on_text(file_text, pipeline)
 
             response["dataframe_str"] = str(current_df)
             response["table_json"] = current_df.to_json(orient='records')
 
         return Response(response)
+
