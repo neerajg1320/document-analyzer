@@ -192,6 +192,9 @@ class Operation(models.Model):
     type = models.CharField(max_length=32, choices=OPERATIONS_CHOICES, blank=False)
     parameters = models.CharField(max_length=2048)
 
+    def __str__(self):
+        return self.title
+
 
 # This table witll
 class Datastore(models.Model):
@@ -214,5 +217,7 @@ class Pipeline(models.Model):
         blank=True,
         default="alice@abc.com",
     )
+    institute_name = models.CharField(max_length=255, blank=False)
+    document_type = models.CharField(max_length=255, blank=False)
     title = models.CharField(max_length=128, blank=False)
     operations = models.ManyToManyField('Operation')
