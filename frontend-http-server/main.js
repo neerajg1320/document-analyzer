@@ -753,14 +753,29 @@ $("#btn_save_datastore").click(function() {
         return;
     }
 
-    var datastore_values_json_str = JSON.stringify(g_account_parameters_value_table.getData("json"));
-    if (datastore_values_json_str == "") {
-        alert('Please provide datastore values expression!');
+    let store_type = $("#sel-datastore").val();
+    if (store_type == "new") {
+        alert('Please provide datastore type!');
         return;
     }
 
+    let store_parameters_table_values = g_account_parameters_value_table.getData("json");
+
+    let final_store_parameters_values = {}
+    store_parameters_table_values.forEach(function(entry) {
+        final_store_parameters_values[entry.parameter] = entry.value;
+    });
+    console.log(final_store_parameters_values);
+
     // save_operation("S1", "Load", "{}");
-    save_operation(datastore_name, "Load", datastore_values_json_str);
+    let loader = {
+        "type": store_type,
+        "properties": JSON.stringify(final_store_parameters_values)
+
+    };
+    let loader_json = JSON.stringify(loader);
+
+    save_operation(datastore_name, "Load", loader_json);
 });
 
 
