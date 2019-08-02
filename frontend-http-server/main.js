@@ -208,29 +208,18 @@ let g_regex_text_box = $("#regex-text");
 let g_document_dataframe_box = $("#document-dataframe");
 let g_document_mapped_dataframe_box = $("#document-mapped-dataframe");
 
-// MacPro Docker
-let g_user_auth_token_docker = '307e60bcf5f1930b39a6ce5bc87b171ed0451323';
-// MacPro Local
-let g_user_auth_token_local = '219201bc10fb6baa4a4cbc36d318aedaa89f78b7';
-// MacAir Local
-// let g_user_auth_token_local = '0676010d893a1e1cd15f5d8a3883b5ced174fdad';
-
 
 var g_current_document = null;
 var g_current_document_local_cache = {};
 
-var flag_server_local = true;
-
-var g_user_auth_token = g_user_auth_token_docker;
-if (flag_server_local) {
-    g_user_auth_token = g_user_auth_token_local;
-}
 
 var g_file_info = {};
 
 $("#fileinfo").submit(function(e) {
+    e.preventDefault();
+
     var formData = new FormData($(this)[0]);
-    
+
     $.ajax({
         url: $(this).attr('action'),
         type: $(this).attr('method'),
@@ -250,7 +239,6 @@ $("#fileinfo").submit(function(e) {
             }
         },
     });
-    e.preventDefault();
 });
 
 
