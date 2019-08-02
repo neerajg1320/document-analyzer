@@ -572,6 +572,21 @@ def apply_mapper_on_dataframe(destination_table_name, new_mapper, df):
     return agg_df
 
 
+def apply_loader_on_dataframe(type, properties, dataframe):
+    if str(type).lower() == 'snowflake':
+        #  This is the mapping according to the hardcoded regex extractor
+        #
+        # flag_process_data = g_flag_process_data
+        # if flag_process_data:
+        #     # Need to be lookup based
+        #     groupby_dict = self.get_groupby_dict(document)
+        #     df = transform_df_using_dict(df, groupby_dict)
+        save_to_snowflake(dataframe, properties)
+        # df = load_from_snowflake(datastore_parameters)
+    elif str(type).lower() == 'postgres':
+        save_to_postgres(dataframe, properties)
+
+
 class DocumentViewSet(viewsets.ModelViewSet):
     """ Manage documents in database """
     queryset = Document.objects.all()
@@ -855,19 +870,9 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
 
         transactions_array = []
+
         if datastore_parameters is not None and mapped_df is not None:
-            if str(datastore_type).lower() == 'snowflake':
-                #  This is the mapping according to the hardcoded regex extractor
-                #
-                # flag_process_data = g_flag_process_data
-                # if flag_process_data:
-                #     # Need to be lookup based
-                #     groupby_dict = self.get_groupby_dict(document)
-                #     df = transform_df_using_dict(df, groupby_dict)
-                save_to_snowflake(mapped_df, datastore_parameters)
-                # df = load_from_snowflake(datastore_parameters)
-            elif str(datastore_type).lower() == 'postgres':
-                save_to_postgres(mapped_df, datastore_parameters)
+            apply_loader_on_dataframe(datastore_type, datastore_parameters, mapped_df)
 
             transactions_array = json.loads(mapped_df.to_json(orient='records'))
 
@@ -1152,6 +1157,7 @@ class PipelineViewSet(viewsets.ModelViewSet):
                     new_str, table_dict = apply_regex_on_text(file_text, regex_str)
                     current_df = pd.DataFrame(table_dict)
                     print(current_df)
+
                 elif operation.type == "Transform":
                     parameters = json.loads(operation.parameters)
                     destination_table = parameters["destination_table"]
@@ -1159,8 +1165,13 @@ class PipelineViewSet(viewsets.ModelViewSet):
                     print("Transform:", operation.parameters)
                     current_df = apply_mapper_on_dataframe(destination_table, mapper, current_df)
                     print(current_df)
+
                 elif operation.type == "Load":
-                    print("Load:", operation.parameters)
+                    parameters = json.loads(operation.parameters)
+                    type = parameters["type"]
+                    properties = json.loads(parameters["properties"])
+                    apply_loader_on_dataframe(type, properties, current_df)
+                    
                 else:
                     response["error"] = "Operation %s not found" % operation.type
 
