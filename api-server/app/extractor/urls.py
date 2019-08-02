@@ -64,6 +64,11 @@ file_textify = views.FileViewSet.as_view({
     'get': 'textify'
 }, renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
 
+pipeline_apply = views.PipelineViewSet.as_view({
+    'post': 'apply'
+}, renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
+
+
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -85,4 +90,6 @@ urlpatterns = [
          name='document-transactions-save'),
 
     path('files/<int:pk>/textify/', file_textify, name='file-textify'),
+
+    path('pipelines/apply/', pipeline_apply, name='pipeline-apply'),
 ]

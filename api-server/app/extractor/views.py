@@ -871,6 +871,11 @@ from extractor.pdf_routines import read_pdf, is_encrypted_pdf, decrypt_pdf, \
     pdftotext_read_pdf, pdftotext_read_pdf_using_subprocess
 
 
+def get_file_path(file):
+    file_path = os.path.join(settings.MEDIA_ROOT, str(file.file))
+    return file_path
+
+
 class FileViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -914,14 +919,10 @@ class FileViewSet(viewsets.ModelViewSet):
 
         return Response(file.text)
 
-    def get_file_path(self, file):
-        file_path = os.path.join(settings.MEDIA_ROOT, str(file.file))
-        return file_path
-
     @action(detail=True, renderer_classes=[renderers.JSONRenderer])
     def documentize(self, request, *args, **kwargs):
         file = self.get_object()
-        file_path = self.get_file_path(file)
+        file_path = get_file_path(file)
 
         global g_flag_process_data
 
@@ -949,11 +950,13 @@ class FileViewSet(viewsets.ModelViewSet):
 
             super(File, file).save()
 
-        addresses = pyap.parse(file.text, country='US')
-        for address in addresses:
-            frameinfo = getframeinfo(currentframe())
-            print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno),
-                  json.dumps(address.as_dict(), indent=4))
+        # The following code is just for testing purpose
+        #
+        # addresses = pyap.parse(file.text, country='US')
+        # for address in addresses:
+        #     frameinfo = getframeinfo(currentframe())
+        #     print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno),
+        #           json.dumps(address.as_dict(), indent=4))
 
         document = Document.objects.create(user=file.user,
                                            title=file.title,
@@ -1058,6 +1061,22 @@ class DatastoreViewSet(viewsets.ModelViewSet):
         return serializers.DatastoreListSerializer
 
 
+def file_to_text(file_path, password="password"):
+    file_name, file_extn = os.path.splitext(file_path)
+
+    if file_extn.lower() == '.pdf':
+        # We first read the pdf, the password is used in case pdf is encrypted
+        text = pdftotext_read_pdf_using_subprocess(file_path, password)
+    elif excel_routines.is_file_extn_excel(file_extn):
+        text = excel_routines.excel_to_text(file_path)
+    elif image_routines.is_file_extn_image(file_extn):
+        text = image_routines.image_to_text(file_path)
+    else:
+        text = "Format {} not supported".format(file_extn)
+
+    return text
+
+
 class PipelineViewSet(viewsets.ModelViewSet):
     """ Manage recipes in database """
     queryset = Pipeline.objects.all()
@@ -1089,3 +1108,39 @@ class PipelineViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """ Create a new recipe """
         serializer.save(user=self.request.user)
+
+    @action(detail=False, methods=['post'], renderer_classes=[renderers.JSONRenderer])
+    def apply(self, request, *args, **kwargs):
+        response = {}
+
+        pipeline_id = request.data.get("pipeline_id", None)
+        if pipeline_id is None:
+            response["error"] = "Pipeline id %s not found" % pipeline_id
+
+        file_id = request.data.get("file_id", None)
+        if file_id is None:
+            response["error"] = "File id %s not found" % file_id
+
+        if file_id and pipeline_id:
+            # TBD: File to Text part to be made part of pipeline
+            file = File.objects.get(user=request.user, pk=file_id)
+            file_path = get_file_path(file)
+            text = file_to_text(file_path)
+            print(text)
+
+            pipeline = Pipeline.objects.get(user=request.user, pk=pipeline_id)
+            print(pipeline)
+
+            for operation in pipeline.operations.all():
+                if operation.type == "Extract":
+                    print("Extract:", operation.parameters)
+                elif operation.type == "Transform":
+                    print("Transform:", operation.parameters)
+                elif operation.type == "Load":
+                    print("Load:", operation.parameters)
+                else:
+                    response["error"] = "Operation %s not found" % operation.type
+
+            response["msg"] = "Pipeline implementation under construction"
+
+        return Response(response)
