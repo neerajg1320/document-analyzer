@@ -1153,13 +1153,18 @@ class PipelineViewSet(viewsets.ModelViewSet):
                     current_df = pd.DataFrame(table_dict)
                     print(current_df)
                 elif operation.type == "Transform":
-                    mapper_str = operation.parameters
+                    parameters = json.loads(operation.parameters)
+                    destination_table = parameters["destination_table"]
+                    mapper = parameters["mapper"]
                     print("Transform:", operation.parameters)
+                    current_df = apply_mapper_on_dataframe(destination_table, mapper, current_df)
+                    print(current_df)
                 elif operation.type == "Load":
                     print("Load:", operation.parameters)
                 else:
                     response["error"] = "Operation %s not found" % operation.type
 
-            response["msg"] = "Pipeline implementation under construction"
+            response["dataframe_str"] = str(current_df)
+            response["table_json"] = current_df.to_json(orient='records')
 
         return Response(response)
