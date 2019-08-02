@@ -1,3 +1,5 @@
+let g_customer_automate_workflow = true;
+
 // Document table which shows transactions present in a document
 let g_customer_transactions_table = new Tabulator("#customer-transactions-table", {
     height:300,
@@ -30,7 +32,10 @@ $("#customer-fileinfo").submit(function(e) {
             g_customer_file_info = response;
             console.log(g_customer_file_info);
 
-            $("#input_file_id").val(g_customer_file_info.id);
+            if (g_customer_automate_workflow) {
+                $("#input_file_id").val(g_customer_file_info.id);
+                $("#btn_apply_pipeline").click();
+            }
         },
     });
 });
@@ -69,7 +74,7 @@ function get_pipelines() {
 
 }
 
-$("#btn_appy_pipeline").click(function() {
+$("#btn_apply_pipeline").click(function() {
     let input_file_id = $("#input_file_id").val();
     let pipeline_id = $("#sel-pipeline").val();
 
@@ -91,7 +96,7 @@ $("#btn_appy_pipeline").click(function() {
         success: function(response) {
             console.log(typeof(response), response);
 
-
+            g_customer_transactions_table.setData(response.table_json);
         }
     });
 

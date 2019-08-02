@@ -634,9 +634,20 @@ $("#btn_save_mapper").click(function() {
         return;
     }
 
-    var mapper_json = JSON.stringify(g_document_mapper_table.getData("json"));
+    let destination_table = $("#sel-destination-header-table").val();
+    if (destination_table == "") {
+        alert('Please provide destination table!');
+        return;
+    }
+
+    let mapper = {
+        "destination_table": destination_table,
+        "mapper": JSON.stringify(g_document_mapper_table.getData("json"))
+    }
+
+    var mapper_json = JSON.stringify(mapper);
     if (mapper_json == "") {
-        alert('Please provide regular expression!');
+        alert('Please provide mapper!');
         return;
     }
 
