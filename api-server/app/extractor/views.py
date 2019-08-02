@@ -465,6 +465,16 @@ class SchemaViewSet(viewsets.ModelViewSet):
         return serializers.SchemaListSerializer
 
 
+def apply_regex_on_text(complete_text, regex_str):
+    match_queue = []
+    regex_str_dict = {"Transaction": regex_str}
+    new_str = replace_regex_with_chars(match_queue, regex_str_dict, complete_text, "Transaction", "-")
+    # print(new_str)
+    print('\n'.join(map(str, match_queue)))
+    transactions_dict_array = create_transactions_dict_array_from_text(regex_str, complete_text)
+    return new_str, transactions_dict_array
+
+
 class DocumentViewSet(viewsets.ModelViewSet):
     """ Manage documents in database """
     queryset = Document.objects.all()
@@ -551,26 +561,21 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # print(regex_str)
         # print(complete_text)
 
-        match_queue = []
-        regex_str_dict = {"Transaction": regex_str}
-        new_str = replace_regex_with_chars(match_queue, regex_str_dict, complete_text, "Transaction", "-")
-        # print(new_str)
-        print('\n'.join(map(str, match_queue)))
-
-        transactions_dict_array = create_transactions_dict_array_from_text(regex_str, complete_text)
-        # We update the transactions dataframe stored as json
-        document.transactions_json = json.dumps(transactions_dict_array)
-        super(Document, document).save()
+        new_str, transactions_dict_array = apply_regex_on_text(complete_text, regex_str)
 
         response_dict = [{
             "new_str": new_str,
-            # "dataframe": str(self.get_or_create_transactions_dataframe()),
             "dataframe": str(pd.DataFrame(transactions_dict_array)),
             "transactions": transactions_dict_array,
         }]
 
+        # We update the transactions dataframe stored as json
+        document.transactions_json = json.dumps(transactions_dict_array)
+        super(Document, document).save()
+
         # Response should be a regex
         return Response(response_dict)
+
 
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
     def transactions(self, request, *args, **kwargs):
@@ -934,9 +939,13 @@ class FileViewSet(viewsets.ModelViewSet):
                 # We first read the pdf, the password is used in case pdf is encrypted
                 file.text = pdftotext_read_pdf_using_subprocess(file_path, file.password)
                 # The we extract the transactions from the text
-                file_transactions_json = text_extract_dataframe_json(file.institute_name,
+                try:
+                    file_transactions_json = text_extract_dataframe_json(file.institute_name,
                                                                      file.document_type,
                                                                      file.text)
+                except Exception as e:
+                    pass  # Ignore for now
+
                 g_flag_process_data = True
             elif excel_routines.is_file_extn_excel(file_extn):
                 file.text = excel_routines.excel_to_text(file_path)
@@ -1125,16 +1134,21 @@ class PipelineViewSet(viewsets.ModelViewSet):
             # TBD: File to Text part to be made part of pipeline
             file = File.objects.get(user=request.user, pk=file_id)
             file_path = get_file_path(file)
-            text = file_to_text(file_path)
-            print(text)
+            file_text = file_to_text(file_path)
+            # print(text)
 
             pipeline = Pipeline.objects.get(user=request.user, pk=pipeline_id)
             print(pipeline)
 
+            current_df = pd.DataFrame()
             for operation in pipeline.operations.all():
                 if operation.type == "Extract":
-                    print("Extract:", operation.parameters)
+                    regex_str = operation.parameters
+                    new_str, table_dict = apply_regex_on_text(file_text, regex_str)
+                    current_df = pd.DataFrame(table_dict)
+                    print(current_df)
                 elif operation.type == "Transform":
+                    mapper_str = operation.parameters
                     print("Transform:", operation.parameters)
                 elif operation.type == "Load":
                     print("Load:", operation.parameters)
