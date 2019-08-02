@@ -475,6 +475,103 @@ def apply_regex_on_text(complete_text, regex_str):
     return new_str, transactions_dict_array
 
 
+def apply_mapper_on_dataframe(destination_table_name, new_mapper, df):
+    destination_tables_schema_dict = hjson.loads(destination_tables_schema_json)
+    try:
+        destination_table = destination_tables_schema_dict[destination_table_name]
+    except KeyError as e:
+        frameinfo = getframeinfo(currentframe())
+        print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno),
+              "Key {} does not exist".format(e))
+        return Response([])
+
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno),
+    #     json.dumps(destination_table, indent=4))
+
+    dst_sch_df = pd.DataFrame(destination_table)
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), str(dst_sch_df))
+
+    column_mapper_df = pd.DataFrame(json.loads(new_mapper))
+
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), column_mapper_df)
+
+    # New dataframe will only contain columns which are selected
+    column_mapper_df = column_mapper_df.loc[column_mapper_df["select"] == True]
+
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), column_mapper_df.dtypes)
+
+    # Find out dst_column to src_column mappings
+    dst_column_dict = {}
+    for index, row in column_mapper_df.iterrows():
+        key = row['dst']
+        if dst_column_dict.get(key, None) is None:
+            dst_column_dict[key] = []
+        dst_column_dict[key].append(row['src'])
+
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), json.dumps(dst_column_dict, indent=2))
+
+    #
+    # Aggregate multiple src_columns mapped to same dst_column
+    #
+    agg_df = pd.DataFrame()
+    for dst_col, src_col_list in dst_column_dict.items():
+        if len(src_col_list) > 1:
+            # https://stackoverflow.com/questions/17071871/select-rows-from-a-dataframe-based-on-values-in-a-column-in-pandas
+            subset_df = dst_sch_df.loc[dst_sch_df['name'] == dst_col]
+            # frameinfo = getframeinfo(currentframe())
+            # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), subset_df)
+
+            # aggregate_fn = 'sum'
+            aggregate_fn = subset_df.iloc[0]['aggregation']
+            agg_df[dst_col] = df[src_col_list].agg(aggregate_fn, axis="columns")
+        else:
+            agg_df[dst_col] = df[src_col_list[0]]
+
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), agg_df.columns)
+
+    # Then we assign the new column types
+    # https://stackoverflow.com/questions/21197774/assign-pandas-dataframe-column-dtypes
+    # Create dictionary from two columns
+    # https://stackoverflow.com/questions/17426292/what-is-the-most-efficient-way-to-create-a-dictionary-of-two-pandas-dataframe-co
+    new_dtypes_dict = pd.Series(dst_sch_df.type.values, index=dst_sch_df.name).to_dict()
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), new_dtypes_dict.keys())
+
+    numeric_columns = []
+    numeric_columns += dst_sch_df.loc[dst_sch_df['type'] == 'float64']['name'].tolist()
+    numeric_columns += dst_sch_df.loc[dst_sch_df['type'] == 'int64']['name'].tolist()
+
+    # numeric_columns.append(dst_sch_df.loc[dst_sch_df['type'] == 'int64'].name)
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), numeric_columns)
+
+    for col in numeric_columns:
+        try:
+            if agg_df[col].dtype == 'object':
+                agg_df[col] = agg_df[col].str.replace(',', '')
+        except KeyError as e:
+            frameinfo = getframeinfo(currentframe())
+            print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno),
+                  "KeyError:" + str(e))
+
+    try:
+        agg_df = agg_df.astype(dtype=new_dtypes_dict)
+    except ValueError as e:
+        frameinfo = getframeinfo(currentframe())
+        print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
+    except KeyError as e:
+        frameinfo = getframeinfo(currentframe())
+        print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
+
+    return agg_df
+
+
 class DocumentViewSet(viewsets.ModelViewSet):
     """ Manage documents in database """
     queryset = Document.objects.all()
@@ -718,102 +815,10 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def transactions_post_mapper(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
 
-        destination_tables_schema_dict = hjson.loads(destination_tables_schema_json)
-
         destination_table_name = request.data.get("destination_table", None)
-
-        try:
-            destination_table = destination_tables_schema_dict[destination_table_name]
-        except KeyError as e:
-            frameinfo = getframeinfo(currentframe())
-            print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno),
-                  "Key {} does not exist".format(e))
-            return Response([])
-
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno),
-        #     json.dumps(destination_table, indent=4))
-
-        dst_sch_df = pd.DataFrame(destination_table)
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), str(dst_sch_df))
-
         new_mapper = request.data.get("mapper", None)
-        column_mapper_df = pd.DataFrame(json.loads(new_mapper))
 
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), column_mapper_df)
-
-        # New dataframe will only contain columns which are selected
-        column_mapper_df = column_mapper_df.loc[column_mapper_df["select"] == True]
-
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), column_mapper_df.dtypes)
-
-        # Find out dst_column to src_column mappings
-        dst_column_dict = {}
-        for index, row in column_mapper_df.iterrows():
-            key = row['dst']
-            if dst_column_dict.get(key, None) is None:
-                dst_column_dict[key] = []
-            dst_column_dict[key].append(row['src'])
-
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), json.dumps(dst_column_dict, indent=2))
-
-        #
-        # Aggregate multiple src_columns mapped to same dst_column
-        #
-        agg_df = pd.DataFrame()
-        for dst_col, src_col_list in dst_column_dict.items():
-            if len(src_col_list) > 1:
-                # https://stackoverflow.com/questions/17071871/select-rows-from-a-dataframe-based-on-values-in-a-column-in-pandas
-                subset_df = dst_sch_df.loc[dst_sch_df['name'] == dst_col]
-                # frameinfo = getframeinfo(currentframe())
-                # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), subset_df)
-
-                # aggregate_fn = 'sum'
-                aggregate_fn = subset_df.iloc[0]['aggregation']
-                agg_df[dst_col] = df[src_col_list].agg(aggregate_fn, axis="columns")
-            else:
-                agg_df[dst_col] = df[src_col_list[0]]
-
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), agg_df.columns)
-
-        # Then we assign the new column types
-        # https://stackoverflow.com/questions/21197774/assign-pandas-dataframe-column-dtypes
-        # Create dictionary from two columns
-        # https://stackoverflow.com/questions/17426292/what-is-the-most-efficient-way-to-create-a-dictionary-of-two-pandas-dataframe-co
-        new_dtypes_dict = pd.Series(dst_sch_df.type.values, index=dst_sch_df.name).to_dict()
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), new_dtypes_dict.keys())
-
-        numeric_columns = []
-        numeric_columns += dst_sch_df.loc[dst_sch_df['type'] == 'float64']['name'].tolist()
-        numeric_columns += dst_sch_df.loc[dst_sch_df['type'] == 'int64']['name'].tolist()
-
-        # numeric_columns.append(dst_sch_df.loc[dst_sch_df['type'] == 'int64'].name)
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), numeric_columns)
-
-        for col in numeric_columns:
-            try:
-                if agg_df[col].dtype == 'object':
-                    agg_df[col] = agg_df[col].str.replace(',', '')
-            except KeyError as e:
-                frameinfo = getframeinfo(currentframe())
-                print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno),
-                      "KeyError:" + str(e))
-
-        try:
-            agg_df = agg_df.astype(dtype=new_dtypes_dict)
-        except ValueError as e:
-            frameinfo = getframeinfo(currentframe())
-            print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
-        except KeyError as e:
-            frameinfo = getframeinfo(currentframe())
-            print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
+        agg_df = apply_mapper_on_dataframe(destination_table_name, new_mapper, df)
 
         try:
             response_dict = [{
