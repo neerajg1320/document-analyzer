@@ -910,6 +910,11 @@ $("#btn_save_pipeline").click(function () {
 
 });
 
+$("#btn_reset_pipeline").click(function () {
+    g_operation_pipeline_array.length = 0;
+
+    console.log("Pipeline_array:", g_operation_pipeline_array);
+});
 
 $(document).ready(function() {
     download_document_using_input(g_document_table, g_user_auth_token);
