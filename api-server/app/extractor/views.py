@@ -395,7 +395,7 @@ def convert_to_regex(text):
     return complete_regex_str
 
 
-destination_tables_schema_json = """
+g_destination_tables_schema_json = """
     "bank_statement": [
         {"name": "TransactionDate", "type": "object", "aggregation": "none"},
         {"name": "ApplicableDate", "type": "object", "aggregation": "none"},
@@ -478,8 +478,8 @@ def apply_regex_on_text(complete_text, regex_str):
     return new_str, transactions_dict_array
 
 
-def apply_mapper_on_dataframe(destination_table_name, new_mapper, df):
-    destination_tables_schema_dict = hjson.loads(destination_tables_schema_json)
+def destnation_table_to_dataframe(destination_table_name):
+    destination_tables_schema_dict = hjson.loads(g_destination_tables_schema_json)
     try:
         destination_table = destination_tables_schema_dict[destination_table_name]
     except KeyError as e:
@@ -488,71 +488,21 @@ def apply_mapper_on_dataframe(destination_table_name, new_mapper, df):
               "Key {} does not exist".format(e))
         return Response([])
 
-    # frameinfo = getframeinfo(currentframe())
-    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno),
-    #     json.dumps(destination_table, indent=4))
+    return pd.DataFrame(destination_table)
 
-    dst_sch_df = pd.DataFrame(destination_table)
-    # frameinfo = getframeinfo(currentframe())
-    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), str(dst_sch_df))
 
-    column_mapper_df = pd.DataFrame(json.loads(new_mapper))
-
-    # frameinfo = getframeinfo(currentframe())
-    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), column_mapper_df)
-
-    # New dataframe will only contain columns which are selected
-    column_mapper_df = column_mapper_df.loc[column_mapper_df["select"] == True]
-
-    # frameinfo = getframeinfo(currentframe())
-    # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), column_mapper_df.dtypes)
-
-    # Find out dst_column to src_column mappings
-    dst_column_dict = {}
-    for index, row in column_mapper_df.iterrows():
-        key = row['dst']
-        if dst_column_dict.get(key, None) is None:
-            dst_column_dict[key] = []
-        dst_column_dict[key].append(row['src'])
-
-    # frameinfo = getframeinfo(currentframe())
-    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), json.dumps(dst_column_dict, indent=2))
-
-    #
-    # Aggregate multiple src_columns mapped to same dst_column
-    #
-    agg_df = pd.DataFrame()
-    for dst_col, src_col_list in dst_column_dict.items():
-        if len(src_col_list) > 1:
-            # https://stackoverflow.com/questions/17071871/select-rows-from-a-dataframe-based-on-values-in-a-column-in-pandas
-            subset_df = dst_sch_df.loc[dst_sch_df['name'] == dst_col]
-            # frameinfo = getframeinfo(currentframe())
-            # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), subset_df)
-
-            # aggregate_fn = 'sum'
-            aggregate_fn = subset_df.iloc[0]['aggregation']
-            agg_df[dst_col] = df[src_col_list].agg(aggregate_fn, axis="columns")
-        else:
-            agg_df[dst_col] = df[src_col_list[0]]
-
-    # frameinfo = getframeinfo(currentframe())
-    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), agg_df.columns)
+def assign_new_datatypes(destination_table_name, agg_df):
+    destination_schema_df = destnation_table_to_dataframe(destination_table_name)
 
     # Then we assign the new column types
     # https://stackoverflow.com/questions/21197774/assign-pandas-dataframe-column-dtypes
     # Create dictionary from two columns
     # https://stackoverflow.com/questions/17426292/what-is-the-most-efficient-way-to-create-a-dictionary-of-two-pandas-dataframe-co
-    new_dtypes_dict = pd.Series(dst_sch_df.type.values, index=dst_sch_df.name).to_dict()
-    # frameinfo = getframeinfo(currentframe())
-    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), new_dtypes_dict.keys())
+    new_dtypes_dict = pd.Series(destination_schema_df.type.values, index=destination_schema_df.name).to_dict()
 
     numeric_columns = []
-    numeric_columns += dst_sch_df.loc[dst_sch_df['type'] == 'float64']['name'].tolist()
-    numeric_columns += dst_sch_df.loc[dst_sch_df['type'] == 'int64']['name'].tolist()
-
-    # numeric_columns.append(dst_sch_df.loc[dst_sch_df['type'] == 'int64'].name)
-    # frameinfo = getframeinfo(currentframe())
-    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), numeric_columns)
+    numeric_columns += destination_schema_df.loc[destination_schema_df['type'] == 'float64']['name'].tolist()
+    numeric_columns += destination_schema_df.loc[destination_schema_df['type'] == 'int64']['name'].tolist()
 
     for col in numeric_columns:
         try:
@@ -573,6 +523,39 @@ def apply_mapper_on_dataframe(destination_table_name, new_mapper, df):
         print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
 
     return agg_df
+
+
+def apply_mapper_on_dataframe(destination_table_name, new_mapper, df):
+    column_mapper_df = pd.DataFrame(json.loads(new_mapper))
+
+    # New dataframe will only contain columns which are selected
+    column_mapper_df = column_mapper_df.loc[column_mapper_df["select"] == True]
+
+    # Find out dst_column to src_column mappings
+    dst_column_dict = {}
+    for index, row in column_mapper_df.iterrows():
+        key = row['dst']
+        if dst_column_dict.get(key, None) is None:
+            dst_column_dict[key] = []
+        dst_column_dict[key].append(row['src'])
+
+    destination_schema_df = destnation_table_to_dataframe(destination_table_name)
+
+    #
+    # Aggregate multiple src_columns mapped to same dst_column
+    #
+    agg_df = pd.DataFrame()
+    for dst_col, src_col_list in dst_column_dict.items():
+        if len(src_col_list) > 1:
+            # https://stackoverflow.com/questions/17071871/select-rows-from-a-dataframe-based-on-values-in-a-column-in-pandas
+            destination_field_row = destination_schema_df.loc[destination_schema_df['name'] == dst_col].iloc[0]
+
+            aggregate_fn = destination_field_row['aggregation']
+            agg_df[dst_col] = df[src_col_list].agg(aggregate_fn, axis="columns")
+        else:
+            agg_df[dst_col] = df[src_col_list[0]]
+
+    return assign_new_datatypes(destination_table_name, agg_df)
 
 
 def apply_loader_on_dataframe(type, properties, dataframe):
@@ -850,7 +833,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # TBD: NG 2019-08-05 3:50pm
         # We need to map the data types
         # The datatypes have to be derived from the destination table
-        # Currently hardcoded
+
+        # Currently hardcoded: enabled
         df = df.astype({'Balance': np.float64})
 
         if new_fields_str is not None:
