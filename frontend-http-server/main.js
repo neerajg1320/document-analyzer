@@ -114,23 +114,44 @@ let g_document_mapper_table = new Tabulator("#document-mapper-table", {
                 return {"values": values};
             }
         },
-
-        // NG 2019-07-24 9:54am
-        // Kept for one day in case we need to revert
-        //
-        // {title:"DestinationType", field:"dsttype", editor:"select", editorParams: function(cell) {
-        //         let hardcoded_values = {
-        //             "int64":"int64",
-        //             "float64":"float64",
-        //             "date":"date",
-        //             "object":"object",
-        //         };
-        //
-        //         return {"values": hardcoded_values};
-        //     }
-        // },
     ],
 });
+
+let g_document_mapper_newfields_table = new Tabulator("#document-mapper-newfields-table", {
+    height:300,
+    layout:"fitColumns", //fit columns to width of table (optional)
+    data: [{"dst": "None", "value":"None"}],
+    columns:[
+        {title:"DestinationColumn", field:"dst", editor:"select", editorParams: function(cell) {
+                console.log(g_table_dynamic_data_dict);
+                let destination_table = $("#sel-destination-header-table").val();
+                console.log(destination_table);
+                let dynamic_fields_array = g_table_dynamic_data_dict[destination_table];
+                console.log(dynamic_fields_array);
+
+                let fields_array = JSON.parse(g_table_dynamic_data_dict[destination_table]);
+                let destination_fields = fields_array.map(a => a.name);
+
+                // Find list of fields already assigned
+                let mapper_array = g_document_mapper_table.getData("json");
+                let assigned_field_set = new Set(mapper_array.map(a => a.dst));
+                // console.log("Assigned Fields: ", assigned_field_set);
+
+                // Create a list of unassigned fields
+                const values = {};
+                destination_fields.forEach(function(field_name) {
+                        if (!assigned_field_set.has(field_name))
+                            values[field_name] = field_name;
+                    }
+                );
+
+                return {"values": values};
+            }
+        },
+        {title:"Value", field:"value", editor:"input", editable:true},
+    ],
+});
+
 
 
 
@@ -597,15 +618,19 @@ $("#btn_apply_mapper").click(function () {
     let destination_table = $("#sel-destination-header-table").val();
 
     console.log(document_transactions_get_mapper_url);
-    var table_data_json_str = JSON.stringify(g_document_mapper_table.getData("json"));
-    console.log(typeof(table_data_json_str), table_data_json_str);
+    let mapper_json_str = JSON.stringify(g_document_mapper_table.getData("json"));
+    let mapper_newfields_json_str = JSON.stringify(g_document_mapper_newfields_table.getData("json"));
+
+    let data_json = {
+        "destination_table": destination_table,
+        "mapper": mapper_json_str,
+        "new_fields": mapper_newfields_json_str
+    };
+    console.log(data_json);
 
     $.ajax({
         type: 'POST',
-        data: {
-            "destination_table": destination_table,
-            "mapper": table_data_json_str
-        },
+        data: data_json,
         url: document_transactions_get_mapper_url,
         headers : {
             'Authorization' : 'Token ' + g_user_auth_token,
