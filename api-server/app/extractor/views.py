@@ -40,6 +40,7 @@ import pyap
 # The flag is manipulated in the FileViewSet::documentize functions
 g_flag_process_data = True
 
+g_decimal_places = 4
 
 class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
                             mixins.ListModelMixin,
@@ -521,7 +522,7 @@ def assign_new_datatypes(destination_table_name, agg_df):
             available_new_dtypes_dict[key] = value
 
     try:
-        agg_df = agg_df.astype(dtype=available_new_dtypes_dict)
+        agg_df = agg_df.astype(dtype=available_new_dtypes_dict).round(g_decimal_places)
     except ValueError as e:
         frameinfo = getframeinfo(currentframe())
         print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
@@ -572,7 +573,7 @@ def create_new_fields(new_fields, df):
                 code_str = "df['%s'] = %s" % (field['dst'], field['value'])
                 exec(code_str)
 
-    return df
+    return df.round(g_decimal_places)
 
 
 def apply_mapper_on_dataframe(destination_table_name, mapper, new_fields, df):
