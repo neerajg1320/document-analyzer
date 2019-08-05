@@ -401,8 +401,9 @@ destination_tables_schema_json = """
         {"name": "ApplicableDate", "type": "object", "aggregation": "none"},
         {"name": "Description", "type": "object", "aggregation": "sum"},
         {"name": "Type", "type": "object", "aggregation": "none"},
-        {"name": "Amount", "type": "float64", "aggregation": "sum"}
-        {"name": "Balance", "type": "float64", "aggregation": "sum"}
+        {"name": "Amount", "type": "float64", "aggregation": "sum"},
+        {"name": "Balance", "type": "float64", "aggregation": "sum"},
+        {"name": "Temp", "type": "float64", "aggregation": "sum"}
     ],
     "contract_note": [
         {"name": "TransactionDate", "type": "object", "aggregation": "none"},
@@ -842,13 +843,28 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         destination_table_name = request.data.get("destination_table", None)
         new_mapper = request.data.get("mapper", None)
+        new_fields_str = request.data.get("new_fields", None)
 
-        agg_df = apply_mapper_on_dataframe(destination_table_name, new_mapper, df)
+        df = apply_mapper_on_dataframe(destination_table_name, new_mapper, df)
+
+        # TBD: NG 2019-08-05 3:50pm
+        # We need to map the data types
+        # The datatypes have to be derived from the destination table
+        # Currently hardcoded
+        df = df.astype({'Balance': np.float64})
+
+        if new_fields_str is not None:
+            new_fields = json.loads(new_fields_str)
+            for field in new_fields:
+                code_str = "df['%s'] = %s" % (field['dst'], field['value'])
+                print(code_str)
+                exec(code_str)
+
 
         try:
             response_dict = [{
-                "mapped_df": str(agg_df),
-                "mapped_df_json": agg_df.to_json(orient='records'),
+                "mapped_df": str(df),
+                "mapped_df_json": df.to_json(orient='records'),
             }]
         except Exception as e:
             response_dict = []
