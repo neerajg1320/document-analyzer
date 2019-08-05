@@ -506,15 +506,22 @@ def assign_new_datatypes(destination_table_name, agg_df):
 
     for col in numeric_columns:
         try:
-            if agg_df[col].dtype == 'object':
-                agg_df[col] = agg_df[col].str.replace(',', '')
+            if col in agg_df.columns:
+                if agg_df[col].dtype == 'object':
+                    agg_df[col] = agg_df[col].str.replace(',', '')
         except KeyError as e:
             frameinfo = getframeinfo(currentframe())
             print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno),
                   "KeyError:" + str(e))
 
+    # We change only the fields which are present in the dataframe
+    available_new_dtypes_dict = {}
+    for key, value in new_dtypes_dict.items():
+        if key in agg_df.columns:
+            available_new_dtypes_dict[key] = value
+
     try:
-        agg_df = agg_df.astype(dtype=new_dtypes_dict)
+        agg_df = agg_df.astype(dtype=available_new_dtypes_dict)
     except ValueError as e:
         frameinfo = getframeinfo(currentframe())
         print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
@@ -525,8 +532,8 @@ def assign_new_datatypes(destination_table_name, agg_df):
     return agg_df
 
 
-def apply_mapper_on_dataframe(destination_table_name, new_mapper, df):
-    column_mapper_df = pd.DataFrame(json.loads(new_mapper))
+def map_existing_fields(destination_table_name, mapper, df):
+    column_mapper_df = pd.DataFrame(mapper)
 
     # New dataframe will only contain columns which are selected
     column_mapper_df = column_mapper_df.loc[column_mapper_df["select"] == True]
@@ -555,7 +562,16 @@ def apply_mapper_on_dataframe(destination_table_name, new_mapper, df):
         else:
             agg_df[dst_col] = df[src_col_list[0]]
 
-    return assign_new_datatypes(destination_table_name, agg_df)
+    return agg_df
+
+
+def create_new_fields(new_fields, df):
+    if new_fields is not None:
+        for field in new_fields:
+            code_str = "df['%s'] = %s" % (field['dst'], field['value'])
+            exec(code_str)
+
+    return df
 
 
 def apply_loader_on_dataframe(type, properties, dataframe):
@@ -825,25 +841,12 @@ class DocumentViewSet(viewsets.ModelViewSet):
         document, df = self.get_or_create_transactions_dataframe()
 
         destination_table_name = request.data.get("destination_table", None)
-        new_mapper = request.data.get("mapper", None)
-        new_fields_str = request.data.get("new_fields", None)
+        new_mapper = json.loads(request.data.get("mapper", None))
+        new_fields = json.loads(request.data.get("new_fields", None))
 
-        df = apply_mapper_on_dataframe(destination_table_name, new_mapper, df)
-
-        # TBD: NG 2019-08-05 3:50pm
-        # We need to map the data types
-        # The datatypes have to be derived from the destination table
-
-        # Currently hardcoded: enabled
-        df = df.astype({'Balance': np.float64})
-
-        if new_fields_str is not None:
-            new_fields = json.loads(new_fields_str)
-            for field in new_fields:
-                code_str = "df['%s'] = %s" % (field['dst'], field['value'])
-                print(code_str)
-                exec(code_str)
-
+        df = map_existing_fields(destination_table_name, new_mapper, df)
+        df = assign_new_datatypes(destination_table_name, df)
+        df = create_new_fields(new_fields, df)
 
         try:
             response_dict = [{
@@ -1118,9 +1121,10 @@ def apply_pipeline_on_text(file_text, pipeline):
         elif operation.type == "Transform":
             parameters = json.loads(operation.parameters)
             destination_table = parameters["destination_table"]
-            mapper = parameters["mapper"]
+            mapper = json.loads(parameters["mapper"])
+            new_fields = json.loads(parameters["new_fields"])
             print("Transform:", operation.parameters)
-            current_df = apply_mapper_on_dataframe(destination_table, mapper, current_df)
+            current_df = map_existing_fields(destination_table, mapper, current_df)
             print(current_df)
 
         elif operation.type == "Load":
