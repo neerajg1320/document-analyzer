@@ -120,7 +120,10 @@ let g_document_mapper_table = new Tabulator("#document-mapper-table", {
 let g_document_mapper_newfields_table = new Tabulator("#document-mapper-newfields-table", {
     height:300,
     layout:"fitColumns", //fit columns to width of table (optional)
-    data: [{"dst": "None", "value":"None"}],
+    data: [
+        {"dst": "None", "value":"None"},
+        {"dst": "None", "value":"None"}
+    ],
     columns:[
         {title:"DestinationColumn", field:"dst", editor:"select", editorParams: function(cell) {
                 console.log(g_table_dynamic_data_dict);
