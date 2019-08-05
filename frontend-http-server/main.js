@@ -670,7 +670,8 @@ $("#btn_save_mapper").click(function() {
 
     let mapper = {
         "destination_table": destination_table,
-        "mapper": JSON.stringify(g_document_mapper_table.getData("json"))
+        "mapper": JSON.stringify(g_document_mapper_table.getData("json")),
+        "new_fields": JSON.stringify(g_document_mapper_newfields_table.getData("json"))
     }
 
     var mapper_json = JSON.stringify(mapper);
