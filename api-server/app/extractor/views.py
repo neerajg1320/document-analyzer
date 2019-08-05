@@ -819,6 +819,14 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         return Response(transactions_pandas_str)
 
+    # Should use the reverse function
+    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
+    def transactions_html(self, request, *args, **kwargs):
+        document, df = self.get_or_create_transactions_dataframe()
+        transactions_pandas_str = df.to_html()
+
+        return Response(transactions_pandas_str)
+
     @action(detail=True, renderer_classes=[renderers.JSONRenderer])
     def transactions_get_mapper(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
