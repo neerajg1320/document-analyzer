@@ -398,9 +398,11 @@ def convert_to_regex(text):
 destination_tables_schema_json = """
     "bank_statement": [
         {"name": "TransactionDate", "type": "object", "aggregation": "none"},
+        {"name": "ApplicableDate", "type": "object", "aggregation": "none"},
         {"name": "Description", "type": "object", "aggregation": "sum"},
         {"name": "Type", "type": "object", "aggregation": "none"},
         {"name": "Amount", "type": "float64", "aggregation": "sum"}
+        {"name": "Balance", "type": "float64", "aggregation": "sum"}
     ],
     "contract_note": [
         {"name": "TransactionDate", "type": "object", "aggregation": "none"},
@@ -1080,7 +1082,7 @@ class DatastoreViewSet(viewsets.ModelViewSet):
         return serializers.DatastoreListSerializer
 
 
-def file_to_text(file_path, password="password"):
+def file_to_text(file_path, password=None):
     file_name, file_extn = os.path.splitext(file_path)
 
     if file_extn.lower() == '.pdf':
