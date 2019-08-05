@@ -568,8 +568,19 @@ def map_existing_fields(destination_table_name, mapper, df):
 def create_new_fields(new_fields, df):
     if new_fields is not None:
         for field in new_fields:
-            code_str = "df['%s'] = %s" % (field['dst'], field['value'])
-            exec(code_str)
+            if not field['dst'] == 'None':
+                code_str = "df['%s'] = %s" % (field['dst'], field['value'])
+                exec(code_str)
+
+    return df
+
+
+def apply_mapper_on_dataframe(destination_table_name, mapper, new_fields, df):
+    df = map_existing_fields(destination_table_name, mapper, df)
+    df = assign_new_datatypes(destination_table_name, df)
+
+    if new_fields is not None:
+        df = create_new_fields(new_fields, df)
 
     return df
 
@@ -841,12 +852,10 @@ class DocumentViewSet(viewsets.ModelViewSet):
         document, df = self.get_or_create_transactions_dataframe()
 
         destination_table_name = request.data.get("destination_table", None)
-        new_mapper = json.loads(request.data.get("mapper", None))
+        mapper = json.loads(request.data.get("mapper", None))
         new_fields = json.loads(request.data.get("new_fields", None))
 
-        df = map_existing_fields(destination_table_name, new_mapper, df)
-        df = assign_new_datatypes(destination_table_name, df)
-        df = create_new_fields(new_fields, df)
+        df = apply_mapper_on_dataframe(destination_table_name, mapper, new_fields, df)
 
         try:
             response_dict = [{
@@ -1120,11 +1129,18 @@ def apply_pipeline_on_text(file_text, pipeline):
 
         elif operation.type == "Transform":
             parameters = json.loads(operation.parameters)
+
+            frameinfo = getframeinfo(currentframe())
+            print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), parameters)
+
             destination_table = parameters["destination_table"]
             mapper = json.loads(parameters["mapper"])
-            new_fields = json.loads(parameters["new_fields"])
+            new_fields = None
+            if "new_fields" in parameters:
+                new_fields = json.loads(parameters["new_fields"])
+
             print("Transform:", operation.parameters)
-            current_df = map_existing_fields(destination_table, mapper, current_df)
+            current_df = apply_mapper_on_dataframe(destination_table, mapper, new_fields, current_df)
             print(current_df)
 
         elif operation.type == "Load":
