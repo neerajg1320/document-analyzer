@@ -1,0 +1,32 @@
+[
+	{
+		"src": "DateSlash0",
+		"select": true,
+		"dst": "TransactionDate"
+	},
+	{
+		"src": "DateSlash1",
+		"select": true,
+		"dst": "ApplicableDate"
+	},
+	{
+		"src": "Float0",
+		"select": true,
+		"dst": "Amount"
+	},
+	{
+		"src": "Float1",
+		"select": true,
+		"dst": "Balance"
+	},
+	{
+		"src": "String0",
+		"select": true,
+		"dst": "Description"
+	},
+	{
+		"src": "String1",
+		"select": true,
+		"dst": "Description"
+	}
+]
