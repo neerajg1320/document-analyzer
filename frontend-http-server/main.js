@@ -181,7 +181,8 @@ let g_document_mapper_newfields_table = new Tabulator("#document-mapper-newfield
 
 let g_document_mapped_table = new Tabulator("#document-mapped-transactions-table", {
     height:300,
-    layout:"fitColumns", //fit columns to width of table (optional)
+    layout:"fillData",
+    layoutColumnsOnNewData:true,
     autoColumns:true,
 
     rowClick: function(e, row){ //trigger an alert message when the row is clicked

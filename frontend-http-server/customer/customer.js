@@ -3,7 +3,8 @@ let g_customer_automate_workflow = true;
 // Document table which shows transactions present in a document
 let g_customer_transactions_table = new Tabulator("#customer-transactions-table", {
     height:300,
-    layout:"fitColumns", //fit columns to width of table (optional)
+    layout:"fillData",
+    layoutColumnsOnNewData:true,
     autoColumns:true,
 
     rowClick: function(e, row){ //trigger an alert message when the row is clicked
