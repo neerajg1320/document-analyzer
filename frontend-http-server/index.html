@@ -43,7 +43,8 @@
         <p>Extractor Type</p>
         <select id="sel-extractor-type">
             <option value="excel">Excel</option>
-            <option value="regex" selected>Regulat Expression</option>
+            <option value="regex" selected>Regular Expression</option>
+            <option value="database">Database</option>
         </select>
         <br/>
         <br/>
@@ -124,11 +125,13 @@
     </div>
 
     <div id="database-info" class="bordered">
-        <button id="btn_get_datastore_list">Get Datastores</button>
-        <button id="btn_save_datastore">Save Datastore</button>
-        <select id="sel-datastore" />
-        <input id="input_new_datastore" type="text" value=""/>
 
+        <select id="sel-datastore"></select>
+
+        <input id="input_new_datastore" type="text" value=""/>
+        <button id="btn_save_datastore">Save Datastore</button>
+        <button id="btn_get_datastore_list">Get Datastores</button>
+        
         <button id="btn_load_to_datastore">Load to Datastore</button>
 
         <div id="account-parameters-value-table"></div>

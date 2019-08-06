@@ -876,10 +876,8 @@ $("#sel-datastore").on('change', function() {
     console.log(this.value);
 
     if (this.value == "new") {
-        // document.getElementById('input_new_datastore').style.display = "";
         g_account_parameters_description_table.setData('[]')
     } else {
-        // document.getElementById('input_new_datastore').style.display = "none";
 
         let parameters_array_json = g_table_datastore_parameters_description_dict[this.value];
         console.log(parameters_array_json);
