@@ -8,7 +8,7 @@
 	{
 		"src": "DateHyphen1",
 		"select": false,
-		"dst": "DateHyphen1",
+		"dst": "ApplicableDate",
 		"dsttype": "object"
 	},
 	{
@@ -20,7 +20,7 @@
 	{
 		"src": "Float1",
 		"select": false,
-		"dst": "Float1",
+		"dst": "Balance",
 		"dsttype": "float64"
 	},
 	{
@@ -38,7 +38,7 @@
 	{
 		"src": "String3",
 		"select": false,
-		"dst": "Type",
+		"dst": "Description",
 		"dsttype": "object"
 	}
 ]
