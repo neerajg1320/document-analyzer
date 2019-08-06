@@ -1133,8 +1133,8 @@ def file_to_text(file_path, password=None):
 def apply_pipeline_on_text(file_text, pipeline):
     current_df = pd.DataFrame()
     for operation in pipeline.operations.all():
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), operation)
+        frameinfo = getframeinfo(currentframe())
+        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), "%s: %s" % (operation.type, operation))
 
         if operation.type == "Extract":
             regex_str = operation.parameters

@@ -128,7 +128,8 @@ let temp_column_name_edit_check = function(cell){
 
 let g_document_mapper_newfields_table = new Tabulator("#document-mapper-newfields-table", {
     height:300,
-    layout:"fitColumns", //fit columns to width of table (optional)
+    layout:"fitDataFill",
+    layoutColumnsOnNewData:true,
     data: [
         {"type": "", "temp_name": "", "dst": "", "value":"None"}
     ],
