@@ -1121,6 +1121,26 @@ def file_to_text(file_path, password=None):
     return text
 
 
+def apply_extractor_on_text(text, parameters):
+    frameinfo = getframeinfo(currentframe())
+    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), parameters)
+
+    df = None
+    extractor_type = parameters["type"]
+    if extractor_type == "regex":
+        parameters = parameters["parameters"]
+        regex_str = parameters["regex"]
+        new_str, table_dict = apply_regex_on_text(text, regex_str)
+        df = pd.DataFrame(table_dict)
+    elif extractor_type == "excel":
+        input_csv = StringIO(text)
+        df = pd.read_csv(input_csv)
+    else:
+        raise RuntimeError("Extractor type '%s' not supported" % extractor_type)
+
+    return df
+
+
 def apply_pipeline_on_text(file_text, pipeline):
     current_df = pd.DataFrame()
     for operation in pipeline.operations.all():
@@ -1129,10 +1149,8 @@ def apply_pipeline_on_text(file_text, pipeline):
 
         if operation.type == "Extract":
             parameters = json.loads(operation.parameters)
-            parameters = parameters["parameters"]
-            regex_str = parameters["regex"]
-            new_str, table_dict = apply_regex_on_text(file_text, regex_str)
-            current_df = pd.DataFrame(table_dict)
+
+            current_df = apply_extractor_on_text(file_text, parameters)
 
             # frameinfo = getframeinfo(currentframe())
             # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), current_df)

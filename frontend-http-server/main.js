@@ -579,12 +579,16 @@ $("#btn_save_extractor").click(function() {
         return;
     }
 
+    let extractor_type = $("#sel-extractor-type").val();
     let extractor_json = {
-        "type": $("#sel-extractor-type").val(),
-        "parameters": {
-            "regex": regex_text
-        }
+        "type": extractor_type
     };
+
+    if (extractor_type == "regex") {
+        extractor_json["parameters"] = {
+            "regex": regex_text
+        };
+    }
 
     // We need to support this at the backend
     save_operation(extractor_name, "Extract", JSON.stringify(extractor_json));
