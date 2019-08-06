@@ -403,8 +403,7 @@ g_destination_tables_schema_json = """
         {"name": "Description", "type": "object", "aggregation": "sum"},
         {"name": "Type", "type": "object", "aggregation": "none"},
         {"name": "Amount", "type": "float64", "aggregation": "sum"},
-        {"name": "Balance", "type": "float64", "aggregation": "sum"},
-        {"name": "Temp", "type": "float64", "aggregation": "sum"}
+        {"name": "Balance", "type": "float64", "aggregation": "sum"}
     ],
     "contract_note": [
         {"name": "TransactionDate", "type": "object", "aggregation": "none"},
@@ -473,8 +472,10 @@ def apply_regex_on_text(complete_text, regex_str):
     match_queue = []
     regex_str_dict = {"Transaction": regex_str}
     new_str = replace_regex_with_chars(match_queue, regex_str_dict, complete_text, "Transaction", "-")
-    # print(new_str)
-    print('\n'.join(map(str, match_queue)))
+
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), '\n'.join(map(str, match_queue)))
+
     transactions_dict_array = create_transactions_dict_array_from_text(regex_str, complete_text)
     return new_str, transactions_dict_array
 
@@ -549,11 +550,13 @@ def map_existing_fields(destination_table_name, mapper, df):
 
     destination_schema_df = destnation_table_to_dataframe(destination_table_name)
 
-    #
     # Aggregate multiple src_columns mapped to same dst_column
     #
     agg_df = pd.DataFrame()
     for dst_col, src_col_list in dst_column_dict.items():
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), dst_col, src_col_list)
+
         if len(src_col_list) > 1:
             # https://stackoverflow.com/questions/17071871/select-rows-from-a-dataframe-based-on-values-in-a-column-in-pandas
             destination_field_row = destination_schema_df.loc[destination_schema_df['name'] == dst_col].iloc[0]
@@ -569,8 +572,16 @@ def map_existing_fields(destination_table_name, mapper, df):
 def create_new_fields(new_fields, df):
     if new_fields is not None:
         for field in new_fields:
-            if not field['dst'] == 'None':
-                code_str = "df['%s'] = %s" % (field['dst'], field['value'])
+            field_name = ""
+            if field['type'] == "Temp":
+                field_name = field['temp_name']
+            elif field['type'] == "Final":
+                field_name = field['dst']
+
+            if field_name is not None and field_name != "":
+                code_str = "df['%s'] = %s" % (field_name, field['value'])
+                # frameinfo = getframeinfo(currentframe())
+                # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), code_str)
                 exec(code_str)
 
     return df.round(g_decimal_places)
@@ -1122,17 +1133,22 @@ def file_to_text(file_path, password=None):
 def apply_pipeline_on_text(file_text, pipeline):
     current_df = pd.DataFrame()
     for operation in pipeline.operations.all():
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), operation)
+
         if operation.type == "Extract":
             regex_str = operation.parameters
             new_str, table_dict = apply_regex_on_text(file_text, regex_str)
             current_df = pd.DataFrame(table_dict)
-            print(current_df)
+
+            # frameinfo = getframeinfo(currentframe())
+            # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), current_df)
 
         elif operation.type == "Transform":
             parameters = json.loads(operation.parameters)
 
-            frameinfo = getframeinfo(currentframe())
-            print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), parameters)
+            # frameinfo = getframeinfo(currentframe())
+            # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), parameters)
 
             destination_table = parameters["destination_table"]
             mapper = json.loads(parameters["mapper"])
@@ -1140,9 +1156,7 @@ def apply_pipeline_on_text(file_text, pipeline):
             if "new_fields" in parameters:
                 new_fields = json.loads(parameters["new_fields"])
 
-            print("Transform:", operation.parameters)
             current_df = apply_mapper_on_dataframe(destination_table, mapper, new_fields, current_df)
-            print(current_df)
 
         elif operation.type == "Load":
             parameters = json.loads(operation.parameters)
@@ -1208,7 +1222,6 @@ class PipelineViewSet(viewsets.ModelViewSet):
             # print(text)
 
             pipeline = Pipeline.objects.get(user=request.user, pk=pipeline_id)
-            print(pipeline)
 
             current_df = apply_pipeline_on_text(file_text, pipeline)
 

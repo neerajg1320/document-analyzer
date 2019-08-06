@@ -1,5 +1,7 @@
 from PyPDF2 import PdfFileReader, PdfFileWriter
 import pdftotext
+from inspect import currentframe, getframeinfo
+
 
 def is_encrypted_pdf(file_path):
     pdf_file = open(file_path, 'rb')
@@ -75,12 +77,13 @@ PDF_COMMAND = 'pdftotext'
 
 
 def pdftotext_read_pdf_using_subprocess(file_path, password=None, flag_replace_newline=False):
-    print("PDF: " + file_path)
-
     if password is not None:
         command = [PDF_COMMAND, '-raw', file_path, '-upw', password, '-']
     else:
         command = [PDF_COMMAND, '-raw', file_path, '-']
+
+    frameinfo = getframeinfo(currentframe())
+    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), "PDF Reader Command:\n", command)
 
     ret_val = None
     try:
