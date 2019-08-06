@@ -117,36 +117,56 @@ let g_document_mapper_table = new Tabulator("#document-mapper-table", {
     ],
 });
 
+
+let temp_column_name_edit_check = function(cell){
+    //get row data
+    var data = cell.getRow().getData();
+
+    return data.type == "Temp"; // only allow the name cell to be edited if the age is over 18
+}
+
+
 let g_document_mapper_newfields_table = new Tabulator("#document-mapper-newfields-table", {
     height:300,
     layout:"fitColumns", //fit columns to width of table (optional)
     data: [
-        {"dst": "None", "value":"None"},
-        {"dst": "None", "value":"None"}
+        {"type": "", "temp_name": "", "dst": "", "value":"None"}
     ],
     columns:[
+        {title:"ColumnType", field:"type", editor:"select", editable:true, editorParams: function(cell) {
+                console.log(cell.getRow().getData());
+
+                values = {};
+                values["Temp"] = "Temp";
+                values["Final"] = "Final";
+
+                return {"values": values};
+            }
+        },
+        {title:"TempColumnName", field:"temp_name", editor:"input", editable: temp_column_name_edit_check},
         {title:"DestinationColumn", field:"dst", editor:"select", editorParams: function(cell) {
-                console.log(g_table_dynamic_data_dict);
-                let destination_table = $("#sel-destination-header-table").val();
-                console.log(destination_table);
-                let dynamic_fields_array = g_table_dynamic_data_dict[destination_table];
-                console.log(dynamic_fields_array);
+                let row = cell.getRow().getData();
+                console.log(row);
 
-                let fields_array = JSON.parse(g_table_dynamic_data_dict[destination_table]);
-                let destination_fields = fields_array.map(a => a.name);
-
-                // Find list of fields already assigned
-                let mapper_array = g_document_mapper_table.getData("json");
-                let assigned_field_set = new Set(mapper_array.map(a => a.dst));
-                // console.log("Assigned Fields: ", assigned_field_set);
-
-                // Create a list of unassigned fields
                 const values = {};
-                destination_fields.forEach(function(field_name) {
-                        if (!assigned_field_set.has(field_name))
-                            values[field_name] = field_name;
-                    }
-                );
+                if (row.type == "Final") {
+                    let destination_table = $("#sel-destination-header-table").val();
+
+                    let fields_array = JSON.parse(g_table_dynamic_data_dict[destination_table]);
+                    let destination_fields = fields_array.map(a => a.name);
+
+                    // Find list of fields already assigned
+                    let mapper_array = g_document_mapper_table.getData("json");
+                    let assigned_field_set = new Set(mapper_array.map(a => a.dst));
+
+                    // Create a list of unassigned fields
+
+                    destination_fields.forEach(function (field_name) {
+                            if (!assigned_field_set.has(field_name))
+                                values[field_name] = field_name;
+                        }
+                    );
+                }
 
                 return {"values": values};
             }
@@ -682,6 +702,11 @@ $("#btn_save_mapper").click(function() {
 
     save_operation(mapper_name, "Transform", mapper_json);
 });
+
+$("#btn_mapper_newfields_add_row").click(function() {
+    g_document_mapper_newfields_table.addRow({});
+});
+
 
 $("#btn_get_schema_list").click(function () {
 
