@@ -863,10 +863,10 @@ class DocumentViewSet(viewsets.ModelViewSet):
         document, df = self.get_or_create_transactions_dataframe()
 
         destination_table_name = request.data.get("destination_table", None)
-        mapper = json.loads(request.data.get("mapper", None))
+        existing_fields_mapper = json.loads(request.data.get("existing_fields", None))
         new_fields = json.loads(request.data.get("new_fields", None))
 
-        df = apply_mapper_on_dataframe(destination_table_name, mapper, new_fields, df)
+        df = apply_mapper_on_dataframe(destination_table_name, existing_fields_mapper, new_fields, df)
 
         try:
             response_dict = [{

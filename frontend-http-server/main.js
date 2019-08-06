@@ -293,13 +293,15 @@ $("#input_file").on('change', function() {
     let file_name = file_path.split("/").pop();
     let file_extn = file_name.split(".").pop();
 
-    select_extractor_type = document.getElementById('sel-extractor-type');
+    let select_extractor_type = document.getElementById('sel-extractor-type');
     if (file_extn == "csv" || file_extn == "xls" || file_extn == "xlsx") {
-        select_extractor_type.value = "csv";
-
-        var event = new Event('change');
-        select_extractor_type.dispatchEvent(event);
+        select_extractor_type.value = "excel";
+    } else {
+        select_extractor_type.value = "regex";
     }
+
+    let event = new Event('change');
+    select_extractor_type.dispatchEvent(event);
 });
 
 // These functions should have no knowledge of elements extractions
@@ -671,7 +673,7 @@ $("#btn_apply_mapper").click(function () {
 
     let data_json = {
         "destination_table": destination_table,
-        "mapper": mapper_json_str,
+        "existing_fields": mapper_json_str,
         "new_fields": mapper_newfields_json_str
     };
     console.log(data_json);
@@ -715,7 +717,7 @@ $("#btn_save_mapper").click(function() {
 
     let mapper = {
         "destination_table": destination_table,
-        "mapper": JSON.stringify(g_document_mapper_table.getData("json")),
+        "existing_fields": JSON.stringify(g_document_mapper_table.getData("json")),
         "new_fields": JSON.stringify(g_document_mapper_newfields_table.getData("json"))
     }
 
