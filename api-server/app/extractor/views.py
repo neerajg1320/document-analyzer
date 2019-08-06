@@ -1144,7 +1144,7 @@ def apply_pipeline_on_text(file_text, pipeline):
             # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), parameters)
 
             destination_table = parameters["destination_table"]
-            mapper = json.loads(parameters["mapper"])
+            mapper = json.loads(parameters["existing_fields"])
             new_fields = None
             if "new_fields" in parameters:
                 new_fields = json.loads(parameters["new_fields"])
