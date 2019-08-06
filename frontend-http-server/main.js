@@ -265,6 +265,7 @@ $("#fileinfo").submit(function(e) {
     e.preventDefault();
 
     var formData = new FormData($(this)[0]);
+    console.log(formData);
 
     $.ajax({
         url: $(this).attr('action'),
@@ -287,6 +288,19 @@ $("#fileinfo").submit(function(e) {
     });
 });
 
+$("#input_file").on('change', function() {
+    let file_path = this.value;
+    let file_name = file_path.split("/").pop();
+    let file_extn = file_name.split(".").pop();
+
+    select_extractor_type = document.getElementById('sel-extractor-type');
+    if (file_extn == "csv" || file_extn == "xls" || file_extn == "xlsx") {
+        select_extractor_type.value = "csv";
+
+        var event = new Event('change');
+        select_extractor_type.dispatchEvent(event);
+    }
+});
 
 // These functions should have no knowledge of elements extractions
 //
@@ -407,6 +421,15 @@ String.prototype.replaceAll = function(search, replacement) {
     return target.split(search).join(replacement);
 };
 
+$("#sel-extractor-type").on('change', function() {
+    console.log(this.value);
+
+    if (this.value == "regex") {
+        document.getElementById('extractor-regex-box').style.display = "";
+    } else {
+        document.getElementById('extractor-regex-box').style.display = "none";
+    }
+});
 
 $("#btn_create_regex").click(function() {
     var selected_text = getSelectionText()
