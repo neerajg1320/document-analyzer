@@ -713,7 +713,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # Response should be a regex
         return Response(response_dict)
 
-
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
     def transactions(self, request, *args, **kwargs):
         document = self.get_object()
@@ -1002,14 +1001,6 @@ class FileViewSet(viewsets.ModelViewSet):
                 file.text = "Format {} not supported".format(file_extn)
 
             super(File, file).save()
-
-        # The following code is just for testing purpose
-        #
-        # addresses = pyap.parse(file.text, country='US')
-        # for address in addresses:
-        #     frameinfo = getframeinfo(currentframe())
-        #     print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno),
-        #           json.dumps(address.as_dict(), indent=4))
 
         document = Document.objects.create(user=file.user,
                                            title=file.title,
