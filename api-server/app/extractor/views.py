@@ -1125,10 +1125,12 @@ def apply_pipeline_on_text(file_text, pipeline):
     current_df = pd.DataFrame()
     for operation in pipeline.operations.all():
         frameinfo = getframeinfo(currentframe())
-        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), "%s: %s" % (operation.type, operation))
+        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), "%s: %s" % (operation.type, operation.parameters))
 
         if operation.type == "Extract":
-            regex_str = operation.parameters
+            parameters = json.loads(operation.parameters)
+            parameters = parameters["parameters"]
+            regex_str = parameters["regex"]
             new_str, table_dict = apply_regex_on_text(file_text, regex_str)
             current_df = pd.DataFrame(table_dict)
 

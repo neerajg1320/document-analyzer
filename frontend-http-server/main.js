@@ -565,10 +565,10 @@ function save_operation(title, type, parameters) {
 }
 
 
-$("#btn_save_regex").click(function() {
+$("#btn_save_extractor").click(function() {
     // Get document id
-    let regex_name = $("#input_regex_name").val();
-    if (regex_name == "") {
+    let extractor_name = $("#input_extractor_name").val();
+    if (extractor_name == "") {
         alert('Please provide regex name!');
         return;
     }
@@ -579,7 +579,15 @@ $("#btn_save_regex").click(function() {
         return;
     }
 
-    save_operation(regex_name, "Extract", regex_text);
+    let extractor_json = {
+        "type": $("#sel-extractor-type").val(),
+        "parameters": {
+            "regex": regex_text
+        }
+    };
+
+    // We need to support this at the backend
+    save_operation(extractor_name, "Extract", JSON.stringify(extractor_json));
 });
 
 
