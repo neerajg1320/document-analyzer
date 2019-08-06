@@ -40,26 +40,35 @@
 
     <div id="document-info">
 
-        <p id="document-text-url">Url for regex</p>
+        <p>Extractor Type</p>
+        <select id="sel-extractor-type">
+            <option value="csv">CSV</option>
+            <option value="regex" selected>Regulat Expression</option>
+        </select>
+        <br/>
+        <br/>
+
+        <button id="btn_save_regex">Save Extractor</button>
+        <br/>
+        <input id="input_regex_name" type="text" value=""/>
+
+
         <div class="bordered">
-            <!--<div id="document-text" class="bordered scrollable"></div>-->
+            <p id="document-text-url">Url for regex create</p>
             <textarea id="document-text"
                       class="bordered scrollable" readonly>
             </textarea>
             <button id="btn_create_regex">Create Regex</button>
             <button id="btn_reset_text">Reset Text</button>
-        </div>
 
-        <p id="document-create_regex-url">Url for regex</p>
-        <div class="bordered">
+            <p id="document-create_regex-url">Url for regex apply</p>
             <textarea id="regex-text"
                       class="bordered scrollable">
             </textarea>
             <button id="btn_apply_regex">Apply Regex</button>
             <button id="btn_reset_regex">Reset Regex</button>
-            <button id="btn_save_regex">Save Regex</button>
-            <input id="input_regex_name" type="text" value=""/>
         </div>
+
         <!--
         <div id="regex-transactions-table"></div>
         -->
@@ -72,14 +81,18 @@
         </div>
         <p id="document-transactions-json-url">Url for transactions-json</p>
         <div id="document-transactions-table"></div>
+        <br/>
 
+
+        <button id="btn_save_mapper">Save Mapper</button>
+        <br/>
+        <input id="input_mapper_name" type="text" value=""/>
+        <br/>
 
         <div class="bordered">
             <div>
                 <button id="btn_get_mapper">Get Mapper</button>
                 <button id="btn_apply_mapper">Apply Mapper</button>
-                <button id="btn_save_mapper">Save Mapper</button>
-                <input id="input_mapper_name" type="text" value=""/>
             </div>
             <div id="document-mapper-table"></div>
             <div>
@@ -88,16 +101,16 @@
             </div>
             <button id="btn_mapper_newfields_add_row">Add Row</button>
             <div id="document-mapper-newfields-table"></div>
-
-            <!- Destination Table>
-            <h3>Destination Header Table</h3>
-            <select id="sel-destination-header-table" />
-            <input id="input_new_schema" type="text" value="" style="display:none"/>
-            <button id="btn_post_schema">Save Schema</button>
-            <button id="btn_get_schema_list">Get Schemas</button>
-
-            <div id="destination-header-table"></div>
         </div>
+
+        <!- Destination Table>
+        <h3>Destination Header Table</h3>
+        <select id="sel-destination-header-table" />
+        <input id="input_new_schema" type="text" value="" style="display:none"/><br/>
+        <button id="btn_post_schema">Save Schema</button><br/>
+        <button id="btn_get_schema_list">Get Schemas</button>
+
+        <div id="destination-header-table"></div>
 
         <!-- Mapped Table -->
         <p id="document-mapped-transactions-dataframe-url">Url for mapped-transactions-dataframe</p>
