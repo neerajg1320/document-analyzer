@@ -63,6 +63,10 @@ document_transactions_save = views.DocumentViewSet.as_view({
     'post': 'transactions_save'
 }, renderer_classes=[renderers.JSONRenderer])
 
+operation_loader_get_tables = views.OperationViewSet.as_view({
+    'get': 'get_loader_tables'
+}, renderer_classes=[renderers.JSONRenderer])
+
 
 file_textify = views.FileViewSet.as_view({
     'get': 'textify'
@@ -88,6 +92,8 @@ urlpatterns = [
     path('documents/<int:pk>/transactions/dataframe/', document_transactions_dataframe, name='document-transactions-dataframe'),
     path('documents/<int:pk>/transactions/html/', document_transactions_html, name='document-transactions-html'),
     path('documents/<int:pk>/transactions/mapper/', document_transactions_mapper, name='document-transactions-mapper'),
+
+    path('operations/<int:pk>/loader/tables/', operation_loader_get_tables, name='datastore-get-tables'),
 
     # This will create the transactions in the transactions table
     # Currently we are saving to snowflake

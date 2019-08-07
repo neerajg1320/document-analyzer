@@ -172,10 +172,70 @@ snowflake_properties_json = """{
 }"""
 
 
+def get_snowflake_db_url(snowflake_properties_dict):
+    db_url = URL(**snowflake_properties_dict)
+    return db_url
+
+
+def get_postgres_db_url(postgres_parameters):
+    db_url = 'postgresql://' \
+             + postgres_parameters['user'] \
+             + ':' + postgres_parameters['password'] \
+             + '@' + postgres_parameters['host'] \
+             + ':' + postgres_parameters['port'] \
+             + '/' + postgres_parameters['database']
+    return db_url
+
+
+from sqlalchemy import inspect
+
+
+def get_tables_from_database(database_parameters):
+    db_url = get_postgres_db_url(database_parameters)
+
+    tables_list = []
+    engine = create_engine(db_url)
+    try:
+        connection = engine.connect()
+
+        inspector = inspect(engine)
+        tables_list = inspector.get_table_names()
+
+    except Exception as e:
+        frameinfo = getframeinfo(currentframe())
+        print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
+    finally:
+        connection.close()
+        engine.dispose()
+
+    return tables_list
+
+
+def get_columns_from_database(database_parameters, table_name):
+    db_url = get_postgres_db_url(database_parameters)
+
+    column_list = []
+    engine = create_engine(db_url)
+    try:
+        connection = engine.connect()
+
+        inspector = inspect(engine)
+        # tables_list = inspector.get_table_names()
+        column_list = inspector.get_columns(table_name)
+    except Exception as e:
+        frameinfo = getframeinfo(currentframe())
+        print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
+    finally:
+        connection.close()
+        engine.dispose()
+
+    return column_list
+
+
 def save_to_snowflake(df, snowflake_parameters):
     table_name = snowflake_parameters.pop('table')
-    snowflake_properties_dict = snowflake_parameters
-    db_url = URL(**snowflake_properties_dict)
+
+    db_url = get_snowflake_db_url(snowflake_parameters)
 
     save_to_sql(df, db_url, table_name)
 
@@ -183,12 +243,7 @@ def save_to_snowflake(df, snowflake_parameters):
 def save_to_postgres(df, postgres_parameters):
     table_name = str(postgres_parameters.pop('table')).lower()
 
-    db_url = 'postgresql://' \
-             + postgres_parameters['user'] \
-             + ':' + postgres_parameters['password'] \
-             + '@' + postgres_parameters['host'] \
-             + ':' + postgres_parameters['port'] \
-             + '/' + postgres_parameters['database']
+    db_url = get_postgres_db_url(postgres_parameters)
 
     save_to_sql(df, db_url, table_name)
 
@@ -1070,6 +1125,31 @@ class OperationViewSet(viewsets.ModelViewSet):
 
         # return self.serializer_class
         return serializers.OperationListSerializer
+
+    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
+    def get_loader_tables(self, request, *args, **kwargs):
+        operation = self.get_object()
+        loader_parameters = json.loads(operation.parameters)
+
+        response = {}
+        if operation.type not in ["Extract", "Load"]:
+            response["error"] = "operation type %s not supported" % operation.type
+            return Response(response)
+
+        # datastore_type = loader_parameters['type']
+        #
+        # datastore_parameters = json.loads(loader_parameters['properties'])
+
+        # print(get_tables_from_database(datastore_parameters))
+        #
+        # columns = get_columns_from_database(datastore_parameters, 'trades')
+        # column_names = list(map(lambda x: x["name"], columns))
+        # print(column_names)
+
+        # print("%s: %s" %(datastore_type, json.dumps(datastore_parameters, indent=4)))
+
+        serializer = self.get_serializer(operation)
+        return Response(serializer.data)
 
 
 class DatastoreViewSet(viewsets.ModelViewSet):
