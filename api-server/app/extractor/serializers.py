@@ -102,7 +102,7 @@ class SchemaDetailSerializer(serializers.ModelSerializer):
 class OperationListSerializer(serializers.ModelSerializer):
     class Meta():
         model = Operation
-        fields = ('id', 'title', 'type',)
+        fields = ('id', 'title', 'type', 'parameters')
         read_only_fields = ('id',)
 
 
