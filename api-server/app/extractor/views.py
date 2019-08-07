@@ -1100,6 +1100,7 @@ class OperationViewSet(viewsets.ModelViewSet):
 
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+    filterset_fields = ['type']
 
     def get_queryset(self):
         """ Return objects for current user only """
