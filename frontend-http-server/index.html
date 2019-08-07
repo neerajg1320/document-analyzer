@@ -126,19 +126,29 @@
         </div>
     </div>
 
+    <!-- Loader Block -->
     <div id="database-info" class="bordered">
-        <h4>Database Properties</h4>
+        <h3>Loader</h3>
 
+        <label>Title</label>
         <select id="sel-datastore-parameters"></select>
+        <button id="btn_get_datastore_parameters">Refresh</button>
 
-        <input id="input_new_datastore" type="text" value="" style="display: none"/>
-        <button id="btn_save_datastore_parameters">Save Datastore Parameters</button>
-        <button id="btn_get_datastore_parameters">Get Datastore Parameters</button>
+        <label>Table</label>
+        <input id="input_datastore_table" />
 
-        <button id="btn_datastore_get_tables">Datastore Get Tables</button>
+        <label>Datastore</label>
+        <select id="sel-datastore"></select>
 
         <button id="btn_apply_loader">Apply Loader</button>
 
+    </div>
+
+    <div class="bordered">
+        <!--<button id="btn_datastore_get_tables">Datastore Get Tables</button>-->
+        <label>Datastore Name</label>
+        <input id="input_new_datastore" type="text" value=""/>
+        <button id="btn_save_datastore_parameters">Save Datastore Parameters</button>
         <div id="account-parameters-value-table"></div>
         <div>
             <button id="btn_upload_datastore">Upload Datastore</button>

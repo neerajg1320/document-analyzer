@@ -842,7 +842,7 @@ let g_table_datastore_dict = []
 
 $("#btn_get_datastore_parameters").click(function () {
 
-    // let datastore_id = $("sel-datastore-parameters").val()
+    // let datastore_id = $("sel-loader").val()
     let datastore_get_parameters_url = 'http://localhost:8000/api/docminer/operations/';
     let data_params = jQuery.param({type: "Load"});
 
@@ -863,7 +863,7 @@ $("#btn_get_datastore_parameters").click(function () {
             let datastores = response.map(a => a.title);
             console.log(datastores);
 
-            let datastores_select = $("#sel-datastore-parameters");
+            let datastores_select = $("#sel-loader");
             datastores_select.empty();
 
             let new_entry_str = "new";
@@ -916,7 +916,7 @@ $("#btn_save_datastore_parameters").click(function() {
 });
 
 
-$("#sel-datastore-parameters").on('change', function() {
+$("#sel-loader").on('change', function() {
     let datastore_name = this.value;
 
     console.log(datastore_name);
