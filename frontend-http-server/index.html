@@ -125,13 +125,16 @@
     </div>
 
     <div id="database-info" class="bordered">
+        <h4>Database Properties</h4>
 
-        <select id="sel-datastore"></select>
+        <select id="sel-datastore-parameters"></select>
 
         <input id="input_new_datastore" type="text" value=""/>
-        <button id="btn_save_datastore">Save Datastore</button>
-        <button id="btn_get_datastore_list">Get Datastores</button>
-        
+        <button id="btn_save_datastore_parameters">Save Datastore Parameters</button>
+        <button id="btn_get_datastore_parameters">Get Datastore Parameters</button>
+
+        <button id="btn_datastore_get_tables">Datastore Get Tables</button>
+
         <button id="btn_load_to_datastore">Load to Datastore</button>
 
         <div id="account-parameters-value-table"></div>
@@ -139,10 +142,14 @@
             <button id="btn_upload_datastore">Upload Datastore</button>
             <button id="btn_download_datastore">Download Datastore</button>
         </div>
-        <div id="account-parameters-description-table"></div>
 
-        <div id="account-transactions-table"></div>
+        <select id="sel-datastore-type"></select>
+        <button id="btn_get_datastore_type_list">Get Datastore Types</button>
+        <div id="account-parameters-description-table"></div>
     </div>
+
+    <h3>Final Table</h3>
+    <div id="account-transactions-table"></div>
 
     <div id="pipeline-info" class="bordered">
         <input id="input_new_pipeline" type="text" value=""/>

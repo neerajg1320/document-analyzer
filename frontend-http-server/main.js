@@ -790,7 +790,7 @@ $("#btn_get_schema_list").click(function () {
 });
 
 
-$("#btn_get_datastore_list").click(function () {
+$("#btn_get_datastore_type_list").click(function () {
 
     // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
     let datastore_get_url = 'http://localhost:8000/api/docminer/datastores/';
@@ -813,7 +813,7 @@ $("#btn_get_datastore_list").click(function () {
 
             console.log(schemas);
 
-            let destination_select = $("#sel-datastore");
+            let destination_select = $("#sel-datastore-type");
             destination_select.empty();
 
             let new_entry_str = "new";
@@ -837,8 +837,54 @@ $("#btn_get_datastore_list").click(function () {
     });
 });
 
+
+$("#btn_get_datastore_parameters").click(function () {
+
+    // let datastore_id = $("sel-datastore-parameters").val()
+    let datastore_get_url = 'http://localhost:8000/api/docminer/datastores/';
+
+    console.log(datastore_get_url);
+
+    $.ajax({
+        url: datastore_get_url,
+        headers : {
+            'Authorization' : 'Token ' + g_user_auth_token,
+        },
+        dataType: 'json',
+        success: function(response) {
+            console.log(typeof(response), response);
+
+
+            // Find the title elements of the json array received
+            // e.g. schemas = ["receipt", "contract_nt", "bank_stmt"]
+            let schemas = response.map(a => a.title);
+
+            console.log(schemas);
+
+            let destination_select = $("#sel-datastore-type");
+            destination_select.empty();
+
+            let new_entry_str = "new";
+            destination_select.append($('<option></option>').attr('value', new_entry_str).text(new_entry_str));
+
+            $.each(response, function (key, entry) {
+                destination_select.append($('<option></option>').attr('value', entry.title).text(entry.title));
+                // Create the global dictionary
+
+                g_table_datastore_parameters_description_dict[entry.title] = entry.parameters;
+
+                console.log(typeof (entry.parameters), entry.parameters);
+                // g_table_datastore_parameters_values_array
+            });
+
+            document.getElementById('input_new_schema').style.display = "";
+        }
+    });
+});
+
+
 // Keep this for later
-$("#btn_save_datastore").click(function() {
+$("#btn_save_datastore_parameters").click(function() {
     // Get document id
     let datastore_name = $("#input_new_datastore").val();
     if (datastore_name == "") {
@@ -846,7 +892,7 @@ $("#btn_save_datastore").click(function() {
         return;
     }
 
-    let store_type = $("#sel-datastore").val();
+    let store_type = $("#sel-datastore-type").val();
     if (store_type == "new") {
         alert('Please provide datastore type!');
         return;
@@ -872,7 +918,7 @@ $("#btn_save_datastore").click(function() {
 });
 
 
-$("#sel-datastore").on('change', function() {
+$("#sel-datastore-type").on('change', function() {
     console.log(this.value);
 
     if (this.value == "new") {
@@ -914,7 +960,7 @@ $("#btn_load_to_datastore").click(function () {
 
     console.log(document_transactions_save_url);
 
-    let store_type = $("#sel-datastore").val();
+    let store_type = $("#sel-datastore-type").val();
     if (store_type == "new") {
         alert('Please provide datastore type!');
         return;
