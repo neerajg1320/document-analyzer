@@ -972,7 +972,7 @@ $("#btn_download_datastore").click(function () {
 });
 
 
-$("#btn_load_to_datastore").click(function () {
+$("#btn_apply_loader").click(function () {
     // Get document id
     let document_id = $("#input_document_id").val();
 

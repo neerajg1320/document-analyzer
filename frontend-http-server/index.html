@@ -40,7 +40,14 @@
 
     <div id="document-info">
 
-        <p>Extractor Type</p>
+        <h3>Extractor Type</h3>
+
+        <button id="btn_save_extractor">Save Extractor</button>
+        <br/>
+        <input id="input_extractor_name" type="text" value=""/>
+        <br/>
+        <br/>
+
         <select id="sel-extractor-type">
             <option value="excel">Excel</option>
             <option value="regex" selected>Regular Expression</option>
@@ -48,11 +55,6 @@
         </select>
         <br/>
         <br/>
-
-        <button id="btn_save_extractor">Save Extractor</button>
-        <br/>
-        <input id="input_extractor_name" type="text" value=""/>
-
 
         <div id="extractor-regex-box" class="bordered">
             <p id="document-text-url">Url for regex create</p>
@@ -135,7 +137,7 @@
 
         <button id="btn_datastore_get_tables">Datastore Get Tables</button>
 
-        <button id="btn_load_to_datastore">Load to Datastore</button>
+        <button id="btn_apply_loader">Apply Loader</button>
 
         <div id="account-parameters-value-table"></div>
         <div>
