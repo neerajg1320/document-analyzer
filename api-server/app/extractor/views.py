@@ -1203,8 +1203,8 @@ def file_to_text(file_path, password=None):
 
 
 def apply_extractor_on_text(text, parameters):
-    frameinfo = getframeinfo(currentframe())
-    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), parameters)
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), parameters)
 
     df = None
     extractor_type = parameters["type"]
@@ -1225,8 +1225,8 @@ def apply_extractor_on_text(text, parameters):
 def apply_pipeline_on_text(file_text, pipeline):
     current_df = pd.DataFrame()
     for operation in pipeline.operations.all():
-        frameinfo = getframeinfo(currentframe())
-        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), "%s: %s" % (operation.type, operation.parameters))
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), "%s: %s" % (operation.type, operation.parameters))
 
         if operation.type == "Extract":
             parameters = json.loads(operation.parameters)
