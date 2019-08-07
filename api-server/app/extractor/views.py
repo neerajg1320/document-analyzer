@@ -4,7 +4,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 
-from core.models import Tag, Extractor, Document, File, Transaction, Schema, Operation, DatastoreType, Pipeline
+from core.models import Tag, Extractor, Document, File, Transaction, Schema, Operation, DatastoreInfo, DatastoreType, Pipeline
 
 from extractor import serializers
 
@@ -1184,6 +1184,39 @@ class DatastoreTypeViewSet(viewsets.ModelViewSet):
 
         # return self.serializer_class
         return serializers.DatastoreTypeListSerializer
+
+
+class DatastoreInfoViewSet(viewsets.ModelViewSet):
+    """ Manage documents in database """
+    queryset = DatastoreInfo.objects.all()
+
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        """ Return objects for current user only """
+        return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        """ Create a new document """
+        # TBD: Here we should perform is_staff check
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        """ Create a new document """
+        # TBD: Here we should perform is_staff check
+        # print(serializer.validated_data)
+        serializer.save(user=self.request.user)
+
+    def get_serializer_class(self):
+        """ Return appropriate serializer class """
+        if self.action == 'retrieve' \
+                or self.action == 'update' \
+                or self.action == 'create':
+            return serializers.DatastoreInfoDetailSerializer
+
+        # return self.serializer_class
+        return serializers.DatastoreInfoListSerializer
 
 
 def file_to_text(file_path, password=None):
