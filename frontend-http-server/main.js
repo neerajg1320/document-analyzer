@@ -838,49 +838,47 @@ $("#btn_get_datastore_type_list").click(function () {
 });
 
 
+let g_table_datastore_dict = []
+
 $("#btn_get_datastore_parameters").click(function () {
 
     // let datastore_id = $("sel-datastore-parameters").val()
-    let datastore_get_url = 'http://localhost:8000/api/docminer/datastores/';
+    let datastore_get_parameters_url = 'http://localhost:8000/api/docminer/operations/';
+    let data_params = jQuery.param({type: "Load"});
 
-    console.log(datastore_get_url);
+    console.log(datastore_get_parameters_url, data_params);
 
     $.ajax({
-        url: datastore_get_url,
+        url: datastore_get_parameters_url,
         headers : {
             'Authorization' : 'Token ' + g_user_auth_token,
         },
+        data: data_params,
         dataType: 'json',
         success: function(response) {
             console.log(typeof(response), response);
 
-
             // Find the title elements of the json array received
             // e.g. schemas = ["receipt", "contract_nt", "bank_stmt"]
-            let schemas = response.map(a => a.title);
+            let datastores = response.map(a => a.title);
+            console.log(datastores);
 
-            console.log(schemas);
-
-            let destination_select = $("#sel-datastore-type");
-            destination_select.empty();
+            let datastores_select = $("#sel-datastore-parameters");
+            datastores_select.empty();
 
             let new_entry_str = "new";
-            destination_select.append($('<option></option>').attr('value', new_entry_str).text(new_entry_str));
+            datastores_select.append($('<option></option>').attr('value', new_entry_str).text(new_entry_str));
 
             $.each(response, function (key, entry) {
-                destination_select.append($('<option></option>').attr('value', entry.title).text(entry.title));
-                // Create the global dictionary
-
-                g_table_datastore_parameters_description_dict[entry.title] = entry.parameters;
-
-                console.log(typeof (entry.parameters), entry.parameters);
-                // g_table_datastore_parameters_values_array
+                datastores_select.append($('<option></option>').attr('value', entry.title).text(entry.title));
+                g_table_datastore_dict[entry.title] = JSON.parse(entry.parameters);
             });
 
-            document.getElementById('input_new_schema').style.display = "";
+            document.getElementById('input_new_datastore').style.display = "";
         }
     });
 });
+
 
 
 // Keep this for later
@@ -917,6 +915,29 @@ $("#btn_save_datastore_parameters").click(function() {
     save_operation(datastore_name, "Load", loader_json);
 });
 
+
+$("#sel-datastore-parameters").on('change', function() {
+    let datastore_name = this.value;
+
+    console.log(datastore_name);
+
+    if (datastore_name == "new") {
+        g_account_parameters_value_table.setData(g_table_datastore_parameters_values_array);
+    } else {
+        let parameters = g_table_datastore_dict[datastore_name];
+        let datastore_properties = JSON.parse(parameters["properties"]);
+
+        console.log(datastore_properties);
+
+        let parameters_values_array = [];
+        for (var key in datastore_properties) {
+            parameters_values_array.push({"parameter": key, "value": datastore_properties[key]});
+        }
+        console.log(parameters_values_array);
+
+        g_account_parameters_value_table.setData(parameters_values_array);
+    }
+});
 
 $("#sel-datastore-type").on('change', function() {
     console.log(this.value);
