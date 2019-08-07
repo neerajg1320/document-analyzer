@@ -197,7 +197,7 @@ class Operation(models.Model):
 
 
 # This table witll
-class Datastore(models.Model):
+class DatastoreType(models.Model):
     user = models.ForeignKey(
         # We could have user User below, but using settings is a better way
         settings.AUTH_USER_MODEL,

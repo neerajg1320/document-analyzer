@@ -4,7 +4,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 
-from core.models import Tag, Extractor, Document, File, Transaction, Schema, Operation, Datastore, Pipeline
+from core.models import Tag, Extractor, Document, File, Transaction, Schema, Operation, DatastoreType, Pipeline
 
 from extractor import serializers
 
@@ -1153,9 +1153,9 @@ class OperationViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class DatastoreViewSet(viewsets.ModelViewSet):
+class DatastoreTypeViewSet(viewsets.ModelViewSet):
     """ Manage documents in database """
-    queryset = Datastore.objects.all()
+    queryset = DatastoreType.objects.all()
 
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -1180,10 +1180,10 @@ class DatastoreViewSet(viewsets.ModelViewSet):
         if self.action == 'retrieve' \
                 or self.action == 'update' \
                 or self.action == 'create':
-            return serializers.DatastoreDetailSerializer
+            return serializers.DatastoreTypeDetailSerializer
 
         # return self.serializer_class
-        return serializers.DatastoreListSerializer
+        return serializers.DatastoreTypeListSerializer
 
 
 def file_to_text(file_path, password=None):

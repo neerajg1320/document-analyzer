@@ -81,7 +81,7 @@ let g_table_data_receipt = [
 
 let g_table_dynamic_data_dict = {};
 
-let g_table_datastore_parameters_description_dict = {};
+let g_table_datastoretype_parameters_description_dict = {};
 
 let g_table_datastore_parameters_values_array = []
 
@@ -792,13 +792,12 @@ $("#btn_get_schema_list").click(function () {
 
 $("#btn_get_datastore_type_list").click(function () {
 
-    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
-    let datastore_get_url = 'http://localhost:8000/api/docminer/datastores/';
+    let datastoretype_get_url = 'http://localhost:8000/api/docminer/datastoretypes/';
 
-    console.log(datastore_get_url);
+    console.log(datastoretype_get_url);
 
     $.ajax({
-        url: datastore_get_url,
+        url: datastoretype_get_url,
         headers : {
             'Authorization' : 'Token ' + g_user_auth_token,
         },
@@ -823,16 +822,12 @@ $("#btn_get_datastore_type_list").click(function () {
                 destination_select.append($('<option></option>').attr('value', entry.title).text(entry.title));
                 // Create the global dictionary
 
-                g_table_datastore_parameters_description_dict[entry.title] = entry.parameters;
+                g_table_datastoretype_parameters_description_dict[entry.title] = entry.parameters;
 
                 console.log(typeof (entry.parameters), entry.parameters);
-                // g_table_datastore_parameters_values_array
             });
 
             document.getElementById('input_new_schema').style.display = "";
-
-
-            // console.log(g_table_dynamic_data_dict);
         }
     });
 });
@@ -840,16 +835,15 @@ $("#btn_get_datastore_type_list").click(function () {
 
 let g_table_datastore_dict = []
 
-$("#btn_get_datastore_parameters").click(function () {
+$("#btn_get_loaders").click(function () {
 
-    // let datastore_id = $("sel-loader").val()
-    let datastore_get_parameters_url = 'http://localhost:8000/api/docminer/operations/';
+    let loader_get_parameters_url = 'http://localhost:8000/api/docminer/operations/';
     let data_params = jQuery.param({type: "Load"});
 
-    console.log(datastore_get_parameters_url, data_params);
+    console.log(loader_get_parameters_url, data_params);
 
     $.ajax({
-        url: datastore_get_parameters_url,
+        url: loader_get_parameters_url,
         headers : {
             'Authorization' : 'Token ' + g_user_auth_token,
         },
@@ -946,7 +940,7 @@ $("#sel-datastore-type").on('change', function() {
         g_account_parameters_description_table.setData('[]')
     } else {
 
-        let parameters_array_json = g_table_datastore_parameters_description_dict[this.value];
+        let parameters_array_json = g_table_datastoretype_parameters_description_dict[this.value];
         console.log(parameters_array_json);
 
         let parameters = JSON.parse(parameters_array_json);
@@ -958,7 +952,7 @@ $("#sel-datastore-type").on('change', function() {
            return {"parameter": parameter.name, "value": ""};
         });
 
-        g_account_parameters_description_table.setData(g_table_datastore_parameters_description_dict[this.value]);
+        g_account_parameters_description_table.setData(g_table_datastoretype_parameters_description_dict[this.value]);
         g_account_parameters_value_table.setData(g_table_datastore_parameters_values_array);
     }
 });
