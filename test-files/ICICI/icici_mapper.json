@@ -19,7 +19,7 @@
 	},
 	{
 		"src": "Float1",
-		"select": false,
+		"select": true,
 		"dst": "Balance",
 		"dsttype": "float64"
 	},
