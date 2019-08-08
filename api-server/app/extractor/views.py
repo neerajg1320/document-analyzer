@@ -1277,6 +1277,8 @@ def apply_extractor_on_text(text, parameters):
     # frameinfo = getframeinfo(currentframe())
     # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), parameters)
 
+    new_str = None
+    table_dict = None
     df = None
     extractor_type = parameters["type"]
     if extractor_type == "regex":
@@ -1287,6 +1289,7 @@ def apply_extractor_on_text(text, parameters):
     elif extractor_type == "excel":
         input_csv = StringIO(text)
         df = pd.read_csv(input_csv)
+        table_dict = json.loads(df.to_json(orient='records'))
     else:
         raise RuntimeError("Extractor type '%s' not supported" % extractor_type)
 
