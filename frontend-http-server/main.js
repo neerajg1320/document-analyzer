@@ -1097,11 +1097,16 @@ function apply_operation(operation, dataframe_json, success_callback) {
 
 }
 
+function handle_loader_operation_response(response) {
+    console.log(response);
+
+}
+
 $("#btn_apply_loader").click(function () {
     let operation = get_operation_dict_for_loader();
     let dataframe_json = g_document_mapped_table.getData("json");
 
-    apply_operation(operation, dataframe_json)
+    apply_operation(operation, dataframe_json, handle_loader_operation_response)
 });
 
 $("#btn_save_pipeline").click(function () {

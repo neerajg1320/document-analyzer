@@ -1320,9 +1320,8 @@ def apply_pipeline_on_text(file_text, pipeline):
         print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), "%s" % (operation.type))
         parameters = json.loads(operation.parameters)
 
-
         if operation.type == "Extract":
-            current_df = apply_extractor_on_text(file_text, parameters)
+            new_str, table_dict, current_df = apply_extractor_on_text(file_text, parameters)
         elif operation.type == "Transform":
             current_df = apply_mapper_on_dataframe(parameters, current_df)
         elif operation.type == "Load":
