@@ -630,9 +630,15 @@ def create_new_fields(new_fields, df):
     return df.round(g_decimal_places)
 
 
-def apply_mapper_on_dataframe(destination_table_name, mapper, new_fields, df):
-    df = map_existing_fields(destination_table_name, mapper, df)
-    df = assign_new_datatypes(destination_table_name, df)
+def apply_mapper_on_dataframe(mapper_parameters, df):
+    destination_table = mapper_parameters["destination_table"]
+    mapper = json.loads(mapper_parameters["existing_fields"])
+    new_fields = None
+    if "new_fields" in mapper_parameters:
+        new_fields = json.loads(mapper_parameters["new_fields"])
+
+    df = map_existing_fields(destination_table, mapper, df)
+    df = assign_new_datatypes(destination_table, df)
 
     if new_fields is not None:
         df = create_new_fields(new_fields, df)
@@ -1120,23 +1126,34 @@ class OperationViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'], renderer_classes=[renderers.JSONRenderer])
     def apply(self, request, *args, **kwargs):
-        print(request.data)
-        if not "operation_json" in request.data:
-            return Response({"error": "Missing field 'operation_json'"})
+        if not "operation_params" in request.data:
+            return Response({"error": "Missing field 'operation_params'"})
         if not "dataframe_json" in request.data:
             return Response({"error": "Missing field 'dataframe_json'"})
 
-        operation = json.loads(request.data.get("operation_json"))
+        operation = json.loads(request.data.get("operation_params"))
         df = pd.read_json(request.data.get("dataframe_json"))
 
-        frameinfo = getframeinfo(currentframe())
-        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), operation, df)
+        operations_parameters = json.loads(operation["parameters"])
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), operations_parameters)
 
         if operation["type"] == "Load":
-            loader_parameters = json.loads(operation["parameters"])
-            apply_loader_on_dataframe(loader_parameters, df)
+            apply_loader_on_dataframe(operations_parameters, df)
+            response_dict = {"msg": "DataFrame Loaded into Datastore"}
 
-        return Response({"msg": "Under process"})
+        elif operation["type"] == "Transform":
+            df = apply_mapper_on_dataframe(operations_parameters, df)
+
+            try:
+                response_dict = [{
+                    "mapped_df": str(df),
+                    "mapped_df_json": df.to_json(orient='records'),
+                }]
+            except Exception as e:
+                response_dict = []
+
+        return Response(response_dict)
 
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
     def get_loader_tables(self, request, *args, **kwargs):
@@ -1280,48 +1297,31 @@ def apply_loader_on_dataframe(loader_parameters, df):
     datastore_credentials = json.loads(datastore.parameters)
     load_frame_into_datastore_table(datastore.type.title, datastore_credentials, table_name, df)
 
+    return df
+
 
 def apply_pipeline_on_text(file_text, pipeline):
     current_df = pd.DataFrame()
+
+    # We need the pipeline operations array in order
+    # TBD
     for operation in pipeline.operations.all():
         frameinfo = getframeinfo(currentframe())
         print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), "%s" % (operation.type))
+        parameters = json.loads(operation.parameters)
+
 
         if operation.type == "Extract":
-            parameters = json.loads(operation.parameters)
-
             current_df = apply_extractor_on_text(file_text, parameters)
-
-            # frameinfo = getframeinfo(currentframe())
-            # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), current_df)
-
         elif operation.type == "Transform":
-            parameters = json.loads(operation.parameters)
-
-            # frameinfo = getframeinfo(currentframe())
-            # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), parameters)
-
-            destination_table = parameters["destination_table"]
-            mapper = json.loads(parameters["existing_fields"])
-            new_fields = None
-            if "new_fields" in parameters:
-                new_fields = json.loads(parameters["new_fields"])
-
-            current_df = apply_mapper_on_dataframe(destination_table, mapper, new_fields, current_df)
-
-            # frameinfo = getframeinfo(currentframe())
-            # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), current_df)
-
+            current_df = apply_mapper_on_dataframe(parameters, current_df)
         elif operation.type == "Load":
-            parameters = json.loads(operation.parameters)
-
-            # frameinfo = getframeinfo(currentframe())
-            # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), current_df)
-
-            apply_loader_on_dataframe(parameters, current_df)
-
+            current_df = apply_loader_on_dataframe(parameters, current_df)
         else:
             raise RuntimeError("Operation %s not found" % operation.type)
+
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), current_df)
 
     return current_df
 

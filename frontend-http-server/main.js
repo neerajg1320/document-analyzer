@@ -670,46 +670,55 @@ $("#btn_get_mapper").click(function () {
 });
 
 
-$("#btn_apply_mapper").click(function () {
+function get_operation_dict_for_mapper()
+{
     // Get document id
-    let document_id = $("#input_document_id").val();
-
-    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
-    let document_transactions_get_mapper_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/transactions/mapper/';
+    let mapper_name = $("#input_mapper_name").val();
+    if (mapper_name == "") {
+        alert('Please provide mapper name!');
+        return;
+    }
 
     let destination_table = $("#sel-destination-header-table").val();
+    if (destination_table == "") {
+        alert('Please provide destination table!');
+        return;
+    }
 
-    console.log(document_transactions_get_mapper_url);
-    let mapper_json_str = JSON.stringify(g_document_mapper_table.getData("json"));
-    let mapper_newfields_json_str = JSON.stringify(g_document_mapper_newfields_table.getData("json"));
-
-    let data_json = {
+    let mapper_parameters = {
         "destination_table": destination_table,
-        "existing_fields": mapper_json_str,
-        "new_fields": mapper_newfields_json_str
+        "existing_fields": JSON.stringify(g_document_mapper_table.getData("json")),
+        "new_fields": JSON.stringify(g_document_mapper_newfields_table.getData("json"))
+    }
+    mapper_parameters_json = JSON.stringify(mapper_parameters);
+
+    return  {
+        "title": mapper_name,
+        "type": "Transform",
+        "parameters": mapper_parameters_json
     };
-    console.log(data_json);
+}
 
-    $.ajax({
-        type: 'POST',
-        data: data_json,
-        url: document_transactions_get_mapper_url,
-        headers : {
-            'Authorization' : 'Token ' + g_user_auth_token,
-        },
-        dataType: 'json',
-        success: function(response) {
-            console.log(typeof(response), response);
-            //response is already a parsed JSON
 
-            var mapped_dataframe = response[0]['mapped_df'];
-            console.log(typeof(mapped_dataframe), mapped_dataframe);
-            g_document_mapped_dataframe_box.empty().append(mapped_dataframe);
+function handle_mapper_operation_response(response) {
+    console.log(typeof(response), response);
+    //response is already a parsed JSON
 
-            var mapped_transactions = response[0]['mapped_df_json'];
-            g_document_mapped_table.setData(mapped_transactions);
-        }
-    });
+    var mapped_dataframe = response[0]['mapped_df'];
+    g_document_mapped_dataframe_box.empty().append(mapped_dataframe);
+
+    var mapped_transactions = response[0]['mapped_df_json'];
+    g_document_mapped_table.setData(mapped_transactions);
+
+}
+
+
+$("#btn_apply_mapper").click(function () {
+    let operation = get_operation_dict_for_mapper();
+    let dataframe_json = g_document_table.getData("json");
+
+    apply_operation(operation, dataframe_json, handle_mapper_operation_response)
+
 
 });
 
@@ -942,7 +951,6 @@ function get_operation_dict_for_loader() {
 // Keep this for later
 $("#btn_save_loader").click(function() {
     let operation = get_operation_dict_for_loader();
-    console.log(operation);
 
     save_operation(operation.title, operation.type, operation.parameters);
 });
@@ -1053,7 +1061,7 @@ $("#btn_download_datastore").click(function () {
 });
 
 
-function apply_operation(operation, dataframe_json) {
+function apply_operation(operation, dataframe_json, success_callback) {
     let operation_apply_url = 'http://localhost:8000/api/docminer/operations/apply/';
 
     console.log(operation_apply_url, operation, dataframe_json);
@@ -1071,23 +1079,15 @@ function apply_operation(operation, dataframe_json) {
         },
         success: function(response) {
             console.log(typeof(response), response);
-            //response is already a parsed JSON
 
-            // alert("Regex saved");
-            // g_operation_pipeline_array.push(response.id);
-            g_operation_pipeline_array.push(response.id);
-
-            console.log("Pipeline_array:", g_operation_pipeline_array);
+            success_callback(response);
         }
     });
 
 }
 
 $("#btn_apply_loader").click(function () {
-
     let operation = get_operation_dict_for_loader();
-    console.log(operation);
-
     let dataframe_json = g_document_mapped_table.getData("json");
 
     apply_operation(operation, dataframe_json)
