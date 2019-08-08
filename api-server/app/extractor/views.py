@@ -1118,6 +1118,26 @@ class OperationViewSet(viewsets.ModelViewSet):
         # return self.serializer_class
         return serializers.OperationListSerializer
 
+    @action(detail=False, methods=['post'], renderer_classes=[renderers.JSONRenderer])
+    def apply(self, request, *args, **kwargs):
+        print(request.data)
+        if not "operation_json" in request.data:
+            return Response({"error": "Missing field 'operation_json'"})
+        if not "dataframe_json" in request.data:
+            return Response({"error": "Missing field 'dataframe_json'"})
+
+        operation = json.loads(request.data.get("operation_json"))
+        df = pd.read_json(request.data.get("dataframe_json"))
+
+        frameinfo = getframeinfo(currentframe())
+        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), operation, df)
+
+        if operation["type"] == "Load":
+            loader_parameters = json.loads(operation["parameters"])
+            apply_loader_on_dataframe(loader_parameters, df)
+
+        return Response({"msg": "Under process"})
+
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer, renderers.JSONRenderer])
     def get_loader_tables(self, request, *args, **kwargs):
         operation = self.get_object()

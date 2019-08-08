@@ -68,6 +68,9 @@ operation_loader_get_tables = views.OperationViewSet.as_view({
     'get': 'get_loader_tables'
 }, renderer_classes=[renderers.JSONRenderer])
 
+operation_apply = views.OperationViewSet.as_view({
+    'post': 'apply'
+}, renderer_classes=[renderers.JSONRenderer])
 
 file_textify = views.FileViewSet.as_view({
     'get': 'textify'
@@ -95,11 +98,13 @@ urlpatterns = [
     path('documents/<int:pk>/transactions/mapper/', document_transactions_mapper, name='document-transactions-mapper'),
 
     path('operations/<int:pk>/loader/tables/', operation_loader_get_tables, name='datastore-get-tables'),
+    path('operations/apply/', operation_apply, name='operation_apply'),
 
     # This will create the transactions in the transactions table
     # Currently we are saving to snowflake
     path('documents/<int:pk>/transactions/save/', document_transactions_save,
          name='document-transactions-save'),
+
 
     path('files/<int:pk>/textify/', file_textify, name='file-textify'),
 

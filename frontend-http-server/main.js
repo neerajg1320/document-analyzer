@@ -910,8 +910,8 @@ $("#btn_get_datastores").click(function () {
     });
 });
 
-// Keep this for later
-$("#btn_save_loader").click(function() {
+
+function get_operation_dict_for_loader() {
     // Get document id
     let datastore_name = $("#input_new_loader").val();
     if (datastore_name == "") {
@@ -930,11 +930,21 @@ $("#btn_save_loader").click(function() {
         "table": datastore_table,
         "datastore_id": datastore_id
     };
-    let loader_json = JSON.stringify(loader);
+    let loader_parameters_json = JSON.stringify(loader);
 
-    console.log(loader);
+    return {
+        "title": datastore_name,
+        "type": "Load",
+        "parameters": loader_parameters_json
+    };
+}
 
-    save_operation(datastore_name, "Load", loader_json);
+// Keep this for later
+$("#btn_save_loader").click(function() {
+    let operation = get_operation_dict_for_loader();
+    console.log(operation);
+
+    save_operation(operation.title, operation.type, operation.parameters);
 });
 
 
@@ -1043,59 +1053,44 @@ $("#btn_download_datastore").click(function () {
 });
 
 
-$("#btn_apply_loader").click(function () {
-    // Get document id
-    let document_id = $("#input_document_id").val();
+function apply_operation(operation, dataframe_json) {
+    let operation_apply_url = 'http://localhost:8000/api/docminer/operations/apply/';
 
-    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
-    let document_transactions_save_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/transactions/save/';
-
-    console.log(document_transactions_save_url);
-
-    let store_type = $("#sel-datastore-type").val();
-    if (store_type == "new") {
-        alert('Please provide datastore type!');
-        return;
-    }
-
-    let store_parameters_table_values = g_account_parameters_value_table.getData("json");
-
-    let final_store_parameters_values = {}
-    store_parameters_table_values.forEach(function(entry) {
-        final_store_parameters_values[entry.parameter] = entry.value;
-    });
-    console.log(final_store_parameters_values);
-
-    let dataframe_json_str = JSON.stringify(g_document_mapped_table.getData("json"));
-    console.log(typeof(dataframe_json_str), dataframe_json_str);
-
-    // let store_parameters_values = JSON.stringify(g_account_parameters_value_table.getData("json"));
-    // if (store_type == "new") {
-    //     alert('Please provide datastore type!');
-    //     return;
-    // }
+    console.log(operation_apply_url, operation, dataframe_json);
 
     $.ajax({
         type: 'POST',
-        url: document_transactions_save_url,
+        url: operation_apply_url,
         headers : {
             'Authorization' : 'Token ' + g_user_auth_token,
         },
         dataType: 'json',
         data: {
-            "store_type": store_type,
-            "parameter_values": JSON.stringify(final_store_parameters_values),
-            "dataframe_json":dataframe_json_str
+            "operation_params": JSON.stringify(operation),
+            "dataframe_json": JSON.stringify(dataframe_json)
         },
         success: function(response) {
-            // console.log(typeof(response), response);
+            console.log(typeof(response), response);
             //response is already a parsed JSON
 
-            // alert("Transactions saved");
-            g_account_table.setData(response);
+            // alert("Regex saved");
+            // g_operation_pipeline_array.push(response.id);
+            g_operation_pipeline_array.push(response.id);
+
+            console.log("Pipeline_array:", g_operation_pipeline_array);
         }
     });
 
+}
+
+$("#btn_apply_loader").click(function () {
+
+    let operation = get_operation_dict_for_loader();
+    console.log(operation);
+
+    let dataframe_json = g_document_mapped_table.getData("json");
+
+    apply_operation(operation, dataframe_json)
 });
 
 $("#btn_save_pipeline").click(function () {
