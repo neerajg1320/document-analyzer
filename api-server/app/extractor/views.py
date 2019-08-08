@@ -1034,17 +1034,19 @@ class FileViewSet(viewsets.ModelViewSet):
                 # We first read the pdf, the password is used in case pdf is encrypted
                 file.text = pdftotext_read_pdf_using_subprocess(file_path, file.password)
                 # The we extract the transactions from the text
-                try:
-                    file_transactions_json = text_extract_dataframe_json(file.institute_name,
-                                                                     file.document_type,
-                                                                     file.text)
-                except Exception as e:
-                    pass  # Ignore for now
+                # try:
+                #     file_transactions_json = text_extract_dataframe_json(file.institute_name,
+                #                                                      file.document_type,
+                #                                                      file.text)
+                # except Exception as e:
+                #     pass  # Ignore for now
 
                 g_flag_process_data = True
             elif excel_routines.is_file_extn_excel(file_extn):
                 file.text = excel_routines.excel_to_text(file_path)
-                file_transactions_json = excel_routines.excel_to_json(file_path)
+
+                # file_transactions_json = excel_routines.excel_to_json(file_path)
+
                 g_flag_process_data = False
             elif image_routines.is_file_extn_image(file_extn):
                 file.text = image_routines.image_to_text(file_path)
