@@ -232,37 +232,25 @@ def get_columns_from_database(database_parameters, table_name):
     return column_list
 
 
-def save_to_snowflake(df, snowflake_parameters):
-    table_name = snowflake_parameters.pop('table')
-
+def save_to_snowflake(df, table_name, snowflake_parameters):
     db_url = get_snowflake_db_url(snowflake_parameters)
 
     save_to_sql(df, db_url, table_name)
 
 
-def save_to_postgres(df, postgres_parameters):
-    table_name = str(postgres_parameters.pop('table')).lower()
-
+def save_to_postgres(df, table_name, postgres_parameters):
     db_url = get_postgres_db_url(postgres_parameters)
 
     save_to_sql(df, db_url, table_name)
 
 
 def save_to_sql(df, db_url, table_name):
-    # frameinfo = getframeinfo(currentframe())
-    # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), str(db_url))
-
     engine = create_engine(db_url)
     try:
         connection = engine.connect()
 
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), "Loading to: %s" % table_name)
-
-        df.to_sql(table_name, engine, index=False, if_exists='append')
-        # new_df = pd.read_sql_query('select * from %s' % table_name, con=engine)
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), new_df)
+        # We are making the table_name lowercase to make it work smoothly with postgres
+        df.to_sql(table_name.lower(), engine, index=False, if_exists='append')
     except Exception as e:
         frameinfo = getframeinfo(currentframe())
         print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
@@ -652,8 +640,11 @@ def apply_mapper_on_dataframe(destination_table_name, mapper, new_fields, df):
     return df
 
 
-def apply_loader_on_dataframe(type, properties, dataframe):
-    if str(type).lower() == 'snowflake':
+def load_frame_into_datastore_table(datastore_type, datastore_credentials, table_name, dataframe):
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), dataframe)
+
+    if str(datastore_type).lower() == 'snowflake':
         #  This is the mapping according to the hardcoded regex extractor
         #
         # flag_process_data = g_flag_process_data
@@ -661,10 +652,10 @@ def apply_loader_on_dataframe(type, properties, dataframe):
         #     # Need to be lookup based
         #     groupby_dict = self.get_groupby_dict(document)
         #     df = transform_df_using_dict(df, groupby_dict)
-        save_to_snowflake(dataframe, properties)
+        save_to_snowflake(dataframe, table_name, datastore_credentials)
         # df = load_from_snowflake(datastore_parameters)
-    elif str(type).lower() == 'postgres':
-        save_to_postgres(dataframe, properties)
+    elif str(datastore_type).lower() == 'postgres':
+        save_to_postgres(dataframe, table_name, datastore_credentials)
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
@@ -960,7 +951,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         transactions_array = []
 
         if datastore_parameters is not None and mapped_df is not None:
-            apply_loader_on_dataframe(datastore_type, datastore_parameters, mapped_df)
+            load_frame_into_datastore_table(datastore_type, datastore_parameters, "TBD", mapped_df)
 
             transactions_array = json.loads(mapped_df.to_json(orient='records'))
 
@@ -1255,11 +1246,26 @@ def apply_extractor_on_text(text, parameters):
     return df
 
 
+def apply_loader_on_dataframe(loader_parameters, df):
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), df)
+
+    table_name = loader_parameters["table"]
+    datastore_id = loader_parameters["datastore_id"]
+
+    datastore = DatastoreInfo.objects.get(pk=datastore_id)
+    if datastore is None:
+        raise RuntimeError("Datastore not found for datastore id '%s'" % str(datastore_id))
+
+    datastore_credentials = json.loads(datastore.parameters)
+    load_frame_into_datastore_table(datastore.type.title, datastore_credentials, table_name, df)
+
+
 def apply_pipeline_on_text(file_text, pipeline):
     current_df = pd.DataFrame()
     for operation in pipeline.operations.all():
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), "%s: %s" % (operation.type, operation.parameters))
+        frameinfo = getframeinfo(currentframe())
+        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), "%s" % (operation.type))
 
         if operation.type == "Extract":
             parameters = json.loads(operation.parameters)
@@ -1283,11 +1289,16 @@ def apply_pipeline_on_text(file_text, pipeline):
 
             current_df = apply_mapper_on_dataframe(destination_table, mapper, new_fields, current_df)
 
+            # frameinfo = getframeinfo(currentframe())
+            # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), current_df)
+
         elif operation.type == "Load":
             parameters = json.loads(operation.parameters)
-            type = parameters["type"]
-            properties = json.loads(parameters["properties"])
-            apply_loader_on_dataframe(type, properties, current_df)
+
+            # frameinfo = getframeinfo(currentframe())
+            # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), current_df)
+
+            apply_loader_on_dataframe(parameters, current_df)
 
         else:
             raise RuntimeError("Operation %s not found" % operation.type)

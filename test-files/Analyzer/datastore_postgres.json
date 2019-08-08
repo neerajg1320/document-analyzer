@@ -18,9 +18,5 @@
 	{
 		"parameter": "database",
 		"value": "app"
-	},
-	{
-		"parameter": "table",
-		"value": "Trades"
 	}
 ]

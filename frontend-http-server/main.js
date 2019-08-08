@@ -819,10 +819,10 @@ $("#btn_get_datastore_type_list").click(function () {
             destination_select.append($('<option></option>').attr('value', new_entry_str).text(new_entry_str));
 
             $.each(response, function (key, entry) {
-                destination_select.append($('<option></option>').attr('value', entry.title).text(entry.title));
+                destination_select.append($('<option></option>').attr('value', entry.id).text(entry.title));
                 // Create the global dictionary
 
-                g_table_datastoretype_parameters_description_dict[entry.title] = entry.parameters;
+                g_table_datastoretype_parameters_description_dict[entry.id] = entry.parameters;
 
                 console.log(typeof (entry.parameters), entry.parameters);
             });
@@ -832,6 +832,7 @@ $("#btn_get_datastore_type_list").click(function () {
     });
 });
 
+let g_table_loader_dict = []
 
 let g_table_datastore_dict = []
 
@@ -865,7 +866,7 @@ $("#btn_get_loaders").click(function () {
 
             $.each(response, function (key, entry) {
                 datastores_select.append($('<option></option>').attr('value', entry.title).text(entry.title));
-                g_table_datastore_dict[entry.title] = JSON.parse(entry.parameters);
+                g_table_loader_dict[entry.title] = JSON.parse(entry.parameters);
             });
 
             document.getElementById('input_new_datastore').style.display = "";
@@ -875,8 +876,93 @@ $("#btn_get_loaders").click(function () {
 
 
 
+$("#btn_get_datastores").click(function () {
+    let loader_get_datastores_url = 'http://localhost:8000/api/docminer/datastores/';
+    console.log(loader_get_datastores_url);
+
+    $.ajax({
+        url: loader_get_datastores_url,
+        headers : {
+            'Authorization' : 'Token ' + g_user_auth_token,
+        },
+        dataType: 'json',
+        success: function(response) {
+            console.log(typeof(response), response);
+
+            // Find the title elements of the json array received
+            // e.g. schemas = ["receipt", "contract_nt", "bank_stmt"]
+            let datastores = response.map(a => a.title);
+            console.log(datastores);
+
+            let datastores_select = $("#sel-datastore");
+            datastores_select.empty();
+
+            let new_entry_str = "new";
+            datastores_select.append($('<option></option>').attr('value', new_entry_str).text(new_entry_str));
+
+            $.each(response, function (key, entry) {
+                datastores_select.append($('<option></option>').attr('value', entry.id).text(entry.title));
+                g_table_datastore_dict[entry.title] = JSON.parse(entry.parameters);
+            });
+
+            document.getElementById('input_new_datastore').style.display = "";
+        }
+    });
+});
+
 // Keep this for later
-$("#btn_save_datastore_parameters").click(function() {
+$("#btn_save_loader").click(function() {
+    // Get document id
+    let datastore_name = $("#input_new_loader").val();
+    if (datastore_name == "") {
+        alert('Please provide datastore name!');
+        return;
+    }
+
+    let datastore_table = $("#input_datastore_table").val();
+    if (datastore_table == "") {
+        alert('Please provide table name!');
+        return;
+    }
+
+    let datastore_id = $("#sel-datastore").val();
+    let loader = {
+        "table": datastore_table,
+        "datastore_id": datastore_id
+    };
+    let loader_json = JSON.stringify(loader);
+
+    console.log(loader);
+
+    save_operation(datastore_name, "Load", loader_json);
+});
+
+
+$("#sel-loader").on('change', function() {
+    let loader_name = this.value;
+
+    console.log(loader_name);
+
+    if (loader_name == "new") {
+        g_account_parameters_value_table.setData(g_table_datastore_parameters_values_array);
+    } else {
+        console.log(g_table_loader_dict);
+        // let parameters = g_table_loader_dict[loader_name];
+        // let datastore_properties = JSON.parse(parameters["properties"]);
+        //
+        // console.log(datastore_properties);
+        //
+        // let parameters_values_array = [];
+        // for (var key in datastore_properties) {
+        //     parameters_values_array.push({"parameter": key, "value": datastore_properties[key]});
+        // }
+        // console.log(parameters_values_array);
+        //
+        // g_account_parameters_value_table.setData(parameters_values_array);
+    }
+});
+
+$("#btn_save_datastore").click(function() {
     // Get document id
     let datastore_name = $("#input_new_datastore").val();
     if (datastore_name == "") {
@@ -899,39 +985,30 @@ $("#btn_save_datastore_parameters").click(function() {
     console.log(final_store_parameters_values);
 
     // save_operation("S1", "Load", "{}");
-    let loader = {
+    let datastore = {
+        "title": datastore_name,
         "type": store_type,
-        "properties": JSON.stringify(final_store_parameters_values)
+        "parameters": JSON.stringify(final_store_parameters_values)
 
     };
-    let loader_json = JSON.stringify(loader);
 
-    save_operation(datastore_name, "Load", loader_json);
-});
+    let datastores_url = 'http://localhost:8000/api/docminer/datastores/';
 
-
-$("#sel-loader").on('change', function() {
-    let datastore_name = this.value;
-
-    console.log(datastore_name);
-
-    if (datastore_name == "new") {
-        g_account_parameters_value_table.setData(g_table_datastore_parameters_values_array);
-    } else {
-        let parameters = g_table_datastore_dict[datastore_name];
-        let datastore_properties = JSON.parse(parameters["properties"]);
-
-        console.log(datastore_properties);
-
-        let parameters_values_array = [];
-        for (var key in datastore_properties) {
-            parameters_values_array.push({"parameter": key, "value": datastore_properties[key]});
+    $.ajax({
+        type: 'POST',
+        data: datastore,
+        url: datastores_url,
+        headers : {
+            'Authorization' : 'Token ' + g_user_auth_token,
+        },
+        dataType: 'json',
+        success: function(response) {
+            console.log(typeof(response), response);
         }
-        console.log(parameters_values_array);
+    });
 
-        g_account_parameters_value_table.setData(parameters_values_array);
-    }
 });
+
 
 $("#sel-datastore-type").on('change', function() {
     console.log(this.value);

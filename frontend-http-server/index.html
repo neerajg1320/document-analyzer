@@ -139,24 +139,33 @@
 
         <label>Datastore</label>
         <select id="sel-datastore"></select>
+        <button id="btn_get_datastores">Refresh</button>
 
         <button id="btn_apply_loader">Apply Loader</button>
 
+        <input id="input_new_loader" type="text" value=""/>
+        <button id="btn_save_loader">Save Loader</button>
+
     </div>
 
+    <!-- Datastore Block -->
     <div class="bordered">
         <!--<button id="btn_datastore_get_tables">Datastore Get Tables</button>-->
-        <label>Datastore Name</label>
-        <input id="input_new_datastore" type="text" value=""/>
-        <button id="btn_save_datastore_parameters">Save Datastore Parameters</button>
+        <h3>Datastore</h3>
+
+        <label>Datastore Type</label>
+        <select id="sel-datastore-type"></select>
+        <button id="btn_get_datastore_type_list">Refresh Datastore Types</button>
+
         <div id="account-parameters-value-table"></div>
         <div>
             <button id="btn_upload_datastore">Upload Datastore</button>
             <button id="btn_download_datastore">Download Datastore</button>
         </div>
 
-        <select id="sel-datastore-type"></select>
-        <button id="btn_get_datastore_type_list">Get Datastore Types</button>
+        <input id="input_new_datastore" type="text" value=""/>
+        <button id="btn_save_datastore">Save Datastore</button>
+
         <div id="account-parameters-description-table"></div>
     </div>
 
