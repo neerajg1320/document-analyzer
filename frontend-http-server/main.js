@@ -723,32 +723,9 @@ $("#btn_apply_mapper").click(function () {
 });
 
 $("#btn_save_mapper").click(function() {
-    // Get document id
-    let mapper_name = $("#input_mapper_name").val();
-    if (mapper_name == "") {
-        alert('Please provide mapper name!');
-        return;
-    }
+    let operation = get_operation_dict_for_mapper();
 
-    let destination_table = $("#sel-destination-header-table").val();
-    if (destination_table == "") {
-        alert('Please provide destination table!');
-        return;
-    }
-
-    let mapper = {
-        "destination_table": destination_table,
-        "existing_fields": JSON.stringify(g_document_mapper_table.getData("json")),
-        "new_fields": JSON.stringify(g_document_mapper_newfields_table.getData("json"))
-    }
-
-    var mapper_json = JSON.stringify(mapper);
-    if (mapper_json == "") {
-        alert('Please provide mapper!');
-        return;
-    }
-
-    save_operation(mapper_name, "Transform", mapper_json);
+    save_operation(operation.title, operation.type, operation.parameters);
 });
 
 $("#btn_mapper_newfields_add_row").click(function() {
