@@ -10,6 +10,14 @@
 <!-- DOM section -->
 <h2>Admin Flow creating Pipelines</h2>
 <div id="main-div">
+    <h3>Pipeline</h3>
+    <div id="pipeline-info" class="bordered">
+        <input id="input_new_pipeline" type="text" value=""/>
+        <button id="btn_save_pipeline">Save Pipeline</button>
+        <button id="btn_reset_pipeline">Reset Pipeline</button>
+    </div>
+
+    <h3>Helper File</h3>
     <div id="input-box" class="bordered">
         <form id="fileinfo" class="bordered" action="http://localhost:8000/api/docminer/files/"
               method="post"
@@ -40,7 +48,7 @@
 
     <div id="document-info">
 
-        <h3>Extractor Type</h3>
+        <h3>Extractor</h3>
 
         <button id="btn_apply_extractor">Apply Extractor</button>
         <br/>
@@ -50,6 +58,7 @@
         <br/>
         <br/>
 
+        <label>Extractor Type</label>
         <select id="sel-extractor-type">
             <option value="excel">Excel</option>
             <option value="regex" selected>Regular Expression</option>
@@ -89,6 +98,7 @@
         <br/>
 
 
+        <h3>Mapper</h3>
         <button id="btn_apply_mapper">Apply Mapper</button>
 
         <div class="bordered">
@@ -108,7 +118,7 @@
         </div>
 
         <!- Destination Table>
-        <h3>Destination Header Table</h3>
+        <h3>Destination Schema</h3>
         <select id="sel-destination-header-table" />
         <input id="input_new_schema" type="text" value="" style="display:none"/><br/>
         <button id="btn_post_schema">Save Schema</button><br/>
@@ -128,14 +138,13 @@
     </div>
 
 
+    <h3>Loader</h3>
     <!-- Loader Block -->
     <br/>
     <br/>
     <button id="btn_apply_loader">Apply Loader</button>
 
     <div id="database-info" class="bordered">
-        <h3>Loader</h3>
-
         <label>Title</label>
         <select id="sel-loader"></select>
         <button id="btn_get_loaders">Refresh</button>
@@ -152,10 +161,10 @@
 
     </div>
 
+    <h3>Datastore</h3>
     <!-- Datastore Block -->
     <div class="bordered">
         <!--<button id="btn_datastore_get_tables">Datastore Get Tables</button>-->
-        <h3>Datastore</h3>
 
         <label>Datastore Type</label>
         <select id="sel-datastore-type"></select>
@@ -174,13 +183,9 @@
     </div>
 
     <h3>Final Table</h3>
-    <div id="account-transactions-table"></div>
 
-    <div id="pipeline-info" class="bordered">
-        <input id="input_new_pipeline" type="text" value=""/>
-        <button id="btn_save_pipeline">Save Pipeline</button>
-        <button id="btn_reset_pipeline">Reset Pipeline</button>
-    </div>
+    <div id="account-transactions-table"></div>
+    
 </div>
 
 <!-- scripts section -->
