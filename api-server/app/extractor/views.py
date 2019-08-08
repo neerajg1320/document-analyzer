@@ -1152,6 +1152,16 @@ class OperationViewSet(viewsets.ModelViewSet):
                 }]
             except Exception as e:
                 response_dict = []
+        elif operation["type"] == "Extract":
+            text = df['text'].iloc[0]
+
+            new_str, table_dict, df = apply_extractor_on_text(text, operations_parameters)
+
+            response_dict = [{
+                "new_str": new_str,
+                "dataframe": str(df),
+                "transactions": table_dict,
+            }]
 
         return Response(response_dict)
 
@@ -1280,7 +1290,7 @@ def apply_extractor_on_text(text, parameters):
     else:
         raise RuntimeError("Extractor type '%s' not supported" % extractor_type)
 
-    return df
+    return new_str, table_dict, df
 
 
 def apply_loader_on_dataframe(loader_parameters, df):

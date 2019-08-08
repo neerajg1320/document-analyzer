@@ -564,8 +564,7 @@ function save_operation(title, type, parameters) {
     });
 }
 
-
-$("#btn_save_extractor").click(function() {
+function get_operation_dict_for_extractor() {
     // Get document id
     let extractor_name = $("#input_extractor_name").val();
     if (extractor_name == "") {
@@ -573,25 +572,60 @@ $("#btn_save_extractor").click(function() {
         return;
     }
 
-    var regex_text = g_regex_text_box.val();
-    if (regex_text == "") {
-        alert('Please provide regular expression!');
-        return;
-    }
-
     let extractor_type = $("#sel-extractor-type").val();
-    let extractor_json = {
+    let extractor_parameters = {
         "type": extractor_type
     };
 
     if (extractor_type == "regex") {
-        extractor_json["parameters"] = {
+        var regex_text = g_regex_text_box.val();
+        if (regex_text == "") {
+            alert('Please provide regular expression!');
+            return;
+        }
+
+        extractor_parameters["parameters"] = {
             "regex": regex_text
         };
     }
 
+    let extractor_parameters_json = JSON.stringify(extractor_parameters);
+
+    return  {
+        "title": extractor_name,
+        "type": "Extract",
+        "parameters": extractor_parameters_json
+    };
+}
+
+function handle_extractor_operation_response(response) {
+    console.log(response);
+
+    var new_str = response[0]['new_str'];
+    g_document_text_box.empty().append(new_str);
+
+    var dataframe = response[0]['dataframe'];
+    g_document_dataframe_box.empty().append(dataframe);
+
+    var transactions = response[0]['transactions'];
+    g_document_table.setData(transactions);
+}
+
+$("#btn_apply_extractor").click(function () {
+    let operation = get_operation_dict_for_extractor();
+    let text = g_current_document.text;
+
+    let dataframe_json = [{'text': text}]
+
+    apply_operation(operation, dataframe_json, handle_extractor_operation_response)
+
+});
+
+$("#btn_save_extractor").click(function() {
+    let operation = get_operation_dict_for_extractor();
+
     // We need to support this at the backend
-    save_operation(extractor_name, "Extract", JSON.stringify(extractor_json));
+    save_operation(operation.title, operation.type, operation.parameters);
 });
 
 
