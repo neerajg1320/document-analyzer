@@ -49,15 +49,17 @@
     <div id="document-info">
 
         <h3>Extractor</h3>
-
+        <label>Extractor Name</label>
+        <select id="sel-extractor"></select>
+        <button id="btn_get_extractors">Refresh</button>
+        <br/>
+        <input id="input_new_extractor" type="text" value=""/>
+        <button id="btn_save_extractor">Save Extractor</button>
+        <br/>
+        <br/>
         <button id="btn_apply_extractor">Apply Extractor</button>
         <br/>
         <br/>
-        <button id="btn_save_extractor">Save Extractor</button>
-        <input id="input_extractor_name" type="text" value=""/>
-        <br/>
-        <br/>
-
         <label>Extractor Type</label>
         <select id="sel-extractor-type">
             <option value="excel">Excel</option>
@@ -96,18 +98,25 @@
         <p id="document-transactions-json-url">Url for transactions-json</p>
         <div id="document-transactions-table"></div>
         <br/>
+    </div>
 
-
+    <!-- Mapper -->
+    <div>
         <h3>Mapper</h3>
+        <label>Mapper Name</label>
+        <select id="sel-mapper"></select>
+        <button id="btn_get_mappers">Refresh</button>
+        <br/>
+        <input id="input_new_mapper" type="text" value=""/>
+        <button id="btn_save_mapper">Save Mapper</button>
+        <br/>
+        <br/>
         <button id="btn_apply_mapper">Apply Mapper</button>
 
         <div class="bordered">
-            <div>
-                <button id="btn_get_mapper">Get Mapper</button>
-                <br/>
-                <button id="btn_save_mapper">Save Mapper</button>
-                <input id="input_mapper_name" type="text" value=""/>
-            </div>
+            <button id="btn_create_mapper">Create Mapper</button>
+            <br/>
+
             <div id="document-mapper-table"></div>
             <div>
                 <button id="btn_upload_mapper">Upload Mapper</button>

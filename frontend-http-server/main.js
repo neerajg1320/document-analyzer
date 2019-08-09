@@ -304,6 +304,7 @@ $("#input_file").on('change', function() {
     select_extractor_type.dispatchEvent(event);
 });
 
+
 // These functions should have no knowledge of elements extractions
 //
 function set_sample_transactions(tabulator_table) {
@@ -677,7 +678,7 @@ $("#sel-destination-header-table").on('change', function() {
 });
 
 
-$("#btn_get_mapper").click(function () {
+$("#btn_create_mapper").click(function () {
     // Get document id
     let document_id = $("#input_document_id").val();
 
@@ -854,6 +855,11 @@ $("#btn_get_datastore_type_list").click(function () {
 
 let g_table_loader_dict = []
 
+let g_table_mapper_dict = []
+
+let g_table_extractor_dict = []
+
+
 let g_table_datastore_dict = []
 
 
@@ -862,23 +868,66 @@ function handle_get_loaders_response(response) {
 
     // Find the title elements of the json array received
     // e.g. schemas = ["receipt", "contract_nt", "bank_stmt"]
-    let datastores = response.map(a => a.title);
-    console.log(datastores);
+    let loaders = response.map(a => a.title);
+    console.log(loaders);
 
-    let datastores_select = $("#sel-loader");
-    datastores_select.empty();
+    let loaders_select = $("#sel-loader");
+    loaders_select.empty();
 
     let new_entry_str = "new";
-    datastores_select.append($('<option></option>').attr('value', new_entry_str).text(new_entry_str));
+    loaders_select.append($('<option></option>').attr('value', new_entry_str).text(new_entry_str));
 
     $.each(response, function (key, entry) {
-        datastores_select.append($('<option></option>').attr('value', entry.title).text(entry.title));
+        loaders_select.append($('<option></option>').attr('value', entry.title).text(entry.title));
         g_table_loader_dict[entry.title] = JSON.parse(entry.parameters);
     });
 
-    document.getElementById('input_new_datastore').style.display = "";
+    document.getElementById('input_new_loader').style.display = "";
 }
 
+function handle_get_mappers_response(response) {
+    console.log(typeof(response), response);
+
+    // Find the title elements of the json array received
+    // e.g. schemas = ["receipt", "contract_nt", "bank_stmt"]
+    let mappers = response.map(a => a.title);
+    console.log(mappers);
+
+    let mappers_select = $("#sel-mapper");
+    mappers_select.empty();
+
+    let new_entry_str = "new";
+    mappers_select.append($('<option></option>').attr('value', new_entry_str).text(new_entry_str));
+
+    $.each(response, function (key, entry) {
+        mappers_select.append($('<option></option>').attr('value', entry.title).text(entry.title));
+        g_table_mapper_dict[entry.title] = JSON.parse(entry.parameters);
+    });
+
+    document.getElementById('input_new_mapper').style.display = "";
+}
+
+function handle_get_extractors_response(response) {
+    console.log(typeof(response), response);
+
+    // Find the title elements of the json array received
+    // e.g. schemas = ["receipt", "contract_nt", "bank_stmt"]
+    let extractors = response.map(a => a.title);
+    console.log(extractors);
+
+    let extractors_select = $("#sel-extractor");
+    extractors_select.empty();
+
+    let new_entry_str = "new";
+    extractors_select.append($('<option></option>').attr('value', new_entry_str).text(new_entry_str));
+
+    $.each(response, function (key, entry) {
+        extractors_select.append($('<option></option>').attr('value', entry.title).text(entry.title));
+        g_table_extractor_dict[entry.title] = JSON.parse(entry.parameters);
+    });
+
+    document.getElementById('input_new_extractor').style.display = "";
+}
 
 function fetch_operations(type, response_handler) {
     let loader_get_parameters_url = 'http://localhost:8000/api/docminer/operations/';
@@ -901,6 +950,14 @@ function fetch_operations(type, response_handler) {
 
 $("#btn_get_loaders").click(function () {
     fetch_operations("Load", handle_get_loaders_response);
+});
+
+$("#btn_get_mappers").click(function () {
+    fetch_operations("Transform", handle_get_mappers_response);
+});
+
+$("#btn_get_extractors").click(function () {
+    fetch_operations("Extract", handle_get_extractors_response);
 });
 
 
@@ -1002,6 +1059,16 @@ function fill_loader_from_operation_dict(operation) {
     fill_datastore_from_id(operation.datastore_id);
 }
 
+function fill_mapper_from_operation_dict(operation) {
+    console.log(operation);
+
+}
+
+function fill_extractor_from_operation_dict(operation) {
+    console.log(operation);
+
+}
+
 
 $("#sel-loader").on('change', function() {
     let loader_name = this.value;
@@ -1016,6 +1083,36 @@ $("#sel-loader").on('change', function() {
 
     }
 });
+
+
+$("#sel-mapper").on('change', function() {
+    let mapper_name = this.value;
+    let mapper_parameters = g_table_mapper_dict[mapper_name];
+
+    if (mapper_name == "new") {
+        g_account_parameters_value_table.setData(g_table_datastore_parameters_values_array);
+    } else {
+        console.log(mapper_name, mapper_parameters);
+
+        fill_mapper_from_operation_dict(mapper_parameters);
+
+    }
+});
+
+$("#sel-extractor").on('change', function() {
+    let extractor_name = this.value;
+    let extractor_parameters = g_table_extractor_dict[extractor_name];
+
+    if (extractor_name == "new") {
+        g_account_parameters_value_table.setData(g_table_datastore_parameters_values_array);
+    } else {
+        console.log(extractor_name, extractor_parameters);
+
+        fill_extractor_from_operation_dict(extractor_parameters);
+
+    }
+});
+
 
 $("#btn_save_datastore").click(function() {
     // Get document id
