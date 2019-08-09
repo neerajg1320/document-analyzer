@@ -1069,7 +1069,7 @@ function fill_loader_from_operation_dict(operation) {
 // TBD: Ensure that the sel-destination-schema is already populated
 function fill_mapper_from_operation_dict(operation) {
     console.log(operation);
-    
+
     set_selector_value_with_event('sel-destination-schema', operation.destination_table);
     g_document_mapper_table.setData(operation.existing_fields);
     g_document_mapper_newfields_table.setData(operation.new_fields);
@@ -1242,6 +1242,48 @@ $("#btn_apply_loader").click(function () {
     let dataframe_json = g_document_mapped_table.getData("json");
 
     apply_operation(operation, dataframe_json, handle_loader_operation_response)
+});
+
+$("#btn_get_pipelines").click(function () {
+
+    let pipeline_get_url = 'http://localhost:8000/api/docminer/pipelines/';
+
+    console.log(pipeline_get_url);
+
+    $.ajax({
+        url: pipeline_get_url,
+        headers : {
+            'Authorization' : 'Token ' + g_user_auth_token,
+        },
+        dataType: 'json',
+        success: function(response) {
+            console.log(typeof(response), response);
+
+
+            // Find the title elements of the json array received
+            // e.g. schemas = ["receipt", "contract_nt", "bank_stmt"]
+            let schemas = response.map(a => a.title);
+
+            console.log(schemas);
+
+            let destination_select = $("#sel-pipeline");
+            destination_select.empty();
+
+            let new_entry_str = "new";
+            destination_select.append($('<option></option>').attr('value', new_entry_str).text(new_entry_str));
+
+            $.each(response, function (key, entry) {
+                destination_select.append($('<option></option>').attr('value', entry.id).text(entry.title));
+                // Create the global dictionary
+
+                g_table_datastoretype_parameters_description_dict[entry.id] = entry.parameters;
+
+                console.log(typeof (entry.parameters), entry.parameters);
+            });
+
+            document.getElementById('input_new_schema').style.display = "";
+        }
+    });
 });
 
 $("#btn_save_pipeline").click(function () {
