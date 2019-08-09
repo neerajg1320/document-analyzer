@@ -857,11 +857,32 @@ let g_table_loader_dict = []
 let g_table_datastore_dict = []
 
 
+function handle_get_loaders_response(response) {
+    console.log(typeof(response), response);
 
-$("#btn_get_loaders").click(function () {
+    // Find the title elements of the json array received
+    // e.g. schemas = ["receipt", "contract_nt", "bank_stmt"]
+    let datastores = response.map(a => a.title);
+    console.log(datastores);
 
+    let datastores_select = $("#sel-loader");
+    datastores_select.empty();
+
+    let new_entry_str = "new";
+    datastores_select.append($('<option></option>').attr('value', new_entry_str).text(new_entry_str));
+
+    $.each(response, function (key, entry) {
+        datastores_select.append($('<option></option>').attr('value', entry.title).text(entry.title));
+        g_table_loader_dict[entry.title] = JSON.parse(entry.parameters);
+    });
+
+    document.getElementById('input_new_datastore').style.display = "";
+}
+
+
+function fetch_operations(type, response_handler) {
     let loader_get_parameters_url = 'http://localhost:8000/api/docminer/operations/';
-    let data_params = jQuery.param({type: "Load"});
+    let data_params = jQuery.param({type: type});
 
     console.log(loader_get_parameters_url, data_params);
 
@@ -873,29 +894,14 @@ $("#btn_get_loaders").click(function () {
         data: data_params,
         dataType: 'json',
         success: function(response) {
-            console.log(typeof(response), response);
-
-            // Find the title elements of the json array received
-            // e.g. schemas = ["receipt", "contract_nt", "bank_stmt"]
-            let datastores = response.map(a => a.title);
-            console.log(datastores);
-
-            let datastores_select = $("#sel-loader");
-            datastores_select.empty();
-
-            let new_entry_str = "new";
-            datastores_select.append($('<option></option>').attr('value', new_entry_str).text(new_entry_str));
-
-            $.each(response, function (key, entry) {
-                datastores_select.append($('<option></option>').attr('value', entry.title).text(entry.title));
-                g_table_loader_dict[entry.title] = JSON.parse(entry.parameters);
-            });
-
-            document.getElementById('input_new_datastore').style.display = "";
+            response_handler(response);
         }
     });
-});
+}
 
+$("#btn_get_loaders").click(function () {
+    fetch_operations("Load", handle_get_loaders_response);
+});
 
 
 $("#btn_get_datastores").click(function () {
