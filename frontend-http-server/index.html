@@ -140,14 +140,18 @@
 
     <h3>Loader</h3>
     <!-- Loader Block -->
+    <label>Loader Name</label>
+    <select id="sel-loader"></select>
+    <button id="btn_get_loaders">Refresh</button>
+    <br/>
+    <input id="input_new_loader" type="text" value=""/>
+    <button id="btn_save_loader">Save Loader</button>
     <br/>
     <br/>
     <button id="btn_apply_loader">Apply Loader</button>
 
     <div id="database-info" class="bordered">
-        <label>Title</label>
-        <select id="sel-loader"></select>
-        <button id="btn_get_loaders">Refresh</button>
+
 
         <label>Table</label>
         <input id="input_datastore_table" />
@@ -156,12 +160,12 @@
         <select id="sel-datastore"></select>
         <button id="btn_get_datastores">Refresh</button>
 
-        <input id="input_new_loader" type="text" value=""/>
-        <button id="btn_save_loader">Save Loader</button>
 
     </div>
 
     <h3>Datastore</h3>
+    <input id="input_new_datastore" type="text" value=""/><br/>
+    <button id="btn_save_datastore">Save Datastore</button>
     <!-- Datastore Block -->
     <div class="bordered">
         <!--<button id="btn_datastore_get_tables">Datastore Get Tables</button>-->
@@ -175,9 +179,6 @@
             <button id="btn_upload_datastore">Upload Datastore</button>
             <button id="btn_download_datastore">Download Datastore</button>
         </div>
-
-        <input id="input_new_datastore" type="text" value=""/>
-        <button id="btn_save_datastore">Save Datastore</button>
 
         <div id="account-parameters-description-table"></div>
     </div>

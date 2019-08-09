@@ -856,6 +856,8 @@ let g_table_loader_dict = []
 
 let g_table_datastore_dict = []
 
+
+
 $("#btn_get_loaders").click(function () {
 
     let loader_get_parameters_url = 'http://localhost:8000/api/docminer/operations/';
@@ -966,28 +968,46 @@ $("#btn_save_loader").click(function() {
     save_operation(operation.title, operation.type, operation.parameters);
 });
 
+function fill_datastore_from_id(datastore_id) {
+    console.log(datastore_id);
+
+    let loader_get_datastores_url = 'http://localhost:8000/api/docminer/datastores/' + datastore_id + '/';
+    $.ajax({
+        url: loader_get_datastores_url,
+        headers : {
+            'Authorization' : 'Token ' + g_user_auth_token,
+        },
+        dataType: 'json',
+        success: function(response) {
+            console.log(typeof(response), response);
+
+            let select_datastore = document.getElementById('sel-datastore');
+            select_datastore.value = response.id;
+
+            let event = new Event('change');
+            select_datastore.dispatchEvent(event);
+        }
+    });
+}
+
+function fill_loader_from_operation_dict(operation) {
+    console.log(operation);
+    $("#input_datastore_table").val(operation.table);
+    fill_datastore_from_id(operation.datastore_id);
+}
+
 
 $("#sel-loader").on('change', function() {
     let loader_name = this.value;
-
-    console.log(loader_name);
+    let loader_parameters = g_table_loader_dict[loader_name];
 
     if (loader_name == "new") {
         g_account_parameters_value_table.setData(g_table_datastore_parameters_values_array);
     } else {
-        console.log(g_table_loader_dict);
-        // let parameters = g_table_loader_dict[loader_name];
-        // let datastore_properties = JSON.parse(parameters["properties"]);
-        //
-        // console.log(datastore_properties);
-        //
-        // let parameters_values_array = [];
-        // for (var key in datastore_properties) {
-        //     parameters_values_array.push({"parameter": key, "value": datastore_properties[key]});
-        // }
-        // console.log(parameters_values_array);
-        //
-        // g_account_parameters_value_table.setData(parameters_values_array);
+        console.log(loader_name, loader_parameters);
+
+        fill_loader_from_operation_dict(loader_parameters);
+
     }
 });
 
