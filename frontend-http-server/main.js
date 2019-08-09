@@ -97,7 +97,7 @@ let g_document_mapper_table = new Tabulator("#document-mapper-table", {
 
         {title:"DestinationColumn", field:"dst", editor:"select", editorParams: function(cell) {
                 console.log(g_table_dynamic_data_dict);
-                let destination_table = $("#sel-destination-header-table").val();
+                let destination_table = $("#sel-destination-schema").val();
                 console.log(destination_table);
                 let dynamic_fields_array = g_table_dynamic_data_dict[destination_table];
                 console.log(dynamic_fields_array);
@@ -151,7 +151,7 @@ let g_document_mapper_newfields_table = new Tabulator("#document-mapper-newfield
 
                 const values = {};
                 if (row.type == "Final") {
-                    let destination_table = $("#sel-destination-header-table").val();
+                    let destination_table = $("#sel-destination-schema").val();
 
                     let fields_array = JSON.parse(g_table_dynamic_data_dict[destination_table]);
                     let destination_fields = fields_array.map(a => a.name);
@@ -663,7 +663,7 @@ $("#btn_documentize").click(function() {
 });
 
 
-$("#sel-destination-header-table").on('change', function() {
+$("#sel-destination-schema").on('change', function() {
     console.log(this.value);
 
     if (this.value == "new") {
@@ -714,7 +714,7 @@ function get_operation_dict_for_mapper()
         return;
     }
 
-    let destination_table = $("#sel-destination-header-table").val();
+    let destination_table = $("#sel-destination-schema").val();
     if (destination_table == "") {
         alert('Please provide destination table!');
         return;
@@ -791,7 +791,7 @@ $("#btn_get_schema_list").click(function () {
 
             console.log(schemas);
 
-            let destination_select = $("#sel-destination-header-table");
+            let destination_select = $("#sel-destination-schema");
             destination_select.empty();
 
             let new_entry_str = "new";
@@ -1053,20 +1053,35 @@ function fill_datastore_from_id(datastore_id) {
     });
 }
 
+function set_selector_value_with_event(sel_id, value) {
+    let select_extractor_type = document.getElementById(sel_id);
+    select_extractor_type.value = value;
+    select_extractor_type.dispatchEvent(new Event('change'));
+}
+
+// TBD: Ensure that the sel-datastore is already populated
 function fill_loader_from_operation_dict(operation) {
     console.log(operation);
     $("#input_datastore_table").val(operation.table);
     fill_datastore_from_id(operation.datastore_id);
 }
 
+// TBD: Ensure that the sel-destination-schema is already populated
 function fill_mapper_from_operation_dict(operation) {
     console.log(operation);
-
+    
+    set_selector_value_with_event('sel-destination-schema', operation.destination_table);
+    g_document_mapper_table.setData(operation.existing_fields);
+    g_document_mapper_newfields_table.setData(operation.new_fields);
 }
+
 
 function fill_extractor_from_operation_dict(operation) {
     console.log(operation);
 
+    set_selector_value_with_event('sel-extractor-type', operation.type)
+
+    document.getElementById('regex-text').value = operation.parameters.regex;
 }
 
 
@@ -1080,7 +1095,6 @@ $("#sel-loader").on('change', function() {
         console.log(loader_name, loader_parameters);
 
         fill_loader_from_operation_dict(loader_parameters);
-
     }
 });
 
@@ -1095,7 +1109,6 @@ $("#sel-mapper").on('change', function() {
         console.log(mapper_name, mapper_parameters);
 
         fill_mapper_from_operation_dict(mapper_parameters);
-
     }
 });
 
@@ -1109,7 +1122,6 @@ $("#sel-extractor").on('change', function() {
         console.log(extractor_name, extractor_parameters);
 
         fill_extractor_from_operation_dict(extractor_parameters);
-
     }
 });
 

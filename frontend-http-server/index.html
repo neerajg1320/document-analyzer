@@ -126,15 +126,19 @@
             <div id="document-mapper-newfields-table"></div>
         </div>
 
-        <!- Destination Table>
-        <h3>Destination Schema</h3>
-        <select id="sel-destination-header-table" />
-        <input id="input_new_schema" type="text" value="" style="display:none"/><br/>
-        <button id="btn_post_schema">Save Schema</button><br/>
-        <button id="btn_get_schema_list">Get Schemas</button>
+        <div class="bordered">
+            <!- Destination Table>
+            <h3>Destination Schema</h3>
+            <label>Schema Name</label>
+            <select id="sel-destination-schema"></select>
+            <button id="btn_get_schema_list">Refresh</button>
+            <br/>
+            <input id="input_new_schema" type="text" value=""/>
+            <button id="btn_post_schema">Save Schema</button><br/>
+            <br/>
 
-        <div id="destination-header-table"></div>
-
+            <div id="destination-header-table"></div>
+        </div>
         <!-- Mapped Table -->
         <p id="document-mapped-transactions-dataframe-url">Url for mapped-transactions-dataframe</p>
         <div id="document-mapped-dataframe" class="bordered scrollable"></div>
