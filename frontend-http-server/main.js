@@ -567,7 +567,7 @@ function save_operation(title, type, parameters) {
 
 function get_operation_dict_for_extractor() {
     // Get document id
-    let extractor_name = $("#input_extractor_name").val();
+    let extractor_name = $("#input_new_extractor").val();
     if (extractor_name == "") {
         alert('Please provide regex name!');
         return;
@@ -708,7 +708,7 @@ $("#btn_create_mapper").click(function () {
 function get_operation_dict_for_mapper()
 {
     // Get document id
-    let mapper_name = $("#input_mapper_name").val();
+    let mapper_name = $("#input_new_mapper").val();
     if (mapper_name == "") {
         alert('Please provide mapper name!');
         return;
