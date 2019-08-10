@@ -577,7 +577,7 @@ def assign_new_datatypes(destination_table_name, agg_df):
     return agg_df
 
 
-def map_existing_fields(destination_table_name, mapper, df):
+def map_existing_fields(destination_schema_df, mapper, df):
     column_mapper_df = pd.DataFrame(mapper)
 
     # New dataframe will only contain columns which are selected
@@ -590,8 +590,6 @@ def map_existing_fields(destination_table_name, mapper, df):
         if dst_column_dict.get(key, None) is None:
             dst_column_dict[key] = []
         dst_column_dict[key].append(row['src'])
-
-    destination_schema_df = destnation_table_to_dataframe(destination_table_name)
 
     # Aggregate multiple src_columns mapped to same dst_column
     #
@@ -637,11 +635,17 @@ def apply_mapper_on_dataframe(mapper_parameters, df):
     if "new_fields" in mapper_parameters:
         new_fields = json.loads(mapper_parameters["new_fields"])
 
-    df = map_existing_fields(destination_table, mapper, df)
+    destination_schema_df = destnation_table_to_dataframe(destination_table)
+
+    df = map_existing_fields(destination_schema_df, mapper, df)
     df = assign_new_datatypes(destination_table, df)
 
     if new_fields is not None:
         df = create_new_fields(new_fields, df)
+
+    for entry in new_fields:
+        if entry["type"] == "Temp":
+            df = df.drop(entry["temp_name"], axis=1)
 
     return df
 
