@@ -968,6 +968,9 @@ $("#btn_get_extractors").click(function () {
 
 
 $("#btn_get_datastores").click(function () {
+    // First get the dependency
+    $("#btn_get_datastore_type_list").click();
+
     let loader_get_datastores_url = 'http://localhost:8000/api/docminer/datastores/';
     console.log(loader_get_datastores_url);
 
@@ -993,7 +996,7 @@ $("#btn_get_datastores").click(function () {
 
             $.each(response, function (key, entry) {
                 datastores_select.append($('<option></option>').attr('value', entry.id).text(entry.title));
-                g_table_datastore_dict[entry.title] = JSON.parse(entry.parameters);
+                g_table_datastore_dict[entry.id] = entry;
             });
 
             document.getElementById('input_new_datastore').style.display = "";
@@ -1177,6 +1180,13 @@ $("#btn_save_datastore").click(function() {
         }
     });
 
+});
+
+$("#sel-datastore").on('change', function() {
+    let datastore = g_table_datastore_dict[this.value];
+    console.log(datastore);
+    
+    set_selector_value_with_event('sel-datastore-type', datastore.type);
 });
 
 
