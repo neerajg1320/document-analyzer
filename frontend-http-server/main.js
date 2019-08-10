@@ -953,10 +953,16 @@ $("#btn_get_loaders").click(function () {
 });
 
 $("#btn_get_mappers").click(function () {
+    // First get the dependency
+    $("#btn_get_schema_list").click();
+
     fetch_operations("Transform", handle_get_mappers_response);
 });
 
 $("#btn_get_extractors").click(function () {
+    // First get the dependency
+    $("#btn_get_datastores").click();
+
     fetch_operations("Extract", handle_get_extractors_response);
 });
 
@@ -1244,7 +1250,32 @@ $("#btn_apply_loader").click(function () {
     apply_operation(operation, dataframe_json, handle_loader_operation_response)
 });
 
+function fetch_operation_by_id(id, response_handler) {
+    let loader_get_parameters_url = 'http://localhost:8000/api/docminer/operations/' + id + '/';
+
+
+    console.log(loader_get_parameters_url);
+
+    $.ajax({
+        url: loader_get_parameters_url,
+        headers : {
+            'Authorization' : 'Token ' + g_user_auth_token,
+        },
+        dataType: 'json',
+        success: function(response) {
+            response_handler(response);
+        }
+    });
+}
+
+let g_table_pipeline_dict = {};
+
 $("#btn_get_pipelines").click(function () {
+
+    // First make the dependency requests
+    $("#btn_get_extractors").click();
+    $("#btn_get_mappers").click();
+    $("#btn_get_loaders").click();
 
     let pipeline_get_url = 'http://localhost:8000/api/docminer/pipelines/';
 
@@ -1274,16 +1305,39 @@ $("#btn_get_pipelines").click(function () {
 
             $.each(response, function (key, entry) {
                 destination_select.append($('<option></option>').attr('value', entry.id).text(entry.title));
-                // Create the global dictionary
 
-                g_table_datastoretype_parameters_description_dict[entry.id] = entry.parameters;
-
-                console.log(typeof (entry.parameters), entry.parameters);
+                g_table_pipeline_dict[entry.id] = entry;
             });
 
             document.getElementById('input_new_schema').style.display = "";
         }
     });
+});
+
+
+function operation_response_handler(response) {
+    console.log(response);
+
+    if (response.type == "Extract") {
+        set_selector_value_with_event('sel-extractor', response.title);
+    } else if (response.type == "Transform") {
+        set_selector_value_with_event('sel-mapper', response.title);
+    } else if (response.type == "Load") {
+        set_selector_value_with_event('sel-loader', response.title);
+    }
+}
+
+$("#sel-pipeline").on('change', function() {
+    let pipeline_id = this.value;
+    let pipeline =  g_table_pipeline_dict[pipeline_id];
+
+    console.log(pipeline_id, pipeline, pipeline.operations);
+
+    for (var i in pipeline.operations) {
+        operation_id = pipeline.operations[i];
+
+        fetch_operation_by_id(operation_id, operation_response_handler);
+    }
 });
 
 $("#btn_save_pipeline").click(function () {
@@ -1334,7 +1388,10 @@ $("#btn_reset_pipeline").click(function () {
 });
 
 $(document).ready(function() {
-    download_document_using_input(g_document_table, g_user_auth_token);
+    $("#btn_get_pipelines").click();
+
+    // download_document_using_input(g_document_table, g_user_auth_token);
+    // $("#btn_get_text").click();
 });
 
 
