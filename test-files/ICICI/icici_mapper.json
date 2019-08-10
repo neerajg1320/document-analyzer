@@ -31,8 +31,8 @@
 	},
 	{
 		"src": "String2",
-		"select": true,
-		"dst": "Type",
+		"select": false,
+		"dst": "",
 		"dsttype": "object"
 	},
 	{
