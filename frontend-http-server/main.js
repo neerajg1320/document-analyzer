@@ -612,14 +612,30 @@ function handle_extractor_operation_response(response) {
     g_document_table.setData(transactions);
 }
 
+function handle_operation_response(operation, response) {
+    console.log(operation, response);
+
+    if (operation.type == "Extract") {
+        handle_extractor_operation_response(response);
+    } else  if (operation.type == "Transform") {
+        handle_mapper_operation_response(response);
+    } else if (operation.type == "Load") {
+        handle_loader_operation_response(response);
+    }
+
+    if (g_flag_pipeline_active) {
+        console.log(g_operations_array);
+        perform_pipeline_operation();
+    }
+}
+
 $("#btn_apply_extractor").click(function () {
     let operation = get_operation_dict_for_extractor();
     let text = g_current_document.text;
 
     let dataframe_json = [{'text': text}]
 
-    apply_operation(operation, dataframe_json, handle_extractor_operation_response)
-
+    apply_operation(operation, dataframe_json, handle_operation_response);
 });
 
 $("#btn_save_extractor").click(function() {
@@ -752,9 +768,7 @@ $("#btn_apply_mapper").click(function () {
     let operation = get_operation_dict_for_mapper();
     let dataframe_json = g_document_table.getData("json");
 
-    apply_operation(operation, dataframe_json, handle_mapper_operation_response)
-
-
+    apply_operation(operation, dataframe_json, handle_operation_response);
 });
 
 $("#btn_save_mapper").click(function() {
@@ -1245,7 +1259,7 @@ function apply_operation(operation, dataframe_json, success_callback) {
         success: function(response) {
             console.log(typeof(response), response);
 
-            success_callback(response);
+            success_callback(operation, response);
         }
     });
 
@@ -1260,26 +1274,14 @@ $("#btn_apply_loader").click(function () {
     let operation = get_operation_dict_for_loader();
     let dataframe_json = g_document_mapped_table.getData("json");
 
-    apply_operation(operation, dataframe_json, handle_loader_operation_response)
+    apply_operation(operation, dataframe_json, handle_operation_response)
 });
 
-function fetch_operation_by_id(id, response_handler) {
-    let loader_get_parameters_url = 'http://localhost:8000/api/docminer/operations/' + id + '/';
 
 
-    console.log(loader_get_parameters_url);
-
-    $.ajax({
-        url: loader_get_parameters_url,
-        headers : {
-            'Authorization' : 'Token ' + g_user_auth_token,
-        },
-        dataType: 'json',
-        success: function(response) {
-            response_handler(response);
-        }
-    });
-}
+var g_flag_pipeline_active = false;
+let g_operations_array = [];
+var g_operation_array_current_index = 0;
 
 let g_table_pipeline_dict = {};
 
@@ -1327,9 +1329,37 @@ $("#btn_get_pipelines").click(function () {
     });
 });
 
+function perform_pipeline_operation() {
+    if (g_operation_array_current_index >= g_operations_array.length) {
+        g_flag_pipeline_active = false;
+        return;
+    }
+
+    let operation = g_operations_array[g_operation_array_current_index++];
+    console.log(operation);
+
+    if (operation.type == "Extract") {
+        $("#btn_apply_extractor").click();
+    } else if (operation.type == "Transform") {
+        $("#btn_apply_mapper").click();
+    } else if (operation.type == "Load") {
+        $("#btn_apply_loader").click();
+    }
+}
+
+$("#btn_apply_pipeline").click(function () {
+    console.log(g_operations_array);
+    g_flag_pipeline_active = true;
+    g_operation_array_current_index = 0;
+
+    perform_pipeline_operation();
+});
+
 
 function operation_response_handler(response) {
     console.log(response);
+
+    g_operations_array.push(response);
 
     if (response.type == "Extract") {
         set_selector_value_with_event('sel-extractor', response.title);
@@ -1338,6 +1368,29 @@ function operation_response_handler(response) {
     } else if (response.type == "Load") {
         set_selector_value_with_event('sel-loader', response.title);
     }
+
+    if (g_operation_array_current_index < g_operation_pipeline_array.length) {
+        fetch_operation_by_id(g_operation_pipeline_array[g_operation_array_current_index++],
+            operation_response_handler);
+    }
+}
+
+function fetch_operation_by_id(id, response_handler) {
+    console.log(g_operation_array_current_index);
+
+    let loader_get_parameters_url = 'http://localhost:8000/api/docminer/operations/' + id + '/';
+    console.log(loader_get_parameters_url);
+
+    $.ajax({
+        url: loader_get_parameters_url,
+        headers : {
+            'Authorization' : 'Token ' + g_user_auth_token,
+        },
+        dataType: 'json',
+        success: function(response) {
+            response_handler(response);
+        }
+    });
 }
 
 $("#sel-pipeline").on('change', function() {
@@ -1346,11 +1399,19 @@ $("#sel-pipeline").on('change', function() {
 
     console.log(pipeline_id, pipeline, pipeline.operations);
 
-    for (var i in pipeline.operations) {
-        operation_id = pipeline.operations[i];
+    g_operations_array.length = 0;
+    g_operation_pipeline_array = pipeline.operations;
+    g_operation_array_current_index = 0;
 
-        fetch_operation_by_id(operation_id, operation_response_handler);
-    }
+    fetch_operation_by_id(g_operation_pipeline_array[g_operation_array_current_index++],
+        operation_response_handler);
+    // for (var i in pipeline.operations) {
+    //     operation_id = pipeline.operations[i];
+    //
+    //     fetch_operation_by_id(operation_id, operation_response_handler);
+    // }
+
+
 });
 
 $("#btn_save_pipeline").click(function () {
