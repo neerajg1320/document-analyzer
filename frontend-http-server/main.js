@@ -1103,6 +1103,7 @@ $("#sel-loader").on('change', function() {
     } else {
         console.log(loader_name, loader_parameters);
 
+        $("#input_new_loader").val(loader_name);
         fill_loader_from_operation_dict(loader_parameters);
     }
 });
@@ -1117,6 +1118,7 @@ $("#sel-mapper").on('change', function() {
     } else {
         console.log(mapper_name, mapper_parameters);
 
+        $("#input_new_mapper").val(mapper_name);
         fill_mapper_from_operation_dict(mapper_parameters);
     }
 });
@@ -1130,6 +1132,7 @@ $("#sel-extractor").on('change', function() {
     } else {
         console.log(extractor_name, extractor_parameters);
 
+        $("#input_new_extractor").val(extractor_name);
         fill_extractor_from_operation_dict(extractor_parameters);
     }
 });
