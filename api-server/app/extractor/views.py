@@ -1315,22 +1315,22 @@ def apply_extractor_on_dataframe(parameters, df):
         text = df['text'].iloc[0]
         parameters = parameters["parameters"]
         regex_str = parameters["regex"]
+
         new_str, table_dict = apply_regex_on_text(text, regex_str)
         new_df = pd.DataFrame(table_dict)
     elif extractor_type == "excel":
         text = df['text'].iloc[0]
         input_csv = StringIO(text)
+
         new_df = pd.read_csv(input_csv)
         table_dict = json.loads(new_df.to_json(orient='records'))
     elif extractor_type == "database":
         # Get the table from database
         parameters = json.loads(parameters["parameters"])
-        print(type(parameters), parameters)
         datastore_type, table_name, datastore_credentials = read_datastore_parameters(parameters)
+
         new_df = load_frame_from_datastore_table(table_name, datastore_type, datastore_credentials)
         table_dict = json.loads(new_df.to_json(orient='records'))
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), new_df)
     else:
         raise RuntimeError("Extractor type '%s' not supported" % extractor_type)
 
