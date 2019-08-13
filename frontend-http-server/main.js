@@ -73,10 +73,10 @@ let g_document_mapper_table = new Tabulator("#document-mapper-table", {
                 console.log(g_table_schema_dict);
                 let destination_table = $("#sel-destination-schema").val();
                 console.log(destination_table);
-                let dynamic_fields_array = g_table_schema_dict[destination_table];
+                let dynamic_fields_array = g_table_schema_dict[destination_table].fields_json;
                 console.log(dynamic_fields_array);
 
-                let fields_array = JSON.parse(g_table_schema_dict[destination_table]);
+                let fields_array = JSON.parse(dynamic_fields_array);
                 let destination_fields = fields_array.map(a => a.name);
 
                 const values = {};
