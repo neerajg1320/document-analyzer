@@ -464,8 +464,6 @@ $("#btn_create_regex").click(function() {
             console.log(typeof(response), response);
             //response is already a parsed JSON
 
-            // alert("Transactions saved");
-            // g_account_table.setData(response);
             var new_str = response[0]['new_str'];
             document.getElementById("document-text-url").innerHTML = document_row_url;
             g_document_text_box.empty().append(new_str);
@@ -516,8 +514,6 @@ $("#btn_apply_regex").click(function() {
             console.log(typeof(response), response);
             //response is already a parsed JSON
 
-            // alert("Transactions saved");
-            // g_account_table.setData(response);
             var new_str = response[0]['new_str'];
             g_document_text_box.empty().append(new_str);
 
@@ -1201,7 +1197,6 @@ $("#btn_save_datastore").click(function() {
 
 $("#sel-datastore").on('change', function() {
     let datastore_name = this.value;
-    console.log(datastore_name);
 
     if (datastore_name == "new") {
         let datastore_type = $("#sel-datastore-type").val();
@@ -1222,13 +1217,11 @@ $("#sel-datastore").on('change', function() {
     } else {
         let datastore = g_table_datastore_dict[datastore_name];
         let parameters = JSON.parse(datastore.parameters);
-        console.log(parameters);
 
         g_table_datastore_parameters_values_array.length = 0;
         for (var key in parameters) {
             // check if the property/key is defined in the object itself, not in parent
             if (parameters.hasOwnProperty(key)) {
-                console.log(key, parameters[key]);
                 g_table_datastore_parameters_values_array.push({"parameter": key, "value":  parameters[key]});
             }
         }
@@ -1241,7 +1234,6 @@ $("#sel-datastore").on('change', function() {
 
 
 $("#sel-datastore-type").on('change', function() {
-    console.log(this.value);
 
     if (this.value == "new") {
         g_account_parameters_description_table.setData('[]')
