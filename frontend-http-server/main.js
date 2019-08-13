@@ -147,6 +147,10 @@ let g_document_mapper_newfields_table = new Tabulator("#document-mapper-newfield
             }
         },
         {title:"Value", field:"value", editor:"input", editable:true},
+        {title:"Delete", formatter:"buttonCross", width:40, align:"center", cellClick:function(e, cell){
+                cell.getRow().delete();
+            }
+        },
     ],
 });
 
