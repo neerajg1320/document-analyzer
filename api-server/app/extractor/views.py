@@ -259,8 +259,8 @@ def save_to_sql(df, db_url, table_name):
         engine.dispose()
 
 
-def load_from_snowflake(snowflake_parameters):
-    engine = create_engine(URL(**snowflake_parameters))
+def load_from_sql(db_url, table_name):
+    engine = create_engine(db_url)
 
     df = None
     try:
@@ -277,6 +277,18 @@ def load_from_snowflake(snowflake_parameters):
         engine.dispose()
 
     return df
+
+
+def load_from_snowflake(table_name, snowflake_parameters):
+    db_url = URL(**snowflake_parameters)
+
+    return load_from_sql(db_url, table_name)
+
+
+def load_from_postgres(table_name, postgres_parameters):
+    db_url = get_postgres_db_url(postgres_parameters)
+
+    return load_from_sql(db_url, table_name)
 
 
 import re
@@ -646,6 +658,16 @@ def apply_mapper_on_dataframe(mapper_parameters, df):
     for entry in new_fields:
         if entry["type"] == "Temp":
             df = df.drop(entry["temp_name"], axis=1)
+
+    return df
+
+
+def load_frame_from_datastore_table(table_name, datastore_type, datastore_credentials):
+    df = None
+    if str(datastore_type).lower() == 'snowflake':
+        df = load_from_snowflake(table_name, datastore_credentials)
+    elif str(datastore_type).lower() == 'postgres':
+        df = load_from_postgres(table_name, datastore_credentials)
 
     return df
 
@@ -1137,12 +1159,15 @@ class OperationViewSet(viewsets.ModelViewSet):
         if not "dataframe_json" in request.data:
             return Response({"error": "Missing field 'dataframe_json'"})
 
+        frameinfo = getframeinfo(currentframe())
+        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), request.data)
+
         operation = json.loads(request.data.get("operation_params"))
         df = pd.read_json(request.data.get("dataframe_json"))
 
         operations_parameters = json.loads(operation["parameters"])
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), operations_parameters)
+
+        response_dict = {}
 
         if operation["type"] == "Load":
             apply_loader_on_dataframe(operations_parameters, df)
@@ -1159,9 +1184,8 @@ class OperationViewSet(viewsets.ModelViewSet):
             except Exception as e:
                 response_dict = []
         elif operation["type"] == "Extract":
-            text = df['text'].iloc[0]
 
-            new_str, table_dict, df = apply_extractor_on_text(text, operations_parameters)
+            new_str, table_dict, df = apply_extractor_on_dataframe(operations_parameters, df)
 
             response_dict = [{
                 "new_str": new_str,
@@ -1279,42 +1303,59 @@ def file_to_text(file_path, password=None):
     return text
 
 
-def apply_extractor_on_text(text, parameters):
+def apply_extractor_on_dataframe(parameters, df):
     # frameinfo = getframeinfo(currentframe())
     # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), parameters)
 
     new_str = None
     table_dict = None
-    df = None
+    new_df = None
     extractor_type = parameters["type"]
     if extractor_type == "regex":
+        text = df['text'].iloc[0]
         parameters = parameters["parameters"]
         regex_str = parameters["regex"]
         new_str, table_dict = apply_regex_on_text(text, regex_str)
-        df = pd.DataFrame(table_dict)
+        new_df = pd.DataFrame(table_dict)
     elif extractor_type == "excel":
+        text = df['text'].iloc[0]
         input_csv = StringIO(text)
-        df = pd.read_csv(input_csv)
-        table_dict = json.loads(df.to_json(orient='records'))
+        new_df = pd.read_csv(input_csv)
+        table_dict = json.loads(new_df.to_json(orient='records'))
+    elif extractor_type == "database":
+        # Get the table from database
+        parameters = json.loads(parameters["parameters"])
+        print(type(parameters), parameters)
+        datastore_type, table_name, datastore_credentials = read_datastore_parameters(parameters)
+        new_df = load_frame_from_datastore_table(table_name, datastore_type, datastore_credentials)
+        table_dict = json.loads(new_df.to_json(orient='records'))
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), new_df)
     else:
         raise RuntimeError("Extractor type '%s' not supported" % extractor_type)
 
-    return new_str, table_dict, df
+    return new_str, table_dict, new_df
 
 
-def apply_loader_on_dataframe(loader_parameters, df):
-    # frameinfo = getframeinfo(currentframe())
-    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), df)
+def read_datastore_parameters(parameters):
+    frameinfo = getframeinfo(currentframe())
+    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), parameters)
 
-    table_name = loader_parameters["table"]
-    datastore_id = loader_parameters["datastore_id"]
+    table_name = parameters["table"]
+    datastore_id = parameters["datastore_id"]
 
     datastore = DatastoreInfo.objects.get(pk=datastore_id)
     if datastore is None:
         raise RuntimeError("Datastore not found for datastore id '%s'" % str(datastore_id))
 
-    datastore_credentials = json.loads(datastore.parameters)
-    load_frame_into_datastore_table(datastore.type.title, datastore_credentials, table_name, df)
+    credentials = json.loads(datastore.parameters)
+
+    return datastore.type.title, table_name, credentials
+
+
+def apply_loader_on_dataframe(loader_parameters, df):
+    datastore_type, table_name, datastore_credentials = read_datastore_parameters(loader_parameters)
+    load_frame_into_datastore_table(datastore_type, datastore_credentials, table_name, df)
 
     return df
 
@@ -1330,7 +1371,9 @@ def apply_pipeline_on_text(file_text, pipeline):
         parameters = json.loads(operation.parameters)
 
         if operation.type == "Extract":
-            new_str, table_dict, current_df = apply_extractor_on_text(file_text, parameters)
+            df_dict = [{"text": file_text}]
+            current_df = pd.DataFrame(df_dict)
+            new_str, table_dict, current_df = apply_extractor_on_dataframe(parameters, current_df)
         elif operation.type == "Transform":
             current_df = apply_mapper_on_dataframe(parameters, current_df)
         elif operation.type == "Load":

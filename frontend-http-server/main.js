@@ -236,7 +236,7 @@ let g_account_parameters_description_table = new Tabulator("#account-parameters-
 });
 
 // Account table which shows transactions in all the documents uploaded for an account
-let g_account_table = new Tabulator("#account-transactions-table", {
+let g_final_table = new Tabulator("#final-table", {
     height:300,
     layout:"fitColumns", //fit columns to width of table (optional)
     autoColumns:true,
@@ -1471,6 +1471,31 @@ $("#btn_reset_pipeline").click(function () {
     g_operation_pipeline_array.length = 0;
 
     console.log("Pipeline_array:", g_operation_pipeline_array);
+});
+
+
+function handle_get_table(operation, response) {
+    console.log(response);
+    g_final_table.setData(response[0]['transactions']);
+}
+
+$("#get_final_table").click(function() {
+    // We are using the following function to reuse the code
+    let load_operation = get_operation_dict_for_loader();
+    database_parameters = load_operation.parameters;
+    console.log(database_parameters);
+
+    let new_parameters = {
+        "type": "database",
+        "parameters": database_parameters
+    };
+
+    let operation = {
+        "type": "Extract",
+        "parameters": JSON.stringify(new_parameters)
+    };
+    let dataframe = [];
+    apply_operation(operation, dataframe, handle_get_table)
 });
 
 $(document).ready(function() {
