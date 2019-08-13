@@ -10,7 +10,7 @@ let g_document_table = new Tabulator("#document-transactions-table", {
 });
 
 
-let g_destination_header_table = new Tabulator("#destination-header-table", {
+let g_schema_table = new Tabulator("#destination-header-table", {
     height:300,
     layout:"fitColumns", //fit columns to width of table (optional)
 
@@ -39,44 +39,17 @@ let g_destination_header_table = new Tabulator("#destination-header-table", {
                 return {"values": hardcoded_values};
             }
         },
+        // https://github.com/olifolkerd/tabulator/issues/942
+        {title:"Delete", formatter:"buttonCross", width:40, align:"center", cellClick:function(e, cell){
+                cell.getRow().delete();
+            }
+        },
     ],
 });
 
-let g_table_data_bank_statement = [
-    {"name": "TransactionDate", "type": "object", "aggregation": "none"},
-    {"name": "Description", "type": "object", "aggregation": "sum"},
-    {"name": "Type", "type": "object", "aggregation": "none"},
-    {"name": "Amount", "type": "float64", "aggregation": "sum"},
-];
-
-let g_table_data_contract_note = [
-    {"name": "TransactionDate", "type": "object", "aggregation": "none"},
-    {"name": "SettlementDate", "type": "object", "aggregation": "none"},
-    {"name": "Scrip", "type": "object", "aggregation": "sum"},
-    {"name": "Quantity", "type": "int64", "aggregation": "sum"},
-    {"name": "TradeType", "type": "object", "aggregation": "none"},
-    {"name": "Rate", "type": "float64", "aggregation": "none"},
-    {"name": "PrincipalAmount", "type": "float64", "aggregation": "sum"},
-    {"name": "Commission", "type": "float64", "aggregation": "sum"},
-    {"name": "Fees", "type": "float64", "aggregation": "sum"},
-    {"name": "NetAmount", "type": "float64", "aggregation": "sum"},
-    {"name": "Summary", "type": "object", "aggregation": "sum"},
-];
-
-let g_table_data_receipt = [
-    {"name": "Date", "type": "object", "aggregation": "none"},
-    {"name": "Description", "type": "object", "aggregation": "sum"},
-    {"name": "Quantity", "type": "int64", "aggregation": "sum"},
-    {"name": "Rate", "type": "float64", "aggregation": "none"},
-    {"name": "Amount", "type": "float64", "aggregation": "sum"},
-];
-
-
-// let g_table_data_dict = {
-//     "bank_statement": g_table_data_bank_statement,
-//     "contract_note": g_table_data_contract_note,
-//     "receipt": g_table_data_receipt
-// };
+$("#btn_add_schema_field").click(function() {
+    g_schema_table.addRow({});
+});
 
 
 let g_table_dynamic_data_dict = {};
@@ -680,11 +653,11 @@ $("#sel-destination-schema").on('change', function() {
 
     if (this.value == "new") {
         document.getElementById('input_new_schema').style.display = "";
-        g_destination_header_table.setData('[]')
+        g_schema_table.setData('[]')
     } else {
         document.getElementById('input_new_schema').style.display = "none";
-        // g_destination_header_table.setData(g_table_data_dict[this.value]);
-        g_destination_header_table.setData(g_table_dynamic_data_dict[this.value]);
+        // g_schema_table.setData(g_table_data_dict[this.value]);
+        g_schema_table.setData(g_table_dynamic_data_dict[this.value]);
 
     }
 });
