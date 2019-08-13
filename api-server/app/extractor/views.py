@@ -496,8 +496,8 @@ def apply_regex_on_text(complete_text, regex_str):
     return new_str, transactions_dict_array
 
 
-def destnation_schema_dataframe(schema_name):
-    schema = Schema.objects.get(title=schema_name)
+def destnation_schema_dataframe(schema_id):
+    schema = Schema.objects.get(pk=schema_id)
     # frameinfo = getframeinfo(currentframe())
     # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), json.loads(schema.fields_json))
 
