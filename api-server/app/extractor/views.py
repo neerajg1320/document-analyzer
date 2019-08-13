@@ -451,45 +451,6 @@ def convert_to_regex(text):
     return complete_regex_str
 
 
-g_destination_tables_schema_json = """
-    "bank_statement": [
-        {"name": "TransactionDate", "type": "object", "aggregation": "none"},
-        {"name": "ApplicableDate", "type": "object", "aggregation": "none"},
-        {"name": "Description", "type": "object", "aggregation": "sum"},
-        {"name": "Type", "type": "object", "aggregation": "none"},
-        {"name": "Amount", "type": "float64", "aggregation": "sum"},
-        {"name": "Balance", "type": "float64", "aggregation": "sum"}
-    ],
-    "contract_note": [
-        {"name": "TransactionDate", "type": "object", "aggregation": "none"},
-        {"name": "SettlementDate", "type": "object", "aggregation": "none"},
-        {"name": "Scrip", "type": "object", "aggregation": "sum"},
-        {"name": "Quantity", "type": "int64", "aggregation": "sum"},
-        {"name": "TradeType", "type": "object", "aggregation": "none"},
-        {"name": "Rate", "type": "float64", "aggregation": "none"},
-        {"name": "PrincipalAmount", "type": "float64", "aggregation": "sum"},
-        {"name": "Commission", "type": "float64", "aggregation": "sum"},
-        {"name": "Fees", "type": "float64", "aggregation": "sum"},
-        {"name": "NetAmount", "type": "float64", "aggregation": "sum"},
-        {"name": "Summary", "type": "object", "aggregation": "sum"}
-    ],
-    "receipt": [
-        {"name": "Date", "type": "object", "aggregation": "none"},
-        {"name": "Description", "type": "object", "aggregation": "sum"},
-        {"name": "Quantity", "type": "int64", "aggregation": "sum"},
-        {"name": "Rate", "type": "float64", "aggregation": "none"},
-        {"name": "Amount", "type": "float64", "aggregation": "sum"}
-    ],
-    "receipt_sno": [
-        {"name": "SerialNo", "type": "int64", "aggregation": "none"},
-        {"name": "Description", "type": "object", "aggregation": "sum"},
-        {"name": "Quantity", "type": "int64", "aggregation": "sum"},
-        {"name": "Rate", "type": "float64", "aggregation": "none"},
-        {"name": "Amount", "type": "float64", "aggregation": "sum"}
-    ]
-"""
-
-
 class SchemaViewSet(viewsets.ModelViewSet):
     """ Manage documents in database """
     queryset = Schema.objects.all()
@@ -535,21 +496,17 @@ def apply_regex_on_text(complete_text, regex_str):
     return new_str, transactions_dict_array
 
 
-def destnation_table_to_dataframe(destination_table_name):
-    destination_tables_schema_dict = hjson.loads(g_destination_tables_schema_json)
-    try:
-        destination_table = destination_tables_schema_dict[destination_table_name]
-    except KeyError as e:
-        frameinfo = getframeinfo(currentframe())
-        print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno),
-              "Key {} does not exist".format(e))
-        return Response([])
+def destnation_schema_dataframe(schema_name):
+    schema = Schema.objects.get(title=schema_name)
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), json.loads(schema.fields_json))
 
+    destination_table = json.loads(schema.fields_json)
     return pd.DataFrame(destination_table)
 
 
 def assign_new_datatypes(destination_table_name, agg_df):
-    destination_schema_df = destnation_table_to_dataframe(destination_table_name)
+    destination_schema_df = destnation_schema_dataframe(destination_table_name)
 
     # Then we assign the new column types
     # https://stackoverflow.com/questions/21197774/assign-pandas-dataframe-column-dtypes
@@ -647,7 +604,7 @@ def apply_mapper_on_dataframe(mapper_parameters, df):
     if "new_fields" in mapper_parameters:
         new_fields = json.loads(mapper_parameters["new_fields"])
 
-    destination_schema_df = destnation_table_to_dataframe(destination_table)
+    destination_schema_df = destnation_schema_dataframe(destination_table)
 
     df = map_existing_fields(destination_schema_df, mapper, df)
     df = assign_new_datatypes(destination_table, df)
