@@ -69,7 +69,7 @@ function get_pipelines() {
                 pipeline_select.append($('<option></option>').attr('value', entry.id).text(entry.title));
             });
 
-            // console.log(g_table_dynamic_data_dict);
+            // console.log(g_table_schema_dict);
         }
     });
 

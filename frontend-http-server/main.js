@@ -53,7 +53,7 @@ $("#btn_add_schema_field").click(function() {
 });
 
 
-let g_table_dynamic_data_dict = {};
+let g_table_schema_dict = {};
 
 let g_table_datastoretype_parameters_description_dict = {};
 
@@ -70,13 +70,13 @@ let g_document_mapper_table = new Tabulator("#document-mapper-table", {
         {title:"Select", field:"select", editor:"tick", formatter:"tick", editable:true},
 
         {title:"DestinationColumn", field:"dst", editor:"select", editorParams: function(cell) {
-                console.log(g_table_dynamic_data_dict);
+                console.log(g_table_schema_dict);
                 let destination_table = $("#sel-destination-schema").val();
                 console.log(destination_table);
-                let dynamic_fields_array = g_table_dynamic_data_dict[destination_table];
+                let dynamic_fields_array = g_table_schema_dict[destination_table];
                 console.log(dynamic_fields_array);
 
-                let fields_array = JSON.parse(g_table_dynamic_data_dict[destination_table]);
+                let fields_array = JSON.parse(g_table_schema_dict[destination_table]);
                 let destination_fields = fields_array.map(a => a.name);
 
                 const values = {};
@@ -127,7 +127,7 @@ let g_document_mapper_newfields_table = new Tabulator("#document-mapper-newfield
                 if (row.type == "Final") {
                     let destination_table = $("#sel-destination-schema").val();
 
-                    let fields_array = JSON.parse(g_table_dynamic_data_dict[destination_table]);
+                    let fields_array = JSON.parse(g_table_schema_dict[destination_table].fields_json);
                     let destination_fields = fields_array.map(a => a.name);
 
                     // Find list of fields already assigned
@@ -650,15 +650,17 @@ $("#btn_documentize").click(function() {
 
 
 $("#sel-destination-schema").on('change', function() {
-    console.log(this.value);
+    let schema_id = this.value;
+    console.log(schema_id);
 
-    if (this.value == "new") {
-        document.getElementById('input_new_schema').style.display = "";
+    if (schema_id == "new") {
+        $("#input_new_schema").val('');
         g_schema_table.setData('[]')
     } else {
-        document.getElementById('input_new_schema').style.display = "none";
+        let schema = g_table_schema_dict[this.value];
+        $("#input_new_schema").val(schema.title);
         // g_schema_table.setData(g_table_data_dict[this.value]);
-        g_schema_table.setData(g_table_dynamic_data_dict[this.value]);
+        g_schema_table.setData(schema.fields_json);
 
     }
 });
@@ -782,16 +784,56 @@ $("#btn_get_schema_list").click(function () {
             destination_select.append($('<option></option>').attr('value', new_entry_str).text(new_entry_str));
 
             $.each(response, function (key, entry) {
-                destination_select.append($('<option></option>').attr('value', entry.title).text(entry.title));
+                destination_select.append($('<option></option>').attr('value', entry.id).text(entry.title));
                 // Create the global dictionary
-                g_table_dynamic_data_dict[entry.title] = entry.fields_json;
+                g_table_schema_dict[entry.id] = entry;
             });
 
             document.getElementById('input_new_schema').style.display = "";
 
-            // console.log(g_table_dynamic_data_dict);
+            // console.log(g_table_schema_dict);
         }
     });
+});
+
+
+$("#btn_save_schema").click(function() {
+    let schema_id = $("#sel-destination-schema").val();
+    var schemas_url = 'http://localhost:8000/api/docminer/schemas/';
+    var request_type = "POST";
+
+    let schema_name = $("#input_new_schema").val();
+    if(schema_name == "") {
+        alert("Please enter Schema Name");
+        return;
+    }
+
+    if (schema_id != "new") {
+        schemas_url = schemas_url + schema_id + '/';
+        request_type = "PUT";
+    }
+
+    let schema = {
+        "title": schema_name,
+        "fields_json": JSON.stringify(g_schema_table.getData("json"))
+    };
+
+    console.log(schemas_url, schema);
+
+    $.ajax({
+        type: request_type,
+        url: schemas_url,
+        headers : {
+            'Authorization' : 'Token ' + g_user_auth_token,
+        },
+        data: schema,
+        dataType: 'json',
+        success: function(response) {
+            console.log(typeof(response), response);
+
+        }
+    });
+
 });
 
 
