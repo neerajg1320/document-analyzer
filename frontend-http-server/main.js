@@ -12,7 +12,8 @@ let g_document_table = new Tabulator("#document-transactions-table", {
 
 let g_schema_table = new Tabulator("#destination-header-table", {
     height:300,
-    layout:"fitColumns", //fit columns to width of table (optional)
+    layout:"fitData", //fit columns to width of table (optional)
+    movableRows: true,
 
     columns:[
         {title:"Name", field:"name", editor:"input", editable:true},

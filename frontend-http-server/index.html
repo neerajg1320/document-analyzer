@@ -4,7 +4,8 @@
     <title>Admin Flow</title>
     <link rel="stylesheet" href="common.css">
     <link rel="stylesheet" href="style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.4.2/css/tabulator.min.css" rel="stylesheet">
+    <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.4.2/css/tabulator.min.css" rel="stylesheet">-->
+    <link href="libs/tabulator/tabulator.min.css" rel="stylesheet">
 </head>
 <body>
 <!-- DOM section -->
@@ -212,15 +213,18 @@
 <!-- scripts section -->
 
 <!-- jquery is required for tabulator.js -->
+<!--
 <script   src="http://code.jquery.com/jquery-3.3.1.min.js"   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="   crossorigin="anonymous"></script>
 <script   src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"   integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="   crossorigin="anonymous"></script>
-
+-->
+<script type="text/javascript" src="libs/jquery/jquery-3.4.1.min.js"/>
+<script type="text/javascript" src="libs/jquery-ui/jquery-ui.min.js"/>
 <!-- moment.js is required for sorting tabulator table based on date -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script type="text/javascript" src="libs/moment-2.24.0.min.js"></script>
 
 <!-- tabulator library is for displaying json array in tabular fashion -->
-<link href="https://unpkg.com/tabulator-tables@4.2.7/dist/css/tabulator.min.css" rel="stylesheet">
-<script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.2.7/dist/js/tabulator.min.js"></script>
+<link href="libs/tabulator-4.2.7.min.css" rel="stylesheet">
+<script type="text/javascript" src="libs/tabulator-4.2.7.min.js"></script>
 
 <!-- Main code which uses js libraries:
     i) Fetch document transactions using API
