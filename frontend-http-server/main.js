@@ -1498,11 +1498,9 @@ $("#get_final_table").click(function() {
     apply_operation(operation, dataframe, handle_get_table)
 });
 
+
 $(document).ready(function() {
     $("#btn_get_pipelines").click();
-
-    // download_document_using_input(g_document_table, g_user_auth_token);
-    // $("#btn_get_text").click();
 });
 
 

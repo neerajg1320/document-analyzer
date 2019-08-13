@@ -1159,8 +1159,8 @@ class OperationViewSet(viewsets.ModelViewSet):
         if not "dataframe_json" in request.data:
             return Response({"error": "Missing field 'dataframe_json'"})
 
-        frameinfo = getframeinfo(currentframe())
-        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), request.data)
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), request.data)
 
         operation = json.loads(request.data.get("operation_params"))
         df = pd.read_json(request.data.get("dataframe_json"))
@@ -1338,8 +1338,8 @@ def apply_extractor_on_dataframe(parameters, df):
 
 
 def read_datastore_parameters(parameters):
-    frameinfo = getframeinfo(currentframe())
-    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), parameters)
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), parameters)
 
     table_name = parameters["table"]
     datastore_id = parameters["datastore_id"]
