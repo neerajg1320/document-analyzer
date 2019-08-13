@@ -1294,6 +1294,7 @@ $("#btn_apply_loader").click(function () {
 var g_flag_pipeline_active = false;
 let g_operations_array = [];
 var g_operation_array_current_index = 0;
+var g_pipeline_completion_handler;
 
 let g_table_pipeline_dict = {};
 
@@ -1344,6 +1345,9 @@ $("#btn_get_pipelines").click(function () {
 function perform_pipeline_operation() {
     if (g_operation_array_current_index >= g_operations_array.length) {
         g_flag_pipeline_active = false;
+
+        g_pipeline_completion_handler({});
+        g_pipeline_completion_handler = undefined;
         return;
     }
 
@@ -1359,12 +1363,24 @@ function perform_pipeline_operation() {
     }
 }
 
-$("#btn_apply_pipeline").click(function () {
-    console.log(g_operations_array);
+function handle_pipeline_execution_complete(response) {
+    console.log("Pipeline Execution Completed", response);
+
+    $("#btn_get_final_table").click();
+}
+
+function execute_pipeline(completion_handler) {
     g_flag_pipeline_active = true;
     g_operation_array_current_index = 0;
+    g_pipeline_completion_handler = completion_handler;
 
     perform_pipeline_operation();
+}
+
+$("#btn_apply_pipeline").click(function () {
+    console.log(g_operations_array);
+
+    execute_pipeline(handle_pipeline_execution_complete);
 });
 
 
@@ -1417,13 +1433,6 @@ $("#sel-pipeline").on('change', function() {
 
     fetch_operation_by_id(g_operation_pipeline_array[g_operation_array_current_index++],
         operation_response_handler);
-    // for (var i in pipeline.operations) {
-    //     operation_id = pipeline.operations[i];
-    //
-    //     fetch_operation_by_id(operation_id, operation_response_handler);
-    // }
-
-
 });
 
 $("#btn_save_pipeline").click(function () {
@@ -1479,7 +1488,7 @@ function handle_get_table(operation, response) {
     g_final_table.setData(response[0]['transactions']);
 }
 
-$("#get_final_table").click(function() {
+$("#btn_get_final_table").click(function() {
     // We are using the following function to reuse the code
     let load_operation = get_operation_dict_for_loader();
     database_parameters = load_operation.parameters;
