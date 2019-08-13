@@ -218,6 +218,7 @@ let g_final_table = new Tabulator("#final-table", {
     height:300,
     layout:"fitColumns", //fit columns to width of table (optional)
     autoColumns:true,
+    movableColumns: true,
 
     rowClick: function(e, row){ //trigger an alert message when the row is clicked
         alert('Row index ' + row.getPosition() + ' clicked');
