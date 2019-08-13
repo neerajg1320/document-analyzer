@@ -604,9 +604,9 @@ def apply_mapper_on_dataframe(mapper_parameters, df):
     if "new_fields" in mapper_parameters:
         new_fields = json.loads(mapper_parameters["new_fields"])
 
-    destination_schema_df = destnation_schema_dataframe(destination_table)
+    schema_df = destnation_schema_dataframe(destination_table)
 
-    df = map_existing_fields(destination_schema_df, mapper, df)
+    df = map_existing_fields(schema_df, mapper, df)
     df = assign_new_datatypes(destination_table, df)
 
     if new_fields is not None:
@@ -615,6 +615,16 @@ def apply_mapper_on_dataframe(mapper_parameters, df):
     for entry in new_fields:
         if entry["type"] == "Temp":
             df = df.drop(entry["temp_name"], axis=1)
+
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), df.columns, schema_df['name'])
+
+    remaining_columns = list(filter(lambda column: column not in df.columns, schema_df['name']))
+    for column in remaining_columns:
+        df[column] = ''
+
+    frameinfo = getframeinfo(currentframe())
+    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), remaining_columns)
 
     return df
 
