@@ -1200,10 +1200,43 @@ $("#btn_save_datastore").click(function() {
 });
 
 $("#sel-datastore").on('change', function() {
-    let datastore = g_table_datastore_dict[this.value];
-    console.log(datastore);
-    
-    set_selector_value_with_event('sel-datastore-type', datastore.type);
+    let datastore_name = this.value;
+    console.log(datastore_name);
+
+    if (datastore_name == "new") {
+        let datastore_type = $("#sel-datastore-type").val();
+
+        if (datastore_type != "new") {
+            let parameters_array_json = g_table_datastoretype_parameters_description_dict[datastore_type];
+            console.log(parameters_array_json);
+
+            let parameters = JSON.parse(parameters_array_json);
+            let parameter_names = parameters.map(a => a.name);
+            console.log(parameter_names);
+
+            // In the value we can provide the default value
+            g_table_datastore_parameters_values_array = parameters.map(function (parameter) {
+                return {"parameter": parameter.name, "value": ""};
+            });
+        }
+    } else {
+        let datastore = g_table_datastore_dict[datastore_name];
+        let parameters = JSON.parse(datastore.parameters);
+        console.log(parameters);
+
+        g_table_datastore_parameters_values_array.length = 0;
+        for (var key in parameters) {
+            // check if the property/key is defined in the object itself, not in parent
+            if (parameters.hasOwnProperty(key)) {
+                console.log(key, parameters[key]);
+                g_table_datastore_parameters_values_array.push({"parameter": key, "value":  parameters[key]});
+            }
+        }
+
+        set_selector_value_with_event('sel-datastore-type', datastore.type);
+    }
+
+    g_account_parameters_value_table.setData(g_table_datastore_parameters_values_array);
 });
 
 
@@ -1214,20 +1247,7 @@ $("#sel-datastore-type").on('change', function() {
         g_account_parameters_description_table.setData('[]')
     } else {
 
-        let parameters_array_json = g_table_datastoretype_parameters_description_dict[this.value];
-        console.log(parameters_array_json);
-
-        let parameters = JSON.parse(parameters_array_json);
-        let parameter_names = parameters.map(a => a.name);
-        console.log(parameter_names);
-
-        // In the value we can provide the default value
-        g_table_datastore_parameters_values_array = parameters.map(function(parameter) {
-           return {"parameter": parameter.name, "value": ""};
-        });
-
         g_account_parameters_description_table.setData(g_table_datastoretype_parameters_description_dict[this.value]);
-        g_account_parameters_value_table.setData(g_table_datastore_parameters_values_array);
     }
 });
 
