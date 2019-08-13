@@ -1,5 +1,6 @@
 Django>=2.1.3,<2.2.0
 djangorestframework>=3.9.0,<3.10.0
+django-filter>=2.2.0,<2.2.1
 psycopg2>=2.7.5,<2.8.0
 pygments>=2.4.2,<2.5.0
 django-cors-middleware>=1.3.1,<1.4.0
@@ -12,6 +13,6 @@ snowflake-connector-python>=1.8.3,<1.9.0
 snowflake-sqlalchemy>=1.1.13,<1.2.0
 pdf2image>=1.5.4,<1.6.0
 pyap>=0.2.0,<0.3.0
-pypostal>=1.1,<1.2
+google-cloud-vision>=0.38.1,<0.38.2
 
 flake8>=3.6.0,<3.7.0
