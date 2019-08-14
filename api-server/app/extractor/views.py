@@ -1269,7 +1269,8 @@ def file_to_text(file_path, password=None):
 
 from extractor.pandas_routines import (df_clean_assign_type_for_floats,
                                        df_clean_assign_type_for_dates,
-                                       df_clean_assign_type_for_integers)
+                                       df_clean_assign_type_for_integers,
+                                       get_columns_info_dataframe)
 
 
 def apply_extractor_on_dataframe(parameters, df):
@@ -1315,7 +1316,7 @@ def apply_extractor_on_dataframe(parameters, df):
         raise RuntimeError("Extractor type '%s' not supported" % extractor_type)
 
     frameinfo = getframeinfo(currentframe())
-    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), new_df.dtypes)
+    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), get_columns_info_dataframe(new_df))
 
     return new_str, table_dict, new_df
 

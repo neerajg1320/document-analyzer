@@ -2,6 +2,7 @@
 let g_document_table = new Tabulator("#document-transactions-table", {
     height:300,
     layout:"fitData", //fit columns to width of table (optional)
+    layoutColumnsOnNewData:true,
     autoColumns:true,
 
     rowClick: function(e, row){ //trigger an alert message when the row is clicked
@@ -13,6 +14,7 @@ let g_document_table = new Tabulator("#document-transactions-table", {
 let g_schema_table = new Tabulator("#destination-header-table", {
     height:300,
     layout:"fitData", //fit columns to width of table (optional)
+    layoutColumnsOnNewData:true,
     movableRows: true,
 
     columns:[
