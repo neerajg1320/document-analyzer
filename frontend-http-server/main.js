@@ -1,7 +1,7 @@
 // Document table which shows transactions present in a document
 let g_document_table = new Tabulator("#document-transactions-table", {
     height:300,
-    layout:"fitColumns", //fit columns to width of table (optional)
+    layout:"fitData", //fit columns to width of table (optional)
     autoColumns:true,
 
     rowClick: function(e, row){ //trigger an alert message when the row is clicked
@@ -63,7 +63,7 @@ let g_table_datastore_parameters_values_array = []
 // Document table which shows transactions present in a document
 let g_document_mapper_table = new Tabulator("#document-mapper-table", {
     height:300,
-    layout:"fitColumns", //fit columns to width of table (optional)
+    layout:"fitData", //fit columns to width of table (optional)
 
     columns:[
         {title:"SourceColumn", field:"src"},
@@ -102,8 +102,9 @@ let temp_column_name_edit_check = function(cell){
 
 let g_document_mapper_newfields_table = new Tabulator("#document-mapper-newfields-table", {
     height:300,
-    layout:"fitDataFill",
+    layout:"fitData",
     layoutColumnsOnNewData:true,
+    movableRows: true,
     data: [
         {"type": "", "temp_name": "", "dst": "", "value":"None"}
     ],
@@ -171,7 +172,7 @@ let g_document_mapped_table = new Tabulator("#document-mapped-transactions-table
 // Regex transactions table which shows transactions extracted by the generated regex
 // let g_regex_transactions_table = new Tabulator("#regex-transactions-table", {
 //     height:300,
-//     layout:"fitColumns", //fit columns to width of table (optional)
+//     layout:"fitData", //fit columns to width of table (optional)
 //     autoColumns:true,
 //
 //     rowClick: function(e, row){ //trigger an alert message when the row is clicked
@@ -183,7 +184,7 @@ let g_document_mapped_table = new Tabulator("#document-mapped-transactions-table
 // Credentials to be used for loading data into account
 let g_account_parameters_value_table = new Tabulator("#account-parameters-value-table", {
     height:300,
-    layout:"fitColumns", //fit columns to width of table (optional)
+    layout:"fitData", //fit columns to width of table (optional)
 
     columns:[
         {title:"Parameter", field:"parameter"},
@@ -194,7 +195,7 @@ let g_account_parameters_value_table = new Tabulator("#account-parameters-value-
 // Credentials to be used for loading data into account
 let g_account_parameters_description_table = new Tabulator("#account-parameters-description-table", {
     height:300,
-    layout:"fitColumns", //fit columns to width of table (optional)
+    layout:"fitData", //fit columns to width of table (optional)
 
     columns:[
         {title:"Name", field:"name", editor:"input", editable:true},
@@ -213,17 +214,7 @@ let g_account_parameters_description_table = new Tabulator("#account-parameters-
     ],
 });
 
-// Account table which shows transactions in all the documents uploaded for an account
-let g_final_table = new Tabulator("#final-table", {
-    height:300,
-    layout:"fitColumns", //fit columns to width of table (optional)
-    autoColumns:true,
-    movableColumns: true,
 
-    rowClick: function(e, row){ //trigger an alert message when the row is clicked
-        alert('Row index ' + row.getPosition() + ' clicked');
-    },
-});
 
 let g_config_automate_flow = true;
 
@@ -1506,13 +1497,25 @@ $("#btn_reset_pipeline").click(function () {
 
 function handle_get_table(operation, response) {
     console.log(response);
-    g_final_table.setData(response[0]['transactions']);
+
+    // Account table which shows transactions in all the documents uploaded for an account
+    let final_table = new Tabulator("#final-table", {
+        height:300,
+        layout:"fitData", //fit columns to width of table (optional)
+        autoColumns:true,
+        movableColumns: true,
+
+        rowClick: function(e, row){ //trigger an alert message when the row is clicked
+            alert('Row index ' + row.getPosition() + ' clicked');
+        },
+    });
+    final_table.setData(response[0]['transactions']);
 }
 
 $("#btn_get_final_table").click(function() {
     // We are using the following function to reuse the code
     let load_operation = get_operation_dict_for_loader();
-    database_parameters = load_operation.parameters;
+    let database_parameters = load_operation.parameters;
     console.log(database_parameters);
 
     let new_parameters = {
