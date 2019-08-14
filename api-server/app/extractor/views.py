@@ -1149,12 +1149,13 @@ class OperationViewSet(viewsets.ModelViewSet):
                 response_dict = []
         elif operation["type"] == "Extract":
 
-            new_str, table_dict, df = apply_extractor_on_dataframe(operations_parameters, df)
+            new_str, table_dict, df, schema_df = apply_extractor_on_dataframe(operations_parameters, df)
 
             response_dict = [{
                 "new_str": new_str,
                 "dataframe": str(df),
                 "transactions": table_dict,
+                "schema": json.loads(schema_df.to_json(orient='records'))
             }]
 
         return Response(response_dict)
@@ -1315,10 +1316,12 @@ def apply_extractor_on_dataframe(parameters, df):
     else:
         raise RuntimeError("Extractor type '%s' not supported" % extractor_type)
 
-    frameinfo = getframeinfo(currentframe())
-    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), get_columns_info_dataframe(new_df))
+    schema_df = get_columns_info_dataframe(new_df)
 
-    return new_str, table_dict, new_df
+    frameinfo = getframeinfo(currentframe())
+    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), schema_df)
+
+    return new_str, table_dict, new_df, schema_df
 
 
 def read_datastore_parameters(parameters):
@@ -1357,7 +1360,7 @@ def apply_pipeline_on_text(file_text, pipeline):
         if operation.type == "Extract":
             df_dict = [{"text": file_text}]
             current_df = pd.DataFrame(df_dict)
-            new_str, table_dict, current_df = apply_extractor_on_dataframe(parameters, current_df)
+            new_str, table_dict, current_df, schema_df = apply_extractor_on_dataframe(parameters, current_df)
         elif operation.type == "Transform":
             current_df = apply_mapper_on_dataframe(parameters, current_df)
         elif operation.type == "Load":

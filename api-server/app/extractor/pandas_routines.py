@@ -165,11 +165,11 @@ def get_columns_info_dataframe(src_df):
     # frameinfo = getframeinfo(currentframe())
     # print("[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), src_df)
 
-    columns = ["src", "select", "dst"]
+    columns = ["src", "srctype", "select", "dst"]
     columns_df = pd.DataFrame(columns=columns)
     index = 0
     for src_column in src_columns:
-        column_row = [str(src_column), True, str(src_column),]
+        column_row = [str(src_column), str(src_df[src_column].dtype), True, str(src_column),]
         # print(column_row)
         columns_df.loc[index] = column_row
         index += 1
