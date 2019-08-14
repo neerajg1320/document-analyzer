@@ -23,7 +23,7 @@ let g_schema_table = new Tabulator("#destination-header-table", {
                 let hardcoded_values = {
                     "int64":"int64",
                     "float64":"float64",
-                    "date":"date",
+                    "date":"datetime[ns]",
                     "object":"object",
                 };
 
@@ -69,6 +69,7 @@ let g_document_mapper_table = new Tabulator("#document-mapper-table", {
 
     columns:[
         {title:"SourceColumn", field:"src"},
+        {title:"SourceColumnType", field:"srctype"},
         {title:"Select", field:"select", editor:"tick", formatter:"tick", editable:true},
 
         {title:"DestinationColumn", field:"dst", editor:"select", editorParams: function(cell) {
@@ -570,14 +571,17 @@ function get_operation_dict_for_extractor() {
 function handle_extractor_operation_response(response) {
     console.log(response);
 
-    var new_str = response[0]['new_str'];
+    let new_str = response[0]['new_str'];
     g_document_text_box.empty().append(new_str);
 
-    var dataframe = response[0]['dataframe'];
+    let dataframe = response[0]['dataframe'];
     g_document_dataframe_box.empty().append(dataframe);
 
-    var transactions = response[0]['transactions'];
+    let transactions = response[0]['transactions'];
     g_document_table.setData(transactions);
+
+    let schema = response[0]['schema'];
+    g_document_mapper_table.setData(schema);
 }
 
 function handle_operation_response(operation, response) {

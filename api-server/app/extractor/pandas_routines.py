@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+
 from datetime import datetime, timezone
 
 from inspect import currentframe, getframeinfo
@@ -36,7 +38,7 @@ def df_clean_date_columns(df, date_cols):
 
 
 def df_dates_str(df):
-    date_cols = df_get_date_columns(df)
+    date_cols = df_get_date_columns_by_name(df)
     df[date_cols] = df[date_cols].applymap(
         lambda x: datetime.strftime(x, "%Y-%m-%d")
     )
@@ -44,8 +46,7 @@ def df_dates_str(df):
     return df
 
 
-def df_dates_iso_format(df):
-    date_cols = df_get_date_columns(df)
+def df_columns_datetime_iso_format(df, date_cols):
     df[date_cols] = df[date_cols].applymap(
         lambda x: datetime.fromtimestamp(x.timestamp(), tz=timezone.utc).isoformat()
     )
@@ -53,7 +54,15 @@ def df_dates_iso_format(df):
     return df
 
 
-def df_get_integer_columns(df):
+def df_columns_datetime_iso_date_format(df, date_cols):
+    df[date_cols] = df[date_cols].applymap(
+        lambda x: datetime.fromtimestamp(x.timestamp(), tz=timezone.utc).isoformat().split('T')[0]
+    )
+
+    return df
+
+
+def df_get_integer_columns_by_name(df):
     integer_cols = []
     for column in df.columns:
         if "Integer" in column:
@@ -61,7 +70,7 @@ def df_get_integer_columns(df):
     return integer_cols
 
 
-def df_get_float_columns(df):
+def df_get_float_columns_by_name(df):
     amount_cols = []
     for column in df.columns:
         if "Float" in column:
@@ -69,12 +78,24 @@ def df_get_float_columns(df):
     return amount_cols
 
 
-def df_get_date_columns(df):
+def df_get_date_columns_by_name(df):
     date_cols = []
     for column in df.columns:
         if "date" in column.lower():
             date_cols.append(column)
     return date_cols
+
+
+def df_get_date_columns_by_name(df):
+    date_cols = []
+    for column in df.columns:
+        if "date" in column.lower():
+            date_cols.append(column)
+    return date_cols
+
+
+def df_get_date_columns_by_type(df):
+    return df.select_dtypes(include=[np.datetime64]).columns
 
 
 def df_get_column_by_substr_case_insensitive(df, substr):
@@ -105,7 +126,7 @@ def df_map_columns_by_groupbydict(df, mapper_dict):
 
 def df_clean_assign_type_for_integers(df):
     # Map the amount columns as float
-    integer_cols = df_get_integer_columns(df)
+    integer_cols = df_get_integer_columns_by_name(df)
     df = df_clean_integer_columns(df, integer_cols)
 
     return df
@@ -113,7 +134,7 @@ def df_clean_assign_type_for_integers(df):
 
 def df_clean_assign_type_for_floats(df):
     # Map the amount columns as float
-    float_cols = df_get_float_columns(df)
+    float_cols = df_get_float_columns_by_name(df)
     df = df_clean_float_columns(df, float_cols)
 
     return df
@@ -122,7 +143,7 @@ def df_clean_assign_type_for_floats(df):
 def df_clean_assign_type_for_dates(df):
     # Serialize the date columns to a format of our choice
     # First we convert then to datetime format using pd.to_datetime function
-    date_cols = df_get_date_columns(df)
+    date_cols = df_get_date_columns_by_name(df)
     df = df_clean_date_columns(df, date_cols)
 
     return df
@@ -144,7 +165,7 @@ def transform_df_using_dict(df, mapper_dict):
 
 # Currently we need to have following columns
 # src, select, dst, type
-def get_columns_info_dataframe(src_df):
+def df_get_columns_info_dataframe(src_df):
 
     src_columns = src_df.columns.values.tolist()
 

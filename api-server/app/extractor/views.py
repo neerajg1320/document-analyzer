@@ -13,6 +13,12 @@ from extractor.text_routines import create_highlighted_text, \
 
 import pandas as pd
 
+from extractor.pandas_routines import (df_clean_assign_type_for_floats,
+                                       df_clean_assign_type_for_dates,
+                                       df_clean_assign_type_for_integers,
+                                       df_get_date_columns_by_type,
+                                       df_get_columns_info_dataframe)
+
 # Used for checking the dtypes
 import numpy as np
 
@@ -24,8 +30,9 @@ from snowflake.sqlalchemy import URL
 from sqlalchemy import create_engine
 
 
-from extractor.pandas_routines import transform_df_using_dict, df_dates_iso_format, \
-    df_get_date_columns, df_dates_str, get_columns_info_dataframe
+from extractor.pandas_routines import transform_df_using_dict, \
+    df_columns_datetime_iso_format, df_columns_datetime_iso_date_format, \
+    df_get_date_columns_by_name, df_dates_str, df_get_columns_info_dataframe
 
 from extractor import excel_routines
 from extractor import image_routines
@@ -533,6 +540,11 @@ def assign_new_datatypes(destination_table_name, agg_df):
     for key, value in new_dtypes_dict.items():
         if key in agg_df.columns:
             available_new_dtypes_dict[key] = value
+            if value == "date":
+                available_new_dtypes_dict[key] = "datetime64[ns]"
+
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), json.dumps(available_new_dtypes_dict, indent=4))
 
     try:
         agg_df = agg_df.astype(dtype=available_new_dtypes_dict).round(g_decimal_places)
@@ -542,6 +554,9 @@ def assign_new_datatypes(destination_table_name, agg_df):
     except KeyError as e:
         frameinfo = getframeinfo(currentframe())
         print("Exception[{}:{}]:".format(frameinfo.filename, frameinfo.lineno), e)
+
+    frameinfo = getframeinfo(currentframe())
+    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), agg_df.dtypes)
 
     return agg_df
 
@@ -844,7 +859,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
             # Need to be lookup based
             groupby_dict = self.get_groupby_dict(document)
             df = transform_df_using_dict(df, groupby_dict)
-            # df = df_dates_iso_format(df)
+            # df = df_columns_dates_iso_format(df)
             df = df_dates_str(df)
 
         # print("Before Sending")
@@ -895,7 +910,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         frameinfo = getframeinfo(currentframe())
         print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), document, df)
 
-        columns_df = get_columns_info_dataframe(df)
+        columns_df = df_get_columns_info_dataframe(df)
         columns_array = json.loads(columns_df.to_json(orient='records'))
 
         return Response(columns_array)
@@ -1140,6 +1155,10 @@ class OperationViewSet(viewsets.ModelViewSet):
         elif operation["type"] == "Transform":
             df = apply_mapper_on_dataframe(operations_parameters, df)
 
+            # Serialize the dates before sending
+            date_cols = df_get_date_columns_by_type(df)
+            df = df_columns_datetime_iso_date_format(df, date_cols)
+
             try:
                 response_dict = [{
                     "mapped_df": str(df),
@@ -1149,11 +1168,19 @@ class OperationViewSet(viewsets.ModelViewSet):
                 response_dict = []
         elif operation["type"] == "Extract":
 
+            # The difference between table_dict and df:
+            # The table_dict has original extracted strings
+            # The df has the values in which the types have been inferred
+            # This results in the display of dates, numbers different for the two
             new_str, table_dict, df, schema_df = apply_extractor_on_dataframe(operations_parameters, df)
+
+            # date_cols = df_get_date_columns_by_type(df)
+            # df = df_columns_datetime_iso_date_format(df, date_cols)
+            # table_dict = json.loads(df.to_json(orient='records'))
 
             response_dict = [{
                 "new_str": new_str,
-                "dataframe": str(df),
+                "dataframe": str(schema_df),
                 "transactions": table_dict,
                 "schema": json.loads(schema_df.to_json(orient='records'))
             }]
@@ -1268,12 +1295,6 @@ def file_to_text(file_path, password=None):
     return text
 
 
-from extractor.pandas_routines import (df_clean_assign_type_for_floats,
-                                       df_clean_assign_type_for_dates,
-                                       df_clean_assign_type_for_integers,
-                                       get_columns_info_dataframe)
-
-
 def apply_extractor_on_dataframe(parameters, df):
     # frameinfo = getframeinfo(currentframe())
     # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), parameters)
@@ -1316,10 +1337,10 @@ def apply_extractor_on_dataframe(parameters, df):
     else:
         raise RuntimeError("Extractor type '%s' not supported" % extractor_type)
 
-    schema_df = get_columns_info_dataframe(new_df)
+    schema_df = df_get_columns_info_dataframe(new_df)
 
-    frameinfo = getframeinfo(currentframe())
-    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), schema_df)
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), schema_df)
 
     return new_str, table_dict, new_df, schema_df
 
@@ -1368,10 +1389,12 @@ def apply_pipeline_on_text(file_text, pipeline):
         else:
             raise RuntimeError("Operation %s not found" % operation.type)
 
+        schema_df = df_get_columns_info_dataframe(current_df)
+
         # frameinfo = getframeinfo(currentframe())
         # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), current_df)
 
-    return current_df
+    return current_df, schema_df
 
 
 class PipelineViewSet(viewsets.ModelViewSet):
@@ -1427,10 +1450,14 @@ class PipelineViewSet(viewsets.ModelViewSet):
 
             pipeline = Pipeline.objects.get(user=request.user, pk=pipeline_id)
 
-            current_df = apply_pipeline_on_text(file_text, pipeline)
+            current_df, schema_df = apply_pipeline_on_text(file_text, pipeline)
+
+            date_cols = df_get_date_columns_by_type(current_df)
+            current_df = df_columns_datetime_iso_date_format(current_df, date_cols)
 
             response["dataframe_str"] = str(current_df)
             response["table_json"] = current_df.to_json(orient='records')
+            response["schema"] = schema_df.to_json(orient='records')
 
         return Response(response)
 
