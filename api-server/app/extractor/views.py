@@ -892,6 +892,9 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def transactions_get_mapper(self, request, *args, **kwargs):
         document, df = self.get_or_create_transactions_dataframe()
 
+        frameinfo = getframeinfo(currentframe())
+        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), document, df)
+
         columns_df = get_columns_info_dataframe(df)
         columns_array = json.loads(columns_df.to_json(orient='records'))
 
@@ -1264,6 +1267,11 @@ def file_to_text(file_path, password=None):
     return text
 
 
+from extractor.pandas_routines import (df_clean_assign_type_for_floats,
+                                       df_clean_assign_type_for_dates,
+                                       df_clean_assign_type_for_integers)
+
+
 def apply_extractor_on_dataframe(parameters, df):
     # frameinfo = getframeinfo(currentframe())
     # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), parameters)
@@ -1272,6 +1280,7 @@ def apply_extractor_on_dataframe(parameters, df):
     table_dict = None
     new_df = None
     extractor_type = parameters["type"]
+
     if extractor_type == "regex":
         text = df['text'].iloc[0]
         parameters = parameters["parameters"]
@@ -1279,12 +1288,19 @@ def apply_extractor_on_dataframe(parameters, df):
 
         new_str, table_dict = apply_regex_on_text(text, regex_str)
         new_df = pd.DataFrame(table_dict)
+
+        # The following methods are dependent on the above method. So they have to follow
+        new_df = df_clean_assign_type_for_dates(new_df)
+        new_df = df_clean_assign_type_for_floats(new_df)
+        new_df = df_clean_assign_type_for_integers(new_df)
+
     elif extractor_type == "excel":
         text = df['text'].iloc[0]
         input_csv = StringIO(text)
 
         new_df = pd.read_csv(input_csv)
         table_dict = json.loads(new_df.to_json(orient='records'))
+
     elif extractor_type == "database":
         # Get the table from database
         parameters = json.loads(parameters["parameters"])
@@ -1294,8 +1310,12 @@ def apply_extractor_on_dataframe(parameters, df):
         if new_df is None:
             new_df = pd.DataFrame()
         table_dict = json.loads(new_df.to_json(orient='records'))
+
     else:
         raise RuntimeError("Extractor type '%s' not supported" % extractor_type)
+
+    frameinfo = getframeinfo(currentframe())
+    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), new_df.dtypes)
 
     return new_str, table_dict, new_df
 

@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 
 from inspect import currentframe, getframeinfo
 
+
 def df_map_columns(df, mapper_dict):
     # https://www.geeksforgeeks.org/combining-multiple-columns-in-pandas-groupby-with-dictionary/
     # Here we shall map data
@@ -15,8 +16,13 @@ def df_map_columns(df, mapper_dict):
     return df
 
 
-# TBD: Need to change these to Decimals
-def df_clean_amount_columns(df, amount_cols):
+def df_clean_integer_columns(df, amount_cols):
+    df[amount_cols] = df[amount_cols].replace({'\$': '', ',': ''}, regex=True)
+    df[amount_cols] = df[amount_cols].astype(int)
+    return df
+
+
+def df_clean_float_columns(df, amount_cols):
     df[amount_cols] = df[amount_cols].replace({'\$': '', ',': ''}, regex=True)
     df[amount_cols] = df[amount_cols].astype(float)
     return df
@@ -47,10 +53,18 @@ def df_dates_iso_format(df):
     return df
 
 
-def df_get_amount_columns(df):
+def df_get_integer_columns(df):
+    integer_cols = []
+    for column in df.columns:
+        if "Integer" in column:
+            integer_cols.append(column)
+    return integer_cols
+
+
+def df_get_float_columns(df):
     amount_cols = []
     for column in df.columns:
-        if "Amount" in column or 'Quantity' in column:
+        if "Float" in column:
             amount_cols.append(column)
     return amount_cols
 
@@ -83,15 +97,24 @@ def df_get_column_by_substr(df, substr):
 
     return cols
 
+
 def df_map_columns_by_groupbydict(df, mapper_dict):
     df = df_map_columns(df, mapper_dict)
     return df
 
 
-def df_clean_assign_type_for_amounts(df):
+def df_clean_assign_type_for_integers(df):
     # Map the amount columns as float
-    amount_cols = df_get_amount_columns(df)
-    df = df_clean_amount_columns(df, amount_cols)
+    integer_cols = df_get_integer_columns(df)
+    df = df_clean_integer_columns(df, integer_cols)
+
+    return df
+
+
+def df_clean_assign_type_for_floats(df):
+    # Map the amount columns as float
+    float_cols = df_get_float_columns(df)
+    df = df_clean_float_columns(df, float_cols)
 
     return df
 
@@ -112,7 +135,7 @@ def transform_df_using_dict(df, mapper_dict):
     df = df_map_columns_by_groupbydict(df, mapper_dict)
 
     # The following methods are dependent on the above method. So they have to follow
-    df = df_clean_assign_type_for_amounts(df)
+    df = df_clean_assign_type_for_floats(df)
 
     df = df_clean_assign_type_for_dates(df)
 
