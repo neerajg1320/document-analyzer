@@ -1291,6 +1291,8 @@ def apply_extractor_on_dataframe(parameters, df):
         datastore_type, table_name, datastore_credentials = read_datastore_parameters(parameters)
 
         new_df = load_frame_from_datastore_table(table_name, datastore_type, datastore_credentials)
+        if new_df is None:
+            new_df = pd.DataFrame()
         table_dict = json.loads(new_df.to_json(orient='records'))
     else:
         raise RuntimeError("Extractor type '%s' not supported" % extractor_type)
