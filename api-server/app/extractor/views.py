@@ -616,15 +616,9 @@ def apply_mapper_on_dataframe(mapper_parameters, df):
         if entry["type"] == "Temp":
             df = df.drop(entry["temp_name"], axis=1)
 
-    # frameinfo = getframeinfo(currentframe())
-    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), df.columns, schema_df['name'])
-
     remaining_columns = list(filter(lambda column: column not in df.columns, schema_df['name']))
     for column in remaining_columns:
         df[column] = ''
-
-    frameinfo = getframeinfo(currentframe())
-    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), remaining_columns)
 
     return df
 

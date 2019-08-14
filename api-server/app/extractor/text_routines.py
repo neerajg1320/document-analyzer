@@ -1,6 +1,12 @@
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters.html import HtmlFormatter
 from pygments import highlight
+import re
+from collections import OrderedDict
+
+
+def debug_extraction_processing():
+    return False
 
 
 def create_highlighted_text(text, lexer_name='text', style='friendly', title=None):
@@ -14,17 +20,9 @@ def create_highlighted_text(text, lexer_name='text', style='friendly', title=Non
     return highlighted
 
 
-import re
-from collections import OrderedDict
+def create_transactions_from_text_tuples_str(regex_str, input_str):
 
-
-def debug_extraction_processing():
-    return False
-
-
-def create_transactions_from_text_tuples_str(transaction_regex_str, input_str):
-
-    pattern = re.compile(transaction_regex_str, re.MULTILINE)
+    pattern = re.compile(regex_str, re.MULTILINE)
     matches = pattern.finditer(input_str)
 
     # We get the list of group names and they can be sorted by their index
@@ -64,9 +62,9 @@ def create_transactions_from_text_tuples_str(transaction_regex_str, input_str):
     return ret_str
 
 
-def create_transactions_dict_array_from_text(transaction_regex_str, input_str):
+def create_transactions_dict_array_from_text(regex_str, input_str):
 
-    pattern = re.compile(transaction_regex_str, re.MULTILINE)
+    pattern = re.compile(regex_str, re.MULTILINE)
     matches = pattern.finditer(input_str)
 
     # We get the list of group names and they can be sorted by their index
