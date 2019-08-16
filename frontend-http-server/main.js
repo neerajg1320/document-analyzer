@@ -66,7 +66,7 @@ let temp_mapper_type_edit_check = function(cell){
     //get row data
     let row = cell.getRow().getData();
 
-    return row.mapping == "SPLIT_SEP" || row.mapping == "SPLIT_REGEX"; // only allow the name cell to be edited if the age is over 18
+    return row.mapping == "SPLIT_SEP" || row.mapping == "SPLIT_REGEX_STATIC"; // only allow the name cell to be edited if the age is over 18
 }
 
 
@@ -75,18 +75,18 @@ let g_document_mapper_table = new Tabulator("#document-mapper-table", {
     height:300,
     layout:"fitData", //fit columns to width of table (optional)
     layoutColumnsOnNewData:true,
-    
+
     columns:[
         {title:"SourceColumn", field:"src"},
         {title:"SourceColumnType", field:"srctype"},
-        {title:"Select", field:"select", editor:"tick", formatter:"tick", editable:true},
 
         {title:"Mapping", field:"mapping", editor:"select", editorParams: function(cell) {
                 let values = {
                     "IGNORE": "IGNORE",
                     "RENAME": "RENAME",
                     "SPLIT_SEP": "SPLIT_SEP",
-                    "SPLIT_REGEX": "SPLIT_REGEX"
+                    "SPLIT_REGEX_STATIC": "SPLIT_REGEX_STATIC",
+                    "SPLIT_REGEX_DYNAMIC": "SPLIT_REGEX_DYNAMIC",
                 };
 
                 return {"values": values};
@@ -96,8 +96,8 @@ let g_document_mapper_table = new Tabulator("#document-mapper-table", {
                 let row = cell.getRow().getData();
                 console.log(row.mapping);
 
-                const values = {};
-                if (row.mapping == "RENAME") {
+                const values = {"None": "None"};
+                if (row.mapping != "IGNORE") {
 
                     console.log(g_table_schema_dict);
                     let destination_table = $("#sel-destination-schema").val();
@@ -126,7 +126,7 @@ let temp_column_name_edit_check = function(cell){
     //get row data
     let row = cell.getRow().getData();
 
-    return row.type == "Temp"; // only allow the name cell to be edited if the age is over 18
+    return row.type == "Generate-Temp" || row.type == "Generate-Regex"; // only allow the name cell to be edited if the age is over 18
 }
 
 
@@ -139,23 +139,46 @@ let g_document_mapper_newfields_table = new Tabulator("#document-mapper-newfield
         {"type": "", "temp_name": "", "dst": "", "value":"None"}
     ],
     columns:[
-        {title:"ColumnType", field:"type", editor:"select", editable:true, editorParams: function(cell) {
+        {title:"Active", field:"active", editor:"tick", formatter:"tick", editable:true},
+        {title:"Rule-Type", field:"type", editor:"select", editable:true, editorParams: function(cell) {
                 console.log(cell.getRow().getData());
 
                 values = {};
-                values["Temp"] = "Temp";
-                values["Final"] = "Final";
+                values["Generate-Temp"] = "Generate-Temp";
+                values["Generate-Final"] = "Generate-Final";
+                values["Generate-Regex"] = "Generate-Regex";
 
                 return {"values": values};
             }
         },
-        {title:"TempColumnName", field:"temp_name", editor:"input", editable: temp_column_name_edit_check},
-        {title:"DestinationColumn", field:"dst", editor:"select", editorParams: function(cell) {
+        {title:"SrcColumn", field:"src", editor:"select", editorParams: function(cell) {
                 let row = cell.getRow().getData();
                 console.log(row);
 
                 const values = {};
-                if (row.type == "Final") {
+                if (row.type == "Generate-Regex") {
+                    let src_fields_array = g_document_mapper_table.getData("json");
+
+                    // Create a list of unassigned fields
+                    console.log(src_fields_array);
+                    src_fields_array.forEach(function (src_field) {
+                            if (src_field.mapping == "SPLIT_REGEX_DYNAMIC") {
+                                values[src_field.src] = src_field.src;
+                            }
+                        }
+                    );
+                }
+
+                return {"values": values};
+            }
+        },
+        {title:"TempColumn", field:"temp_name", editor:"input", editable: temp_column_name_edit_check},
+        {title:"SchemaColumn", field:"dst", editor:"select", editorParams: function(cell) {
+                let row = cell.getRow().getData();
+                console.log(row);
+
+                const values = {};
+                if (row.type == "Generate-Final") {
                     let destination_table = $("#sel-destination-schema").val();
 
                     let fields_array = JSON.parse(g_table_schema_dict[destination_table].fields_json);

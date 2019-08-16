@@ -561,58 +561,125 @@ def assign_new_datatypes(destination_table_name, agg_df):
     return agg_df
 
 
-def map_existing_fields(destination_schema_df, mapper, df):
+def map_existing_fields(schema_df, mapper, df):
     column_mapper_df = pd.DataFrame(mapper)
 
-    # New dataframe will only contain columns which are selected
-    column_mapper_df = column_mapper_df.loc[column_mapper_df["select"] == True]
+    mapped_df = pd.DataFrame()
 
-    # Find out dst_column to src_column mappings
+    # For aggregation where necessary, find out how many src columns are mapping to a destination column.
     dst_column_dict = {}
     for index, row in column_mapper_df.iterrows():
-        key = row['dst']
-        if dst_column_dict.get(key, None) is None:
-            dst_column_dict[key] = []
-        dst_column_dict[key].append(row['src'])
+        if row['mapping'] != "IGNORE":
+            dst_column = row['dst']
+            src_column = row['src']
+
+            if dst_column != "None":
+                if dst_column_dict.get(dst_column, None) is None:
+                    dst_column_dict[dst_column] = []
+
+                dst_column_dict[dst_column].append(src_column)
+
+            if row['mapping'] == "SPLIT_SEP":
+                parameters = json.loads(row['parameters'])
+
+                frameinfo = getframeinfo(currentframe())
+                print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), json.dumps(parameters))
+
+                separator = ' '
+                if 'separator' in parameters:
+                    separator = parameters['separator']
+                split_df = df[src_column].str.split(separator, expand=True)
+
+                columns = split_df.columns
+                if 'columns' in parameters:
+                    columns = parameters["columns"]
+
+                mapped_df[columns] = split_df
+
+            elif row['mapping'] == "SPLIT_REGEX_STATIC":
+                parameters = json.loads(row['parameters'])
+
+                regex = ''
+                if 'regex' in parameters:
+                    regex = parameters['regex']
+
+                split_df = df[src_column].str.extract(regex, expand=True)
+
+                columns = split_df.columns
+                if 'columns' in parameters:
+                    columns = parameters["columns"]
+
+                mapped_df[columns] = split_df
+
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), mapped_df)
 
     # Aggregate multiple src_columns mapped to same dst_column
     #
-    agg_df = pd.DataFrame()
+
     for dst_col, src_col_list in dst_column_dict.items():
+        schema_row = schema_df.loc[schema_df['name'] == dst_col].iloc[0]
+
         # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), dst_col, src_col_list)
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), dst_col, src_col_list, "\n", schema_row)
 
         if len(src_col_list) > 1:
             # https://stackoverflow.com/questions/17071871/select-rows-from-a-dataframe-based-on-values-in-a-column-in-pandas
-            destination_field_row = destination_schema_df.loc[destination_schema_df['name'] == dst_col].iloc[0]
-
-            aggregate_fn = destination_field_row['aggregation']
-            agg_df[dst_col] = df[src_col_list].agg(aggregate_fn, axis="columns")
+            aggregate_fn = schema_row['aggregation']
+            mapped_df[dst_col] = df[src_col_list].agg(aggregate_fn, axis="columns")
         else:
-            agg_df[dst_col] = df[src_col_list[0]]
 
-    return agg_df
+            mapped_df[dst_col] = df[src_col_list[0]]
+
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), mapped_df)
+
+    return mapped_df
 
 
-def create_new_fields(new_fields, df):
+def create_new_fields(new_fields, src_df, mapped_df):
     if new_fields is not None:
         for field in new_fields:
-            field_name = ""
-            if field['type'] == "Temp":
-                field_name = field['temp_name']
-            elif field['type'] == "Final":
-                field_name = field['dst']
 
-            if field_name is not None and field_name != "":
-                code_str = "df['%s'] = %s" % (field_name, field['value'])
-                # frameinfo = getframeinfo(currentframe())
-                # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), code_str)
-                exec(code_str)
+            if not field['active']:
+                continue
+                
+            if field['type'] == "Generate-Regex":
 
-    return df.round(g_decimal_places)
+                src_column = field['src']
+                parameters = json.loads(field['value'])
+
+                regex = ''
+                if 'regex' in parameters:
+                    regex = parameters['regex']
+
+                split_df = src_df[src_column].str.extract(regex, expand=True)
+
+                columns = split_df.columns
+                if 'columns' in parameters:
+                    columns = parameters["columns"]
+
+                mapped_df[columns] = split_df
+            else:
+                field_name = ""
+                if field['type'] == "Generate-Temp":
+                    field_name = field['temp_name']
+                elif field['type'] == "Generate-Final":
+                    field_name = field['dst']
+
+                if field_name is not None and field_name != "":
+                    code_str = "df['%s'] = %s" % (field_name, field['value'])
+                    df = mapped_df
+                    # frameinfo = getframeinfo(currentframe())
+                    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), code_str)
+                    exec(code_str)
+
+                mapped_df = mapped_df.round(g_decimal_places)
+
+    return mapped_df
 
 
-def apply_mapper_on_dataframe(mapper_parameters, df):
+def apply_mapper_on_dataframe(mapper_parameters, src_df):
     destination_table = mapper_parameters["destination_table"]
     mapper = json.loads(mapper_parameters["existing_fields"])
     new_fields = None
@@ -621,21 +688,21 @@ def apply_mapper_on_dataframe(mapper_parameters, df):
 
     schema_df = destnation_schema_dataframe(destination_table)
 
-    df = map_existing_fields(schema_df, mapper, df)
-    df = assign_new_datatypes(destination_table, df)
+    mapped_df = map_existing_fields(schema_df, mapper, src_df)
+    mapped_df = assign_new_datatypes(destination_table, mapped_df)
 
     if new_fields is not None:
-        df = create_new_fields(new_fields, df)
+        mapped_df = create_new_fields(new_fields, src_df, mapped_df)
 
     for entry in new_fields:
         if entry["type"] == "Temp":
-            df = df.drop(entry["temp_name"], axis=1)
+            mapped_df = mapped_df.drop(entry["temp_name"], axis=1)
 
-    remaining_columns = list(filter(lambda column: column not in df.columns, schema_df['name']))
+    remaining_columns = list(filter(lambda column: column not in mapped_df.columns, schema_df['name']))
     for column in remaining_columns:
-        df[column] = ''
+        mapped_df[column] = ''
 
-    return df
+    return mapped_df
 
 
 def load_frame_from_datastore_table(table_name, datastore_type, datastore_credentials):
