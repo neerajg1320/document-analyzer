@@ -563,16 +563,16 @@ function get_operation_dict_for_extractor() {
 function handle_extractor_operation_response(response) {
     console.log(response);
 
-    let new_str = response[0]['new_str'];
+    let new_str = response['new_str'];
     g_document_text_box.empty().append(new_str);
 
-    let dataframe = response[0]['dataframe'];
+    let dataframe = response['dataframe'];
     g_document_dataframe_box.empty().append(dataframe);
 
-    let transactions = response[0]['transactions'];
+    let transactions = response['transactions'];
     g_document_table.setData(transactions);
 
-    let schema = response[0]['schema'];
+    let schema = response['schema'];
     g_document_mapper_table.setData(schema);
 }
 
@@ -721,10 +721,10 @@ function handle_mapper_operation_response(response) {
     console.log(typeof(response), response);
     //response is already a parsed JSON
 
-    var mapped_dataframe = response[0]['mapped_df'];
+    var mapped_dataframe = response['mapped_df'];
     g_document_mapped_dataframe_box.empty().append(mapped_dataframe);
 
-    var mapped_transactions = response[0]['mapped_df_json'];
+    var mapped_transactions = response['mapped_df_json'];
     g_document_mapped_table.setData(mapped_transactions);
 
 }
@@ -1507,7 +1507,7 @@ function handle_get_table(operation, response) {
             alert('Row index ' + row.getPosition() + ' clicked');
         },
     });
-    final_table.setData(response[0]['transactions']);
+    final_table.setData(response['transactions']);
 }
 
 $("#btn_get_final_table").click(function() {

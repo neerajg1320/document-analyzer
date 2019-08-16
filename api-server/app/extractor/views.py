@@ -926,12 +926,12 @@ class DocumentViewSet(viewsets.ModelViewSet):
         df = apply_mapper_on_dataframe(destination_table_name, existing_fields_mapper, new_fields, df)
 
         try:
-            response_dict = [{
+            response_dict = {
                 "mapped_df": str(df),
                 "mapped_df_json": df.to_json(orient='records'),
-            }]
+            }
         except Exception as e:
-            response_dict = []
+            response_dict = {}
 
         # Response should be a regex
         return Response(response_dict)
@@ -1160,12 +1160,12 @@ class OperationViewSet(viewsets.ModelViewSet):
             df = df_columns_datetime_iso_date_format(df, date_cols)
 
             try:
-                response_dict = [{
+                response_dict = {
                     "mapped_df": str(df),
                     "mapped_df_json": df.to_json(orient='records'),
-                }]
+                }
             except Exception as e:
-                response_dict = []
+                response_dict = {}
         elif operation["type"] == "Extract":
 
             # The difference between table_dict and df:
@@ -1178,12 +1178,12 @@ class OperationViewSet(viewsets.ModelViewSet):
             # df = df_columns_datetime_iso_date_format(df, date_cols)
             # table_dict = json.loads(df.to_json(orient='records'))
 
-            response_dict = [{
+            response_dict = {
                 "new_str": new_str,
                 "dataframe": str(schema_df),
                 "transactions": table_dict,
                 "schema": json.loads(schema_df.to_json(orient='records'))
-            }]
+            }
 
         return Response(response_dict)
 
