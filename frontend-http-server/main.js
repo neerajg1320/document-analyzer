@@ -572,8 +572,7 @@ function handle_extractor_operation_response(response) {
     let transactions = response['transactions'];
     g_document_table.setData(transactions);
 
-    let schema = response['schema'];
-    g_document_mapper_table.setData(schema);
+    g_table_schema = response['schema'];
 }
 
 function handle_operation_response(operation, response) {
@@ -661,29 +660,9 @@ $("#sel-destination-schema").on('change', function() {
 
 
 $("#btn_create_mapper").click(function () {
-    // Get document id
-    let document_id = $("#input_document_id").val();
+    console.log(g_table_schema);
 
-    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
-    let document_transactions_get_mapper_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/transactions/mapper/';
-
-    console.log(document_transactions_get_mapper_url);
-
-    $.ajax({
-        url: document_transactions_get_mapper_url,
-        headers : {
-            'Authorization' : 'Token ' + g_user_auth_token,
-        },
-        dataType: 'json',
-        success: function(response) {
-            console.log(typeof(response), response);
-            //response is already a parsed JSON
-
-            // alert("Transactions saved");
-            g_document_mapper_table.setData(response);
-        }
-    });
-
+    g_document_mapper_table.setData(g_table_schema);
 });
 
 
@@ -879,8 +858,9 @@ let g_table_mapper_dict = []
 
 let g_table_extractor_dict = []
 
-
 let g_table_datastore_dict = []
+
+var g_table_schema = [];
 
 
 function handle_get_loaders_response(response) {
