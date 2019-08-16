@@ -643,7 +643,7 @@ def create_new_fields(new_fields, src_df, mapped_df):
 
             if not field['active']:
                 continue
-                
+
             if field['type'] == "Generate-Regex":
 
                 src_column = field['src']
@@ -655,11 +655,20 @@ def create_new_fields(new_fields, src_df, mapped_df):
 
                 split_df = src_df[src_column].str.extract(regex, expand=True)
 
+                # Rename the column names if specified
                 columns = split_df.columns
                 if 'columns' in parameters:
                     columns = parameters["columns"]
+                    split_df.columns = columns
 
-                mapped_df[columns] = split_df
+                # Create the columns which are not present in the mapped dataframe
+                for column in columns:
+                    if column not in mapped_df:
+                        mapped_df[column] = np.nan
+
+                # Update only the non NaN values from the newly generated dataframe
+                mapped_df.update(split_df)
+
             else:
                 field_name = ""
                 if field['type'] == "Generate-Temp":
