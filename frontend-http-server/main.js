@@ -62,44 +62,71 @@ let g_table_datastoretype_parameters_description_dict = {};
 let g_table_datastore_parameters_values_array = []
 
 
+let temp_mapper_type_edit_check = function(cell){
+    //get row data
+    let row = cell.getRow().getData();
+
+    return row.mapping == "SPLIT_SEP" || row.mapping == "SPLIT_REGEX"; // only allow the name cell to be edited if the age is over 18
+}
+
+
 // Document table which shows transactions present in a document
 let g_document_mapper_table = new Tabulator("#document-mapper-table", {
     height:300,
     layout:"fitData", //fit columns to width of table (optional)
-
+    layoutColumnsOnNewData:true,
+    
     columns:[
         {title:"SourceColumn", field:"src"},
         {title:"SourceColumnType", field:"srctype"},
         {title:"Select", field:"select", editor:"tick", formatter:"tick", editable:true},
 
-        {title:"DestinationColumn", field:"dst", editor:"select", editorParams: function(cell) {
-                console.log(g_table_schema_dict);
-                let destination_table = $("#sel-destination-schema").val();
-                console.log(destination_table);
-                let dynamic_fields_array = g_table_schema_dict[destination_table].fields_json;
-                console.log(dynamic_fields_array);
-
-                let fields_array = JSON.parse(dynamic_fields_array);
-                let destination_fields = fields_array.map(a => a.name);
-
-                const values = {};
-                destination_fields.forEach(function(field_name) {
-                        values[field_name] = field_name;
-                    }
-                );
+        {title:"Mapping", field:"mapping", editor:"select", editorParams: function(cell) {
+                let values = {
+                    "IGNORE": "IGNORE",
+                    "RENAME": "RENAME",
+                    "SPLIT_SEP": "SPLIT_SEP",
+                    "SPLIT_REGEX": "SPLIT_REGEX"
+                };
 
                 return {"values": values};
             }
         },
+        {title:"DestinationColumn", field:"dst", editor:"select", editorParams: function(cell) {
+                let row = cell.getRow().getData();
+                console.log(row.mapping);
+
+                const values = {};
+                if (row.mapping == "RENAME") {
+
+                    console.log(g_table_schema_dict);
+                    let destination_table = $("#sel-destination-schema").val();
+                    console.log(destination_table);
+                    let dynamic_fields_array = g_table_schema_dict[destination_table].fields_json;
+                    console.log(dynamic_fields_array);
+
+                    let fields_array = JSON.parse(dynamic_fields_array);
+                    let destination_fields = fields_array.map(a => a.name);
+
+                    destination_fields.forEach(function (field_name) {
+                            values[field_name] = field_name;
+                        }
+                    );
+                }
+
+                return {"values": values};
+            }
+        },
+        {title:"Parameters", field:"parameters", editor:"input", editable: temp_mapper_type_edit_check},
     ],
 });
 
 
 let temp_column_name_edit_check = function(cell){
     //get row data
-    var data = cell.getRow().getData();
+    let row = cell.getRow().getData();
 
-    return data.type == "Temp"; // only allow the name cell to be edited if the age is over 18
+    return row.type == "Temp"; // only allow the name cell to be edited if the age is over 18
 }
 
 
