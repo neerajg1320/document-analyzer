@@ -23,7 +23,7 @@ let g_schema_table = new Tabulator("#destination-header-table", {
                 let hardcoded_values = {
                     "int64":"int64",
                     "float64":"float64",
-                    "date":"datetime[ns]",
+                    "date":"date",
                     "object":"object",
                 };
 
@@ -437,14 +437,11 @@ $("#btn_create_regex").click(function() {
             console.log(typeof(response), response);
             //response is already a parsed JSON
 
-            var new_str = response[0]['new_str'];
+            let new_str = response['new_str'];
             document.getElementById("document-text-url").innerHTML = document_row_url;
             g_document_text_box.empty().append(new_str);
 
-            var regex_str = response[0]['regex'];
-            // console.log(regex_str)
-            // display_regex_str = regex_str.replaceAll("<", "{").replaceAll(">", "}");
-            // g_regex_text_box.value = display_regex_str;
+            let regex_str = response['regex'];
             document.getElementById('regex-text').value = regex_str;
             g_current_document_local_cache['regex_str'] = regex_str;
         }
@@ -485,16 +482,11 @@ $("#btn_apply_regex").click(function() {
         },
         success: function(response) {
             console.log(typeof(response), response);
-            //response is already a parsed JSON
 
-            var new_str = response[0]['new_str'];
-            g_document_text_box.empty().append(new_str);
 
-            var dataframe = response[0]['dataframe'];
-            g_document_dataframe_box.empty().append(dataframe);
-
-            var transactions = response[0]['transactions'];
-            g_document_table.setData(transactions);
+            g_document_text_box.empty().append(response['new_str']);
+            g_document_dataframe_box.empty().append(response['dataframe']);
+            g_document_table.setData(response['transactions']);
         }
     });
 

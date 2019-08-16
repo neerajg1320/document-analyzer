@@ -732,11 +732,11 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # document.transactions_json = json.dumps(transactions_dict_array)
         # super(Document, document).save()
 
-        response_dict = [{
+        response_dict = {
             "regex": regex_str,
             "new_str": new_str,
             # "transactions": transactions_dict_array,
-        }]
+        }
 
         # Response should be a regex
         return Response(response_dict)
@@ -754,11 +754,11 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         new_str, transactions_dict_array = apply_regex_on_text(complete_text, regex_str)
 
-        response_dict = [{
+        response_dict = {
             "new_str": new_str,
             "dataframe": str(pd.DataFrame(transactions_dict_array)),
             "transactions": transactions_dict_array,
-        }]
+        }
 
         # We update the transactions dataframe stored as json
         document.transactions_json = json.dumps(transactions_dict_array)
