@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vuejs Basic</title>
+    <style>
+        .color-red { color: red; }
+        .color-blue { color: blue; }
+        .is-loading { background: gray; }
+        .hide { display: none;}
+    </style>
+</head>
+<!-- https://laracasts.com/series/learn-vue-2-step-by-step/episodes/5?autoplay=true -->
+<body>
+
+<div id="root">
+    <div class="hide">
+        <input type="text" id="input" v-model="message">
+        <p>The value of input is: {{ message }}</p>
+        <ul>
+            <li v-for="name in names" v-text="name"></li>
+        </ul>
+
+        <input type="text" v-model="newName">
+        <button @click="addName">Add Name</button>
+
+        <button :title="title">Hover over me</button>
+
+        <h1 :class="className">Hello World</h1>
+        <button @click="toggleLoading" :class="{'is-loading': isLoading}">Toggle Me</button>
+
+        <h3> {{reversedMessage}}</h3>
+    </div>
+
+    <div>
+        <h3>All Tasks</h3>
+        <ul>
+            <li v-for="task in tasks" v-text="task.description"></li>
+        </ul>
+        <h3>Incomplete Tasks</h3>
+        <ul>
+            <li v-for="task in incompleteTasks" v-text="task.description"></li>
+        </ul>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+
+    var app = new Vue({
+        el: '#root',
+        data: {
+            message: "Hello There",
+            names: ['Joe', 'Mary', 'Jane', 'Jack'],
+            newName:"",
+            title: "I am title of button",
+            className: "color-red",
+            isLoading: false,
+            tasks: [
+                {description: "Go to the store", completed: true},
+                {description: "Finish screencast", completed: false},
+                {description: "Make donation", completed: false},
+                {description: "Clear inbox", completed: false},
+                {description: "Make dinner", completed: false},
+                {description: "Clean room", completed: true}
+            ],
+        },
+        methods: {
+            addName() {
+                this.names.push(this.newName);
+                this.newName = "";
+            },
+            toggleLoading() {
+                this.isLoading = !this.isLoading;
+            }
+        },
+        computed: {
+            reversedMessage() {
+                return this.message.split('').reverse().join('');
+            },
+            incompleteTasks() {
+                return this.tasks.filter(task => !task.completed);
+            }
+        },
+        mounted() {
+            // alert("Ready");
+        }
+    })
+</script>
+
+</body>
+</html>
