@@ -618,7 +618,11 @@ def map_existing_fields(schema_df, mapper, df):
     #
 
     for dst_col, src_col_list in dst_column_dict.items():
-        schema_row = schema_df.loc[schema_df['name'] == dst_col].iloc[0]
+        try:
+            schema_row = schema_df.loc[schema_df['name'] == dst_col].iloc[0]
+        except Exception as e:
+            frameinfo = getframeinfo(currentframe())
+            print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), dst_col, e)
 
         # frameinfo = getframeinfo(currentframe())
         # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), dst_col, src_col_list, "\n", schema_row)
@@ -645,6 +649,10 @@ def create_new_fields(new_fields, src_df, mapped_df):
                 continue
 
             if field['type'] == "Generate-Regex":
+
+                # frameinfo = getframeinfo(currentframe())
+                # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), type(field), field)
+                # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), type(field['value']), field['value'])
 
                 src_column = field['src']
                 parameters = json.loads(field['value'])
@@ -1254,9 +1262,11 @@ class OperationViewSet(viewsets.ModelViewSet):
             # df = df_columns_datetime_iso_date_format(df, date_cols)
             # table_dict = json.loads(df.to_json(orient='records'))
 
+            pd.options.display.max_colwidth = 100
             response_dict = {
                 "new_str": new_str,
-                "dataframe": str(schema_df),
+                # "dataframe": str(schema_df),
+                "dataframe": str(df[['scrip_commission_fee']]),
                 "transactions": table_dict,
                 "schema": json.loads(schema_df.to_json(orient='records'))
             }

@@ -190,7 +190,7 @@ class Operation(models.Model):
     )
     title = models.CharField(max_length=128, blank=False)
     type = models.CharField(max_length=32, choices=OPERATIONS_CHOICES, blank=False)
-    parameters = models.CharField(max_length=2048)
+    parameters = models.CharField(max_length=4096)
 
     def __str__(self):
         return self.title

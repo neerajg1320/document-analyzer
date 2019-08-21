@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vuejs with Components</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.css">
+    <style>
+        .hide { display: none;}
+    </style>
+</head>
+<!-- https://laracasts.com/series/learn-vue-2-step-by-step/episodes/5?autoplay=true -->
+<body>
+
+<div id="root" class="container">
+
+    <coupon @applied="onCouponApplied"></coupon>
+    <h1 v-if="couponApplied">You used a coupon</h1>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="main.js"></script>
+
+</body>
+</html>

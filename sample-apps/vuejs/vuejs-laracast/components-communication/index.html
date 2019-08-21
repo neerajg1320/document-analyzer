@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vuejs with Components</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.css">
+    <style>
+        .hide { display: none;}
+    </style>
+</head>
+<!-- https://laracasts.com/series/learn-vue-2-step-by-step/episodes/5?autoplay=true -->
+<body>
+
+<div id="root" class="container">
+    <div class="hide">
+        <task-list></task-list>
+
+        <message title="Hello World" body="Lorem ipsum dolor sit amet"></message>
+        <message title="Hello Universe" body="Wheels on the bus"></message>
+
+        <modal v-if="showModal" @close="showModal = false">Show a message</modal>
+        <button @click="showModal = true">Show Modal</button>
+    </div>
+
+    <tabs>
+        <tab name="About Us" :selected="true">
+            <h1>Content for about us.</h1>
+        </tab>
+        <tab name="About our culture">
+            <h1>Content for our culture.</h1>
+        </tab>
+        <tab name="About our vision">
+            <h1>Content for our vision.</h1>
+        </tab>
+    </tabs>
+
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="main.js"></script>
+
+</body>
+</html>

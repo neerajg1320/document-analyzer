@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vuejs with Components</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.css">
+    <style>
+        .hide { display: none;}
+    </style>
+</head>
+<!-- https://laracasts.com/series/learn-vue-2-step-by-step/episodes/5?autoplay=true -->
+<body>
+
+<div id="root" class="container">
+
+    <modal>
+        <template slot="header">Slotted Modal</template>
+        Here is my content. I am wrapped by an html tag.
+        <template slot="footer">
+            <button class="button is-success">Save changes</button>
+            <button class="button">Cancel</button>
+        </template>
+    </modal>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="main.js"></script>
+
+</body>
+</html>
