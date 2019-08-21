@@ -13,14 +13,12 @@
 
 <div id="root" class="container">
 
-    <modal>
-        <template slot="header">Slotted Modal</template>
-        Here is my content. I am wrapped by an html tag.
-        <template slot="footer">
-            <button class="button is-success">Save changes</button>
-            <button class="button">Cancel</button>
-        </template>
-    </modal>
+    <progress-view inline-template>
+        <div>
+            <h1>You progress status is {{ completionRate }}%</h1>
+            <button @click="completionRate += 10">Update</button>
+        </div>
+    </progress-view>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>

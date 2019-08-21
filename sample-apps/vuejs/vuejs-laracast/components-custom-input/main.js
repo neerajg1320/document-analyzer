@@ -1,29 +1,25 @@
-window.Event = new Vue();
-
 Vue.component('coupon', {
-    template: '<input placeholder="Enter you coupon code" @blur="onCouponApplied">',
+    props: ['code'],
+    template: `
+        <input type="text" :value="code" @input="updateCode($event.target.value)" ref="input">
+    `,
     methods: {
-        onCouponApplied() {
-            Event.$emit('applied', this.coupon);
+        updateCode(code) {
+            // Any validation if required
+            if (code === 'ALLFREE') {
+                alert('This coupon is expired!')
+                this.$refs.input.value = '';
+            }
+            this.$emit('input', code);
         }
     }
 })
 
-
 new Vue({
-    el: '#root',
-    methods: {
-        onCouponApplied() {
-            this.couponApplied = true;
-        }
-    },
+    el: '#app',
+
     data: {
-        couponApplied: false
-    },
-    created() {
-        Event.$on('applied', () => {
-            alert('Received applied from Event');
-        });
+        coupon: 'FREEBIE'
     }
-});
+})
 

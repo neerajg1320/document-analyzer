@@ -13,9 +13,14 @@
 
 <div id="root" class="container">
 
-    <coupon @applied="onCouponApplied"></coupon>
-    <h1 v-if="couponApplied">You used a coupon</h1>
-
+    <modal>
+        <template slot="header">Slotted Modal</template>
+        Here is my content. I am wrapped by an html tag.
+        <template slot="footer">
+            <button class="button is-success">Save changes</button>
+            <button class="button">Cancel</button>
+        </template>
+    </modal>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>

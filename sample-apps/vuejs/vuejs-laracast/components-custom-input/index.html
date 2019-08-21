@@ -11,10 +11,9 @@
 <!-- https://laracasts.com/series/learn-vue-2-step-by-step/episodes/5?autoplay=true -->
 <body>
 
-<div id="root" class="container">
+<div id="app" class="container">
 
-    <coupon @applied="onCouponApplied"></coupon>
-    <h1 v-if="couponApplied">You used a coupon</h1>
+    <coupon v-model="coupon"></coupon>
 
 </div>
 
