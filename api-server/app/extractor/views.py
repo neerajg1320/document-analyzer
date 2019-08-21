@@ -654,7 +654,15 @@ def create_new_fields(new_fields, src_df, mapped_df):
                 # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), type(field), field)
                 # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), type(field['value']), field['value'])
 
-                src_column = field['src']
+                if 'src' in field:
+                    src_column = field['src']
+                elif 'temp_name' in field:
+                    src_column = field['temp_name']
+                    src_df = mapped_df
+                elif 'dst' in field:
+                    src_column = field['dst']
+                    src_df = mapped_df
+
                 parameters = json.loads(field['value'])
 
                 regex = ''
@@ -687,8 +695,8 @@ def create_new_fields(new_fields, src_df, mapped_df):
                 if field_name is not None and field_name != "":
                     code_str = "df['%s'] = %s" % (field_name, field['value'])
                     df = mapped_df
-                    # frameinfo = getframeinfo(currentframe())
-                    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), code_str)
+                    frameinfo = getframeinfo(currentframe())
+                    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), code_str)
                     exec(code_str)
 
                 mapped_df = mapped_df.round(g_decimal_places)
