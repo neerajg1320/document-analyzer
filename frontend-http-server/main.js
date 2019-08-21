@@ -711,7 +711,7 @@ $("#sel-destination-schema").on('change', function() {
 
 $("#btn_create_mapper").click(function () {
     console.log(g_table_schema);
-
+    g_table_schema.forEach(row => row['mapping'] = "RENAME");
     g_document_mapper_table.setData(g_table_schema);
 });
 
@@ -731,11 +731,16 @@ function get_operation_dict_for_mapper()
         return;
     }
 
+
+    // Convert backslashes to double backslashes: preparing for python strings
+    let table_new_fields = g_document_mapper_newfields_table.getData("json");
+    table_new_fields.forEach(row => row['value'] = row['value'].replace(/\\/g, "\\\\"));
+
     let mapper_parameters = {
         "destination_table": destination_table,
         "existing_fields": JSON.stringify(g_document_mapper_table.getData("json")),
-        "new_fields": JSON.stringify(g_document_mapper_newfields_table.getData("json"))
-    }
+        "new_fields": JSON.stringify(table_new_fields)
+    };
     mapper_parameters_json = JSON.stringify(mapper_parameters);
 
     return  {
@@ -1131,7 +1136,10 @@ function fill_mapper_from_operation_dict(operation) {
 
     set_selector_value_with_event('sel-destination-schema', operation.destination_table);
     g_document_mapper_table.setData(operation.existing_fields);
-    g_document_mapper_newfields_table.setData(operation.new_fields);
+
+    let table_new_fields = JSON.parse(operation.new_fields);
+    table_new_fields.forEach(row => row['value'] = row['value'].replace(/\\\\/g, "\\"));
+    g_document_mapper_newfields_table.setData(table_new_fields);
 }
 
 

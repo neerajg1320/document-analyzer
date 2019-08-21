@@ -1,0 +1,135 @@
+[
+	{
+		"src": "trade_date",
+		"srctype": "datetime64[ns]",
+		"select": true,
+		"dst": "TransactionDate",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "setl_date",
+		"srctype": "datetime64[ns]",
+		"select": true,
+		"dst": "SettlementDate",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "mkt",
+		"srctype": "object",
+		"select": true,
+		"dst": "mkt",
+		"mapping": "IGNORE"
+	},
+	{
+		"src": "cap",
+		"srctype": "object",
+		"select": true,
+		"dst": "cap",
+		"mapping": "IGNORE"
+	},
+	{
+		"src": "symbol",
+		"srctype": "object",
+		"select": true,
+		"dst": "symbol",
+		"mapping": "IGNORE"
+	},
+	{
+		"src": "trade_type",
+		"srctype": "object",
+		"select": true,
+		"dst": "TradeType",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "trade_qty",
+		"srctype": "object",
+		"select": true,
+		"dst": "Quantity",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "trade_rate",
+		"srctype": "object",
+		"select": true,
+		"dst": "Rate",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "acct_type",
+		"srctype": "object",
+		"select": true,
+		"dst": "acct_type",
+		"mapping": "IGNORE"
+	},
+	{
+		"src": "marker_principal",
+		"srctype": "object",
+		"select": true,
+		"dst": "marker_principal",
+		"mapping": "IGNORE"
+	},
+	{
+		"src": "principal",
+		"srctype": "object",
+		"select": true,
+		"dst": "PrincipalAmount",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "option",
+		"srctype": "object",
+		"select": true,
+		"dst": "option",
+		"mapping": "IGNORE"
+	},
+	{
+		"src": "opt_type",
+		"srctype": "object",
+		"select": true,
+		"dst": "Scrip",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "opt_name",
+		"srctype": "object",
+		"select": true,
+		"dst": "Scrip",
+		"mapping": "IGNORE"
+	},
+	{
+		"src": "expiry_date",
+		"srctype": "datetime64[ns]",
+		"select": true,
+		"dst": "Scrip",
+		"mapping": "IGNORE"
+	},
+	{
+		"src": "strike_price",
+		"srctype": "object",
+		"select": true,
+		"dst": "Scrip",
+		"mapping": "IGNORE"
+	},
+	{
+		"src": "scrip_commission_fee",
+		"srctype": "object",
+		"select": true,
+		"dst": "Summary",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "marker_net_amount",
+		"srctype": "object",
+		"select": true,
+		"dst": "marker_net_amount",
+		"mapping": "IGNORE"
+	},
+	{
+		"src": "net_amount",
+		"srctype": "object",
+		"select": true,
+		"dst": "NetAmount",
+		"mapping": "RENAME"
+	}
+]
