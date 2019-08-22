@@ -34,7 +34,7 @@ $("#customer-fileinfo").submit(function(e) {
             console.log(g_customer_file_info);
 
             if (g_customer_automate_workflow) {
-                $("#input_file_id").val(g_customer_file_info.id);
+                $("#input_file_id").val(JSON.stringify(g_customer_file_info));
                 $("#btn_apply_pipeline").click();
             }
         },
@@ -76,9 +76,9 @@ function get_pipelines() {
 }
 
 $("#btn_apply_pipeline").click(function() {
-    let input_file_id = $("#input_file_id").val();
     let pipeline_id = $("#sel-pipeline").val();
 
+    console.log(g_customer_file_info["files"]);
     console.log(pipeline_id);
 
     let pipelines_apply_url = 'http://localhost:8000/api/docminer/pipelines/apply/';
@@ -90,7 +90,7 @@ $("#btn_apply_pipeline").click(function() {
             'Authorization' : 'Token ' + g_user_auth_token,
         },
         data: {
-            "file_id": input_file_id,
+            "files": g_customer_file_info["files"],
             "pipeline_id": pipeline_id
         },
         dataType: 'json',
