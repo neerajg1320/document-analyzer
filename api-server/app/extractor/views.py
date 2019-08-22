@@ -680,26 +680,37 @@ def create_new_fields(new_fields, src_df, mapped_df):
                 for column in columns:
                     if column not in mapped_df:
                         if '_' in column:
-                            [col_name, col_type, col_default] = column.split('_')
+                            col_info = column.split('_')
+                            col_name = col_info[0]
+                            col_type = col_info[1]
+                            if len(col_info) > 2:
+                                col_default = col_info[2]
+                            else:
+                                col_default = None
+
                             # frameinfo = getframeinfo(currentframe())
                             # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), col_name, col_type, col_default)
 
                             column_mapper[column] = col_name
                             if col_type == "float":
+                                if col_default is None:
+                                    col_default = "0.0"
+                                col_default = col_default.replace('d', '.').replace('n', '-')
                                 mapped_df[column] = float(col_default)
                             elif col_type == "int":
+                                if col_default is None:
+                                    col_default = "0"
+                                col_default = col_default.replace('d', '.').replace('n', '-')
                                 mapped_df[column] = int(col_default)
                             elif col_type == "str":
+                                if col_default is None:
+                                    col_default = ""
                                 mapped_df[column] = str(col_default)
                             else:
                                 mapped_df[column] = np.nan
                         else:
                             mapped_df[column] = np.nan
 
-                # frameinfo = getframeinfo(currentframe())
-                # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), mapped_df[columns], "\n", mapped_df[columns].dtypes)
-
-                
                 # Update only the non NaN values from the newly generated dataframe
                 mapped_df.update(split_df)
 
@@ -762,8 +773,10 @@ def load_frame_from_datastore_table(table_name, datastore_type, datastore_creden
 
 
 def load_frame_into_datastore_table(datastore_type, datastore_credentials, table_name, dataframe):
-    # frameinfo = getframeinfo(currentframe())
-    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), dataframe)
+    schema = Schema.objects.filter(title__iexact=table_name)
+
+    frameinfo = getframeinfo(currentframe())
+    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), schema[0])
 
     if str(datastore_type).lower() == 'snowflake':
         #  This is the mapping according to the hardcoded regex extractor
