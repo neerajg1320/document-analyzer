@@ -676,13 +676,15 @@ def create_new_fields(new_fields, src_df, mapped_df):
                     split_df.columns = columns
 
                 # Create the columns which are not present in the mapped dataframe
+                column_mapper = {}
                 for column in columns:
                     if column not in mapped_df:
-                        if 'float' in column:
+                        if '_' in column:
                             [col_name, col_type, col_default] = column.split('_')
                             # frameinfo = getframeinfo(currentframe())
                             # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), col_name, col_type, col_default)
 
+                            column_mapper[column] = col_name
                             if col_type == "float":
                                 mapped_df[column] = float(col_default)
                             elif col_type == "int":
@@ -697,8 +699,12 @@ def create_new_fields(new_fields, src_df, mapped_df):
                 # frameinfo = getframeinfo(currentframe())
                 # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), mapped_df[columns], "\n", mapped_df[columns].dtypes)
 
+                
                 # Update only the non NaN values from the newly generated dataframe
                 mapped_df.update(split_df)
+
+                # Now rename the columns
+                mapped_df = mapped_df.rename(columns=column_mapper)
 
             else:
                 field_name = ""
