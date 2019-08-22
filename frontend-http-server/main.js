@@ -1414,7 +1414,9 @@ function perform_pipeline_operation() {
 function handle_pipeline_execution_complete(response) {
     console.log("Pipeline Execution Completed", response);
 
-    $("#btn_get_final_table").click();
+    if ($("#sel-loader").val() != "new") {
+        $("#btn_get_final_table").click();
+    }
 }
 
 function execute_pipeline(completion_handler) {
