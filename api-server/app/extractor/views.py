@@ -3,6 +3,9 @@ from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
+from rest_framework.views import APIView
+
+from django.forms.models import model_to_dict
 
 from core.models import Tag, Extractor, Document, File, Transaction, Schema, Operation, DatastoreInfo, DatastoreType, Pipeline
 
@@ -726,9 +729,10 @@ def create_new_fields(new_fields, src_df, mapped_df):
 
                 if field_name is not None and field_name != "":
                     code_str = "df['%s'] = %s" % (field_name, field['value'])
+                    # Don't delete the following line. df is used in following line exec(code_str)
                     df = mapped_df
-                    frameinfo = getframeinfo(currentframe())
-                    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), code_str)
+                    # frameinfo = getframeinfo(currentframe())
+                    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), code_str)
                     exec(code_str)
 
                 mapped_df = mapped_df.round(g_decimal_places)
@@ -1108,8 +1112,7 @@ def get_file_path(file):
 
 
 # https://stackoverflow.com/questions/52389956/uploading-multiple-files-using-django-rest-framework-without-using-forms
-from rest_framework.views import APIView
-from django.forms.models import model_to_dict
+
 
 
 def create_files_from_http_request(request):
@@ -1124,8 +1127,8 @@ def create_files_from_http_request(request):
                                    password=request.data.get('password'),
                                    remark=request.data.get('remark'),
                                    )
-        frameinfo = getframeinfo(currentframe())
-        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), model_to_dict(fobj))
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), model_to_dict(fobj))
         file_id_array.append(fobj.id)
 
     return file_id_array
@@ -1539,8 +1542,8 @@ def apply_pipeline_on_text(file_text, pipeline):
     # We need the pipeline operations array in order
     # TBD
     for operation in pipeline.operations.all():
-        frameinfo = getframeinfo(currentframe())
-        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), "%s" % (operation.type))
+        # frameinfo = getframeinfo(currentframe())
+        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), "%s" % (operation.type))
         parameters = json.loads(operation.parameters)
 
         if operation.type == "Extract":
@@ -1602,26 +1605,29 @@ class PipelineViewSet(viewsets.ModelViewSet):
         if pipeline_id is None:
             response["error"] = "Pipeline id %s not found" % pipeline_id
 
-        file_id = request.data.get("file_id", None)
-        if file_id is None:
-            response["error"] = "File id %s not found" % file_id
+        files = request.data.getlist("files[]", None)
 
-        if file_id and pipeline_id:
-            # TBD: File to Text part to be made part of pipeline
-            file = File.objects.get(user=request.user, pk=file_id)
-            file_path = get_file_path(file)
-            file_text = file_to_text(file_path)
-            # print(text)
+        if files and pipeline_id:
+            combined_df = pd.DataFrame()
+            combined_schema_df = pd.DataFrame()
 
-            pipeline = Pipeline.objects.get(user=request.user, pk=pipeline_id)
+            for file_id in files:
+                # TBD: File to Text part to be made part of pipeline
+                file = File.objects.get(user=request.user, pk=file_id)
+                file_path = get_file_path(file)
+                file_text = file_to_text(file_path)
 
-            current_df, schema_df = apply_pipeline_on_text(file_text, pipeline)
+                pipeline = Pipeline.objects.get(user=request.user, pk=pipeline_id)
 
-            date_cols = df_get_date_columns_by_type(current_df)
-            current_df = df_columns_datetime_iso_date_format(current_df, date_cols)
+                current_df, schema_df = apply_pipeline_on_text(file_text, pipeline)
 
-            response["dataframe_str"] = str(current_df)
-            response["table_json"] = current_df.to_json(orient='records')
+                date_cols = df_get_date_columns_by_type(current_df)
+                current_df = df_columns_datetime_iso_date_format(current_df, date_cols)
+
+                combined_df = pd.concat([combined_df, current_df])
+
+            response["dataframe_str"] = str(combined_df)
+            response["table_json"] = combined_df.to_json(orient='records')
             response["schema"] = schema_df.to_json(orient='records')
 
         return Response(response)
