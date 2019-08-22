@@ -1087,7 +1087,12 @@ class FileViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """ Create a new document """
         # TBD: Here we should perform is_staff check
-        serializer.save(user=self.request.user)
+        obj = serializer.save(user=self.request.user)
+        for file in self.request.data.getlist('file'):
+            frameinfo = getframeinfo(currentframe())
+            print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), file)
+            mf = File.objects.create(user=self.request.user, file=file)
+            # obj.files.add(mf)
 
     def perform_update(self, serializer):
         """ Create a new document """
