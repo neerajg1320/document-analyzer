@@ -512,18 +512,16 @@ def destnation_schema_dataframe(schema_id):
     return pd.DataFrame(destination_table)
 
 
-def assign_new_datatypes(destination_table_name, agg_df):
-    destination_schema_df = destnation_schema_dataframe(destination_table_name)
-
+def assign_new_datatypes(schema_df, agg_df):
     # Then we assign the new column types
     # https://stackoverflow.com/questions/21197774/assign-pandas-dataframe-column-dtypes
     # Create dictionary from two columns
     # https://stackoverflow.com/questions/17426292/what-is-the-most-efficient-way-to-create-a-dictionary-of-two-pandas-dataframe-co
-    new_dtypes_dict = pd.Series(destination_schema_df.type.values, index=destination_schema_df.name).to_dict()
+    new_dtypes_dict = pd.Series(schema_df.type.values, index=schema_df.name).to_dict()
 
     numeric_columns = []
-    numeric_columns += destination_schema_df.loc[destination_schema_df['type'] == 'float64']['name'].tolist()
-    numeric_columns += destination_schema_df.loc[destination_schema_df['type'] == 'int64']['name'].tolist()
+    numeric_columns += schema_df.loc[schema_df['type'] == 'float64']['name'].tolist()
+    numeric_columns += schema_df.loc[schema_df['type'] == 'int64']['name'].tolist()
 
     for col in numeric_columns:
         try:
@@ -680,7 +678,24 @@ def create_new_fields(new_fields, src_df, mapped_df):
                 # Create the columns which are not present in the mapped dataframe
                 for column in columns:
                     if column not in mapped_df:
-                        mapped_df[column] = np.nan
+                        if 'float' in column:
+                            [col_name, col_type, col_default] = column.split('_')
+                            # frameinfo = getframeinfo(currentframe())
+                            # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), col_name, col_type, col_default)
+
+                            if col_type == "float":
+                                mapped_df[column] = float(col_default)
+                            elif col_type == "int":
+                                mapped_df[column] = int(col_default)
+                            elif col_type == "str":
+                                mapped_df[column] = str(col_default)
+                            else:
+                                mapped_df[column] = np.nan
+                        else:
+                            mapped_df[column] = np.nan
+
+                # frameinfo = getframeinfo(currentframe())
+                # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), mapped_df[columns], "\n", mapped_df[columns].dtypes)
 
                 # Update only the non NaN values from the newly generated dataframe
                 mapped_df.update(split_df)
@@ -714,7 +729,7 @@ def apply_mapper_on_dataframe(mapper_parameters, src_df):
     schema_df = destnation_schema_dataframe(destination_table)
 
     mapped_df = map_existing_fields(schema_df, mapper, src_df)
-    mapped_df = assign_new_datatypes(destination_table, mapped_df)
+    mapped_df = assign_new_datatypes(schema_df, mapped_df)
 
     if new_fields is not None:
         mapped_df = create_new_fields(new_fields, src_df, mapped_df)
