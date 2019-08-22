@@ -108,5 +108,7 @@ urlpatterns = [
 
     path('files/<int:pk>/textify/', file_textify, name='file-textify'),
 
+    path('folder/', views.FolderUpload.as_view()),
+
     path('pipelines/apply/', pipeline_apply, name='pipeline-apply'),
 ]

@@ -1107,6 +1107,38 @@ def get_file_path(file):
     return file_path
 
 
+# https://stackoverflow.com/questions/52389956/uploading-multiple-files-using-django-rest-framework-without-using-forms
+from rest_framework.views import APIView
+from django.forms.models import model_to_dict
+
+
+def create_files_from_http_request(request):
+    files_list = request.data.getlist('file')
+    file_id_array = []
+    for file in files_list:
+        fobj = File.objects.create(user=request.user,
+                                   file=file,
+                                   title=request.data.get('title'),
+                                   institute_name=request.data.get('institute_name'),
+                                   document_type=request.data.get('document_type'),
+                                   password=request.data.get('password'),
+                                   remark=request.data.get('remark'),
+                                   )
+        frameinfo = getframeinfo(currentframe())
+        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), model_to_dict(fobj))
+        file_id_array.append(fobj.id)
+
+    return file_id_array
+
+
+class FolderUpload(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        files =create_files_from_http_request(request)
+        return Response({'files': files})
+
+
 class FileViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
