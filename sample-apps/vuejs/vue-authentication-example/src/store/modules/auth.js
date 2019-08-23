@@ -36,6 +36,14 @@ const actions = {
       commit(AUTH_LOGOUT)
       localStorage.removeItem('user-token')
       resolve()
+
+      apiCall({url: 'user/me/logout', data: {}, method: 'GET'})
+        .then(resp => {
+          console.log(resp)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     })
   }
 }
