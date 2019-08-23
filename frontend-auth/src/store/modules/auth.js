@@ -1,7 +1,8 @@
 /* eslint-disable promise/param-names */
 import { AUTH_REQUEST, AUTH_ERROR, AUTH_SUCCESS, AUTH_LOGOUT } from '../actions/auth'
 import { USER_REQUEST } from '../actions/user'
-import api from 'utils/apiMock'
+import apiMock from '../../utils/apiMock'
+import apiAuth from '../../utils/apiAuth'
 
 const state = { token: localStorage.getItem('user-token') || '', status: '', hasLoadedOnce: false }
 
@@ -14,8 +15,11 @@ const actions = {
   [AUTH_REQUEST]: ({commit, dispatch}, user) => {
     return new Promise((resolve, reject) => {
       commit(AUTH_REQUEST)
-      api({url: 'auth', data: user, method: 'POST'})
+
+      // apiMock({url: 'auth', data: user, method: 'POST'})
+      apiAuth.login(user)
       .then(resp => {
+        console.log(resp);
         localStorage.setItem('user-token', resp.token)
         // Here set the header of your ajax library to the token value.
         // example with axios
@@ -31,13 +35,14 @@ const actions = {
       })
     })
   },
+
   [AUTH_LOGOUT]: ({commit, dispatch}) => {
     return new Promise((resolve, reject) => {
       commit(AUTH_LOGOUT)
       localStorage.removeItem('user-token')
       resolve()
 
-      api({url: 'user/me/logout', data: {}, method: 'GET'})
+      apiMock({url: 'user/me/logout', data: {}, method: 'GET'})
         .then(resp => {
           console.log(resp)
         })

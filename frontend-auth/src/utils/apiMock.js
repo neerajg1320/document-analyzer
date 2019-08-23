@@ -4,7 +4,7 @@ const mocks = {
   'user/me/logout': { 'GET': { status: 'success' } }
 }
 
-const apiCall = ({url, method, ...args}) => new Promise((resolve, reject) => {
+const apiMock = ({url, method, ...args}) => new Promise((resolve, reject) => {
   setTimeout(() => {
     try {
       resolve(mocks[url][method || 'GET'])
@@ -16,4 +16,4 @@ const apiCall = ({url, method, ...args}) => new Promise((resolve, reject) => {
   }, 1000)
 })
 
-export default apiCall
+export default apiMock

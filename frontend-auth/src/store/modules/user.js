@@ -1,5 +1,5 @@
 import { USER_REQUEST, USER_ERROR, USER_SUCCESS } from '../actions/user'
-import apiCall from 'utils/apiMock'
+import api from '../../utils/apiMock'
 import Vue from 'vue'
 import { AUTH_LOGOUT } from '../actions/auth'
 
@@ -13,14 +13,17 @@ const getters = {
 const actions = {
   [USER_REQUEST]: ({commit, dispatch}) => {
     commit(USER_REQUEST)
-    apiCall({url: 'user/me'})
+    api({url: 'user/me'})
       .then(resp => {
         commit(USER_SUCCESS, resp)
       })
-      .catch(resp => {
+      .catch(err => {
+
         commit(USER_ERROR)
         // if resp is unauthorized, logout, to
         dispatch(AUTH_LOGOUT)
+        // eslint-disable-next-line
+        console.error(err)
       })
   },
 }
