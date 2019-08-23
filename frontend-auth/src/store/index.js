@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import user from './modules/user'
 import auth from './modules/auth'
-import institutes from './modules/institutes'
+import institutes from './modules/resources'
 
 Vue.use(Vuex)
 
