@@ -1,3 +1,5 @@
+# https://developer.okta.com/blog/2018/02/15/build-crud-app-vuejs-node
+
 vue init pwa front-vue
 cd ./frontend-vue
 npm install

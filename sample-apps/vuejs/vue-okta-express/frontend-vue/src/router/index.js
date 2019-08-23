@@ -6,8 +6,8 @@ import Auth from '@okta/okta-vue'
 
 Vue.use(Auth, {
   issuer: 'https://dev-524006.okta.com/oauth2/default',
-  client_id: '0oa15r7k6quY3Au4H357',
-  redirect_uri: 'http://localhost:8080/implicit/callback',
+  client_id: '0oa16i2z5rks84Wdf357',
+  redirect_uri: 'http://localhost:8120/implicit/callback',
   scope: 'openid profile email'
 })
 
