@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Flow</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="customer.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.4.2/css/tabulator.min.css" rel="stylesheet">
+</head>
+<body>
+<h2>Customer Flow using Pipelines</h2>
+<div id="customer-main-box" class="bordered">
+    <div id="customer-file-input-box" class="bordered">
+        <form id="customer-fileinfo" class="bordered" action="http://localhost:8000/api/docminer/folder/"
+              method="post"
+              enctype="multipart/form-data">
+            <input name="title" type="text" value="Sample PDF">
+            <input name="institute_name" type="text" value="Etrade">
+            <input name="document_type" type="text" value="ContractNote">
+            <input name="password" type="text" value="">
+            <input name="remark" type="text" value="No Remark">
+            <input name="file" type="file" id="image" multiple>
+            <input type="submit">
+        </form>
+        <div id="pipeline-box" class="bordered">
+            <input id="input_file_id" />
+            <select id="sel-pipeline" name="pipeline"></select>
+            <button id="btn_apply_pipeline">Apply Pipeline</button>
+        </div>
+    </div>
+    <div id="customer-table-box" class="bordered">
+        <div id="customer-transactions-table"></div>
+    </div>
+</div>
+<!-- scripts section -->
+
+<!-- jquery is required for tabulator.js -->
+<script   src="http://code.jquery.com/jquery-3.3.1.min.js"   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="   crossorigin="anonymous"></script>
+<script   src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"   integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="   crossorigin="anonymous"></script>
+
+<!-- moment.js is required for sorting tabulator table based on date -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
+<!-- tabulator library is for displaying json array in tabular fashion -->
+<link href="https://unpkg.com/tabulator-tables@4.2.7/dist/css/tabulator.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.2.7/dist/js/tabulator.min.js"></script>
+
+<!-- Main code which uses js libraries:
+    i) Fetch document transactions using API
+    ii) Display transactions received as json array in a table format using tabulator
+-->
+<script type="text/javascript" src="../common_auth.js"></script>
+<script type="text/javascript" src="customer.js"></script>
+</body>
+</html>
