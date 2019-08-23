@@ -1,17 +1,16 @@
 <template>
     <div>
-        <AppHeader></AppHeader>
+        <navigation></navigation>
     </div>
 </template>
 
 <script>
-    import AppHeader from './components/AppHeader'
+    import navigation from './components/navigation/'
 
     export default {
         name: "App",
-        components: {AppHeader},
-        componentss: {
-            AppHeader
+        components: {
+            navigation
         }
     }
 </script>

@@ -8,6 +8,6 @@
 
 <script>
     export default  {
-        name: 'AppHeader'
+        name: 'Navigation'
     }
 </script>
