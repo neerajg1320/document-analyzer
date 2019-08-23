@@ -2,7 +2,7 @@
     <div>
         <!-- List of Operations -->
         <h2>Operations</h2>
-        <table class="table table-striped">
+        <table class="table table-hover">
             <thead>
             <tr>
                 <th>Id</th>
@@ -28,28 +28,30 @@
 
 <script>
     import { mapActions, mapGetters } from 'vuex';
+    const resource_name = 'operations';
 
     export default {
         name: "Resources",
         computed: mapGetters(['allResources']),
         methods: {
-            ...mapActions(['fetchResources']),
+            ...mapActions(['fetchResources', 'delResource']),
 
-            populateResourceToEdit (resource) {
+            populateResourceToEdit (instance) {
                 console.log(resource.id);
                 // this.model = Object.assign({}, post)
             },
 
             deleteResource (id) {
-                console.log(id);
                 if (confirm('Are you sure you want to delete?')) {
                     // if we are editing a post we deleted, remove it from the form
+                    const payload = {resource_name, id};
+                    this.delResource(payload)
                 }
             }
         },
         created() {
-            const resource = 'operations';
-            this.fetchResources(resource);
+            const payload = {resource_name};
+            this.fetchResources(payload);
         }
     }
 </script>

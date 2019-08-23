@@ -27,16 +27,17 @@ export default {
     return this.execute('get', `/${resource}`, token)
   },
 
-  get (resource, id, token) {
+  get (resource, token, id) {
     return this.execute('get', `/${resource}/${id}`, token)
   },
   post (resource, token, data) {
     return this.execute('post', `/${resource}`, token, data)
   },
-  updatePost (resource, id, token, data) {
+
+  update (resource, token, id, data) {
     return this.execute('put', `/${resource}/${id}`, token, data)
   },
-  deletePost (resource, id, token) {
+  del (resource, token, id) {
     return this.execute('delete', `/${resource}/${id}`, token)
   }
 }
