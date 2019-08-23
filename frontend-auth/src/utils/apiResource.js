@@ -1,43 +1,42 @@
-import Vue from 'vue'
 import axios from 'axios'
 
 const client = axios.create({
-  baseURL: 'http://localhost:8081/',
+  baseURL: 'http://localhost:8000/api/docminer/',
   json: true
 })
 
 export default {
-  async execute (method, resource, data) {
+  async execute (method, resource, token, data) {
     // When you authenticate with OIDC, an access token is persisted locally
     // in the browser.
     // Inject the accessToken for each request
-    let accessToken = await Vue.prototype.$auth.getAccessToken()
+    // let accessToken = await Vue.prototype.$auth.getAccessToken()
     return client({
       method,
       url: resource,
       data,
       headers: {
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `token ${token}`
       }
     }).then(req => {
       return req.data
     })
   },
 
-  getList (resource) {
-    return this.execute('get', `/${resource}`)
+  getList (resource, token) {
+    return this.execute('get', `/${resource}`, token)
   },
 
-  get (resource, id) {
-    return this.execute('get', `/${resource}/${id}`)
+  get (resource, id, token) {
+    return this.execute('get', `/${resource}/${id}`, token)
   },
-  post (resource, data) {
-    return this.execute('post', `/${resource}`, data)
+  post (resource, token, data) {
+    return this.execute('post', `/${resource}`, token, data)
   },
-  updatePost (resource, id, data) {
-    return this.execute('put', `/${resource}/${id}`, data)
+  updatePost (resource, id, token, data) {
+    return this.execute('put', `/${resource}/${id}`, token, data)
   },
-  deletePost (resource, id) {
-    return this.execute('delete', `/${resource}/${id}`)
+  deletePost (resource, id, token) {
+    return this.execute('delete', `/${resource}/${id}`, token)
   }
 }
