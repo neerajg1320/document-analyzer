@@ -3,7 +3,7 @@ import Router from 'vue-router'
 // import Home from '../components/doghome'
 import Account from '../components/account'
 import Login from '../components/login'
-import Institute from '../components/institute'
+import Resource from '../components/resource'
 import store from '../store'
 
 Vue.use(Router)
@@ -30,7 +30,7 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      component: Institute,
+      component: Resource,
     },
     {
       path: '/account',
