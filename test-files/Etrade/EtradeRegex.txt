@@ -1,0 +1,24 @@
+(?#
+)(?P<trade_date>\d{2}\/\d{2}\/\d{2})(?:\s){1,2}(?#
+)(?P<setl_date>\d{2}\/\d{2}\/\d{2})(?:\s){1,2}(?#
+)(?P<mkt>[\w]+)(?:\s){1,2}(?#
+)(?P<cap>[\w]+)(?:\s){1,2}(?#
+)(?:(?P<symbol>[\w]+)(?:\s){1,2}(?#
+))?(?# symbol/cusip is only for EQ
+)(?P<trade_type>[\w]+)(?:\s){1,2}(?#
+)(?P<trade_qty>[,.\-\d]+)(?:\s){1,2}(?#
+)(?P<trade_rate>[\$,.\-\d]+)(?:\s){1,2}(?#
+)(?P<acct_type>[\w]+)(?:\s){1,2}(?#
+)(?P<marker_principal>PRINCIPAL)(?:\s){1,2}(?#
+)(?P<principal>[\$,.\-\d]+)(?:\s){1,2}(?#
+)(?:(?P<option>(?#
+    )(?P<opt_type>CALL|PUT) (?#
+    )(?P<opt_name>[\w]+) (?#
+    )(?P<expiry_date>\d{2}\/\d{2}\/\d{2}) (?#
+    )(?P<strike_price>[\$,.\-\d]+))(?#
+)(?:\s){1,2})?(?#
+)(?P<scrip_commission_fee>(?:.|\s)*?)(?:\s){1,2}(?#
+)(?P<marker_net_amount>NET AMOUNT)(?:\s){1,2}(?#
+)(?P<net_amount>[\$,.\-\d]+)(?:\s){1,2}(?#
+)(?#
+)
