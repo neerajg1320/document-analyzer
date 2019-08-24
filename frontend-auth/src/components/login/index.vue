@@ -1,15 +1,11 @@
-/**
-* Created by vouill on 11/13/17.
-*/
-
 <template>
   <div>
     <form class="login" @submit.prevent="login">
       <h1>Sign in</h1>
       <label>User name</label>
-      <input required v-model="email" type="email" placeholder="Snoopy"/>
+      <input required v-model="email" type="email" placeholder="email"/>
       <label>Password</label>
-      <input required v-model="password" type="password" placeholder="Password"/>
+      <input required v-model="password" type="password" placeholder="password"/>
       <hr/>
       <button type="submit">Login</button>
     </form>

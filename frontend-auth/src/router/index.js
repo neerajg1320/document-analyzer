@@ -31,6 +31,7 @@ export default new Router({
       path: '/',
       name: 'Home',
       component: Resource,
+      beforeEnter: ifAuthenticated,
     },
     {
       path: '/account',

@@ -1,7 +1,3 @@
-/**
-* Created by vouill on 11/13/17.
-*/
-
 <template>
   <div class="loader loader--style2">
     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"

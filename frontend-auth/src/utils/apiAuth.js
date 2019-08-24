@@ -6,16 +6,25 @@ const client = axios.create({
 })
 
 export default {
-  async execute (method, resource, data) {
+  async execute (method, resource, data, token) {
     // When you authenticate with OIDC, an access token is persisted locally
     // in the browser.
     // Inject the accessToken for each request
     // let accessToken = await Vue.prototype.$auth.getAccessToken()
-    return client({
+    const request = {
       method,
       url: resource,
       data
-    }).then(req => {
+    };
+
+    if (token != undefined) {
+      console.log(token);
+      request['headers'] = {
+        Authorization: `token ${token}`
+      };
+    }
+
+    return client(request).then(req => {
       return req.data
     })
   },
@@ -28,4 +37,7 @@ export default {
     return this.execute('post', '/api/user/token/', user)
   },
 
+  getUserProfile (token) {
+    return this.execute('get', 'api/user/me/', {}, token)
+  }
 }

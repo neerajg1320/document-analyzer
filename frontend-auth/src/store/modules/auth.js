@@ -4,7 +4,11 @@ import { USER_REQUEST } from '../actions/user'
 import apiMock from '../../utils/apiMock'
 import apiAuth from '../../utils/apiAuth'
 
-const state = { token: localStorage.getItem('user-token') || '', status: '', hasLoadedOnce: false }
+const state = {
+  token: localStorage.getItem('user-token') || '',
+  status: '',
+  hasLoadedOnce: false
+}
 
 const getters = {
   isAuthenticated: state => !!state.token,
@@ -19,8 +23,8 @@ const actions = {
       // apiMock({url: 'auth', data: user, method: 'POST'})
       apiAuth.login(user)
       .then(resp => {
-        console.log(resp);
         localStorage.setItem('user-token', resp.token)
+        console.log(resp.token);
         // Here set the header of your ajax library to the token value.
         // example with axios
         // axios.defaults.headers.common['Authorization'] = resp.token

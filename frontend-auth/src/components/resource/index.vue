@@ -27,6 +27,7 @@
 </template>
 
 <script>
+    import {USER_REQUEST} from '../../store/actions/user'
     import { mapActions, mapGetters } from 'vuex';
     const resource_name = 'operations';
 
@@ -52,6 +53,9 @@
         created() {
             const payload = {resource_name};
             this.fetchResources(payload);
+            // this.$store.dispatch(USER_REQUEST, { email, password }).then(() => {
+            //     this.$router.push('/')
+            // })
         }
     }
 </script>

@@ -1,7 +1,3 @@
-/**
-* Created by vouill on 11/13/17.
-*/
-
 <template>
     <div class="navigation">
         <ul>
@@ -76,7 +72,7 @@
             ...mapGetters(['getProfile', 'isAuthenticated', 'isProfileLoaded']),
             ...mapState({
                 authLoading: state => state.auth.status === 'loading',
-                name: state => `${state.user.profile.title} ${state.user.profile.name}`,
+                name: state => `${state.user.profile.name}`,
             })
         },
     }
