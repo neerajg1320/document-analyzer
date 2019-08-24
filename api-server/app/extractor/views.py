@@ -777,11 +777,6 @@ def load_frame_from_datastore_table(table_name, datastore_type, datastore_creden
 
 
 def load_frame_into_datastore_table(datastore_type, datastore_credentials, table_name, dataframe):
-    schema = Schema.objects.filter(title__iexact=table_name)
-
-    frameinfo = getframeinfo(currentframe())
-    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), schema[0])
-
     if str(datastore_type).lower() == 'snowflake':
         #  This is the mapping according to the hardcoded regex extractor
         #
