@@ -18,15 +18,15 @@ export default {
     };
 
     if (token != undefined) {
-      console.log(token);
       request['headers'] = {
         Authorization: `token ${token}`
       };
     }
 
-    return client(request).then(req => {
-      return req.data
-    })
+    return client(request)
+      .then(req => {
+        return req.data
+      })
   },
 
   register(user) {
@@ -38,6 +38,10 @@ export default {
   },
 
   getUserProfile (token) {
+    return this.execute('get', 'api/user/me/', {}, token)
+  },
+
+  logout (token) {
     return this.execute('get', 'api/user/me/', {}, token)
   }
 }

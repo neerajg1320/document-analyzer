@@ -51,11 +51,11 @@
             }
         },
         created() {
+            this.$store.dispatch(USER_REQUEST).then(() => {
+
+            });
             const payload = {resource_name};
             this.fetchResources(payload);
-            // this.$store.dispatch(USER_REQUEST, { email, password }).then(() => {
-            //     this.$router.push('/')
-            // })
         }
     }
 </script>

@@ -10,6 +10,7 @@ const getters = {
 
 const actions = {
     async fetchResources({ rootState, commit }, payload) {
+        // console.log('fetchResources:', payload);
         const { token } = rootState.auth;
         const { resource_name } = payload;
         const response = await apiResource.getList(resource_name, token);

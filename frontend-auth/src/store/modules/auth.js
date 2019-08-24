@@ -24,7 +24,6 @@ const actions = {
       apiAuth.login(user)
       .then(resp => {
         localStorage.setItem('user-token', resp.token)
-        console.log(resp.token);
         // Here set the header of your ajax library to the token value.
         // example with axios
         // axios.defaults.headers.common['Authorization'] = resp.token
@@ -40,20 +39,21 @@ const actions = {
     })
   },
 
-  [AUTH_LOGOUT]: ({commit, dispatch}) => {
+  [AUTH_LOGOUT]: ({rootState, commit, dispatch}) => {
     return new Promise((resolve, reject) => {
-      commit(AUTH_LOGOUT)
-      localStorage.removeItem('user-token')
-      resolve()
+        localStorage.removeItem('user-token')
+        const {token} = rootState.auth;
+        commit(AUTH_LOGOUT)
 
-      apiMock({url: 'user/me/logout', data: {}, method: 'GET'})
-        .then(resp => {
-          console.log(resp)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    })
+        // apiMock({url: 'user/me/logout', data: {}, method: 'GET'})
+        apiAuth.logout(token)
+            .then(resp => {
+              resolve(resp)
+            })
+            .catch(err => {
+              reject(err)
+            })
+    });
   }
 }
 

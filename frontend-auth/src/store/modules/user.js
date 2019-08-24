@@ -1,5 +1,4 @@
 import { USER_REQUEST, USER_ERROR, USER_SUCCESS } from '../actions/user'
-// import apiMock from '../../utils/apiMock'
 import apiAuth from '../../utils/apiAuth'
 import Vue from 'vue'
 import { AUTH_LOGOUT } from '../actions/auth'
@@ -16,7 +15,7 @@ const actions = {
     const { token } = rootState.auth;
 
     commit(USER_REQUEST)
-    // apiMock({url: 'user/me'})
+
     apiAuth.getUserProfile(token)
       .then(resp => {
         commit(USER_SUCCESS, resp)
