@@ -37,8 +37,8 @@
         methods: {
             ...mapActions(['fetchResources', 'delResource']),
 
-            populateResourceToEdit (instance) {
-                console.log(resource.id);
+            populateResourceToEdit (resource_instance) {
+                console.log(resource_instance.id);
                 // this.model = Object.assign({}, post)
             },
 
