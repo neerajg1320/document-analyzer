@@ -31,7 +31,7 @@ export default {
     return this.execute('get', `/${resource}/${id}`, token)
   },
   post (resource, token, data) {
-    return this.execute('post', `/${resource}`, token, data)
+    return this.execute('post', `/${resource}/`, token, data)
   },
 
   update (resource, token, id, data) {

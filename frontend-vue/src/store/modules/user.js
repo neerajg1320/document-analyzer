@@ -12,22 +12,22 @@ const getters = {
 
 const actions = {
   [USER_REQUEST]: ({rootState, commit, dispatch}) => {
-    const { token } = rootState.auth;
+    return new Promise((resolve, reject) => {
+      const {token} = rootState.auth;
 
-    commit(USER_REQUEST)
+      commit(USER_REQUEST)
 
-    apiAuth.getUserProfile(token)
-      .then(resp => {
-        commit(USER_SUCCESS, resp)
-      })
-      .catch(err => {
-
-        commit(USER_ERROR)
-        // if resp is unauthorized, logout, to
-        dispatch(AUTH_LOGOUT)
-        // eslint-disable-next-line
-        console.error(err)
-      })
+      apiAuth.getUserProfile(token)
+          .then(resp => {
+            commit(USER_SUCCESS, resp);
+            resolve(resp);
+          })
+          .catch(err => {
+            commit(USER_ERROR)
+            dispatch(AUTH_LOGOUT)
+            reject(err);
+          })
+    });
   },
 }
 
