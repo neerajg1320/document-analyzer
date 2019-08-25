@@ -1,41 +1,51 @@
 <template>
     <div>
-        <!-- List of Operations -->
-        <h2>Operations</h2>
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Type</th>
-                <th>&nbsp;</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="resource in allResources" :key="resource.id">
-                <td>{{ resource.id }}</td>
-                <td>{{ resource.title }}</td>
-                <td>{{ resource.type }}</td>
-                <td class="text-right">
-                    <a href="#" @click.prevent="populateResourceToEdit(resource)">Edit</a> -
-                    <a href="#" @click.prevent="deleteInstance(resource.id)">Delete</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <h1 class="h1">Resource Manager</h1>
+        <!--<b-alert :show="loading" variant="info">Loading...</b-alert>-->
 
-        <div>
-            <form @submit.prevent="saveInstance">
-                <label label="Title">Title</label>
-                <input type="text" v-model="model.title">
-
-                <label label="Body">Body</label>
-                <textarea v-model="model.body"></textarea>
-                <div>
-                    <button type="submit" variant="success">Save Post</button>
-                </div>
-            </form>
-        </div>
+        <b-row>
+            <b-col>
+                <!-- List of Operations -->
+                <h2>Operations</h2>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="resource in allResources" :key="resource.id">
+                        <td>{{ resource.id }}</td>
+                        <td>{{ resource.title }}</td>
+                        <td>{{ resource.type }}</td>
+                        <td class="text-right">
+                            <a href="#" @click.prevent="populateResourceToEdit(resource)">Edit</a> -
+                            <a href="#" @click.prevent="deleteInstance(resource.id)">Delete</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </b-col>
+            <b-col lg="3">
+                <!-- Form for new post -->
+                <b-card :title="(model.id ? 'Edit Post ID#' + model.id : 'New Resource')">
+                    <form @submit.prevent="addInstance">
+                        <b-form-group label="Title">
+                            <b-form-input type="text" v-model="model.title"></b-form-input>
+                        </b-form-group>
+                        <b-form-group label="Body">
+                            <b-form-textarea rows="4" v-model="model.body"></b-form-textarea>
+                        </b-form-group>
+                        <div>
+                            <b-btn type="submit" variant="success">Save</b-btn>
+                        </div>
+                    </form>
+                </b-card>
+            </b-col>
+        </b-row>
     </div>
 </template>
 
@@ -56,23 +66,36 @@
         },
         computed: mapGetters(['allResources']),
         methods: {
-            ...mapActions(['fetchResources', 'saveResource', 'delResource']),
+            ...mapActions(['fetchResources', 'addResource', 'updateResource', 'delResource']),
 
             populateResourceToEdit (resource_instance) {
                 console.log(resource_instance.id);
                 // this.model = Object.assign({}, post)
+                this.model = Object.assign({}, resource_instance)
             },
 
-            saveInstance() {
+            addInstance() {
                 console.log(this.model.title, this.model.body);
                 const payload = {resource_name, "instance": this.model}
-                this.saveResource(payload)
-                    .then(resp => {
-                      console.log(resp);
-                    })
-                    .catch(err => {
-                      console.log(err);
-                    })
+
+                if (this.model.id) {
+                  this.updateResource(payload)
+                      .then(resp => {
+                        console.log(resp);
+                      })
+                      .catch(err => {
+                        console.log(err);
+                      })
+                } else {
+                  this.addResource(payload)
+                      .then(resp => {
+                        console.log(resp);
+                      })
+                      .catch(err => {
+                        console.log(err);
+                      })
+                }
+                this.model = {}
             },
 
             deleteInstance (id) {

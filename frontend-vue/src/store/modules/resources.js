@@ -24,34 +24,50 @@ const actions = {
         const { token } = rootState.auth;
         const { resource_name } = payload;
         const response = await apiResource.getList(resource_name, token);
-        commit('setResources', response)
+        commit('setResourcesMut', response)
     },
 
-    async saveResource ({ rootState, commit }, payload) {
+    async addResource ({ rootState, commit }, payload) {
         const { token } = rootState.auth;
         const {resource_name, instance} = payload;
         console.log(resource_name, instance);
         const resource = await apiResource.post(resource_name, token, instance);
-        commit('addResource', resource);
+        commit('addResourceMut', resource);
 
+    },
+
+    async updateResource ({ rootState, commit }, payload) {
+        const { token } = rootState.auth;
+        const {resource_name, instance} = payload;
+        console.log(resource_name, instance);
+        const resource = await apiResource.put(resource_name, token, instance.id, instance);
+        commit('updateResourceMut', resource);
     },
 
     async delResource ({ rootState, commit }, payload) {
         const { token } = rootState.auth;
         const {resource_name, id} = payload;
         await apiResource.del(resource_name, token, id);
-        commit('deleteResource', id);
+        commit('deleteResourceMut', id);
     },
 };
 
 const mutations = {
-    setResources: (state, resources) => {
+    setResourcesMut: (state, resources) => {
         state.resources = resources;
     },
-    addResource: (state, resource) => {
+    addResourceMut: (state, resource) => {
         state.resources.push(resource);
     },
-    deleteResource: (state, id) => {
+    updateResourceMut: (state, resource) => {
+        state.resources = state.resources.map(item => {
+            if (item.id === resource.id) {
+                return resource;
+            }
+            return item;
+        });
+    },
+    deleteResourceMut: (state, id) => {
         state.resources = state.resources.filter(item => {
             return item.id != id;
         })

@@ -24,20 +24,22 @@ export default {
   },
 
   getList (resource, token) {
-    return this.execute('get', `/${resource}`, token)
+    return this.execute('get', `/${resource}/`, token)
   },
 
   get (resource, token, id) {
-    return this.execute('get', `/${resource}/${id}`, token)
+    return this.execute('get', `/${resource}/${id}/`, token)
   },
   post (resource, token, data) {
     return this.execute('post', `/${resource}/`, token, data)
   },
-
-  update (resource, token, id, data) {
-    return this.execute('put', `/${resource}/${id}`, token, data)
+  put (resource, token, id, data) {
+    return this.execute('put', `/${resource}/${id}/`, token, data)
+  },
+  patch (resource, token, id, data) {
+    return this.execute('patch', `/${resource}/${id}/`, token, data)
   },
   del (resource, token, id) {
-    return this.execute('delete', `/${resource}/${id}`, token)
+    return this.execute('delete', `/${resource}/${id}/`, token)
   }
 }
