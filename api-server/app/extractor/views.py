@@ -1343,7 +1343,7 @@ class OperationViewSet(viewsets.ModelViewSet):
             response_dict = {
                 "new_str": new_str,
                 # "dataframe": str(schema_df),
-                "dataframe": str(df[['scrip_commission_fee']]),
+                "dataframe": str(df),
                 "transactions": table_dict,
                 "schema": json.loads(schema_df.to_json(orient='records'))
             }
