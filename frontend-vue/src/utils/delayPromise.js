@@ -1,8 +1,8 @@
 export default {
-  async delayPromise (delayInms) {
+  async delayPromise (delayInms, data) {
     return new Promise(resolve => {
       setTimeout(() => {
-        resolve(2);
+        resolve(data);
       }, delayInms);
     });
   }

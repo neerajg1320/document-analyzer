@@ -12,10 +12,10 @@ const getters = {
 const actions = {
     async fetchResources({ rootState, commit }, payload) {
         // This is asynchronous wait
-        delayUtil.delayPromise(5000)
-            .then(resp => {
-                console.log("Delay completed: ", resp);
-            });
+        // delayUtil.delayPromise(5000, "hello")
+        //     .then(resp => {
+        //         console.log("Delay completed: ", resp);
+        //     });
 
         // The following in synchronous wait
         // await delayUtil.delayPromise(5000);
@@ -31,19 +31,30 @@ const actions = {
         const { token } = rootState.auth;
         const {resource_name, instance} = payload;
         console.log(resource_name, instance);
-        return await apiResource.post(resource_name, token, instance);
+        const resource = await apiResource.post(resource_name, token, instance);
+        commit('addResource', resource);
+
     },
 
     async delResource ({ rootState, commit }, payload) {
         const { token } = rootState.auth;
         const {resource_name, id} = payload;
-        return await apiResource.del(resource_name, token, id);
+        await apiResource.del(resource_name, token, id);
+        commit('deleteResource', id);
     },
 };
 
 const mutations = {
     setResources: (state, resources) => {
         state.resources = resources;
+    },
+    addResource: (state, resource) => {
+        state.resources.push(resource);
+    },
+    deleteResource: (state, id) => {
+        state.resources = state.resources.filter(item => {
+            return item.id != id;
+        })
     }
 }
 
