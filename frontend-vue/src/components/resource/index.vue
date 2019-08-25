@@ -1,12 +1,10 @@
 <template>
-    <div>
-        <h1 class="h1">Resource Manager</h1>
-        <!--<b-alert :show="loading" variant="info">Loading...</b-alert>-->
-
+    <div class="container-fluid mt-4">
+        <h2 class="text-center" style="margin-bottom: 25px">Resource Manager</h2>
+        <b-alert :show="loading" variant="info">Loading...</b-alert>
         <b-row>
             <b-col>
                 <!-- List of Operations -->
-                <h2>Operations</h2>
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -29,7 +27,7 @@
                     </tbody>
                 </table>
             </b-col>
-            <b-col lg="3">
+            <b-col lg="4">
                 <!-- Form for new post -->
                 <b-card :title="(model.id ? 'Edit Post ID#' + model.id : 'New Resource')">
                     <form @submit.prevent="addInstance">
@@ -50,76 +48,70 @@
 </template>
 
 <script>
-    import {USER_REQUEST} from '../../store/actions/user'
-    import { mapActions, mapGetters } from 'vuex';
-    const resource_name = 'operations';
+  import {USER_REQUEST} from '../../store/actions/user'
+  import { mapActions, mapGetters } from 'vuex';
+  const resource_name = 'operations';
 
-    export default {
-        name: "Resources",
-        data () {
-            return {
-                model: {
-                    type: 'Extract',
-                    parameters: "None"
-                }
-            }
-        },
-        computed: mapGetters(['allResources']),
-        methods: {
-            ...mapActions(['fetchResources', 'addResource', 'updateResource', 'delResource']),
-
-            populateResourceToEdit (resource_instance) {
-                console.log(resource_instance.id);
-                // this.model = Object.assign({}, post)
-                this.model = Object.assign({}, resource_instance)
-            },
-
-            addInstance() {
-                console.log(this.model.title, this.model.body);
-                const payload = {resource_name, "instance": this.model}
-
-                if (this.model.id) {
-                  this.updateResource(payload)
-                      .then(resp => {
-                        console.log(resp);
-                      })
-                      .catch(err => {
-                        console.log(err);
-                      })
-                } else {
-                  this.addResource(payload)
-                      .then(resp => {
-                        console.log(resp);
-                      })
-                      .catch(err => {
-                        console.log(err);
-                      })
-                }
-                this.model = {}
-            },
-
-            deleteInstance (id) {
-                if (confirm('Are you sure you want to delete?')) {
-                    // if we are editing a post we deleted, remove it from the form
-                    const payload = {resource_name, id};
-                    this.delResource(payload)
-                        .then(resp => {
-                          console.log(resp);
-                        })
-                        .catch(err => {
-                          console.log(err);
-                        })
-                }
-            }
-        },
-        created() {
-          const payload = {resource_name};
-          this.fetchResources(payload);
-          this.$store.dispatch(USER_REQUEST).then(resp => {
-            console.log(resp);
-          });
+  export default {
+    name: "Resources",
+    data () {
+      return {
+        loading: false,
+        model: {
+          type: 'Extract',
+          parameters: "None"
         }
+      }
+    },
+    computed: mapGetters(['allResources']),
+    methods: {
+      ...mapActions(['fetchResources', 'addResource', 'updateResource', 'delResource']),
+
+      populateResourceToEdit (resource_instance) {
+        // eslint-disable-next-line
+        console.log(resource_instance.id);
+        // this.model = Object.assign({}, post)
+        this.model = Object.assign({}, resource_instance)
+      },
+
+      resetModel() {
+        this.model.title = '';
+        this.model.body = '';
+      },
+
+      async addInstance() {
+        const payload = {resource_name, "instance": this.model}
+
+        if (this.model.id) {
+          await this.updateResource(payload)
+        } else {
+          await this.addResource(payload)
+        }
+
+        this.resetModel();
+      },
+
+      async deleteInstance (id) {
+        if (confirm('Are you sure you want to delete?')) {
+          // if we are editing a post we deleted, remove it from the form
+          const payload = {resource_name, id};
+          await this.delResource(payload)
+        }
+      }
+    },
+    async created() {
+      // this.loading = false;
+      this.$store.dispatch(USER_REQUEST).then(resp => {
+        // eslint-disable-next-line
+        console.log(resp);
+      });
+
+      const payload = {resource_name};
+      this.loading = true;
+      await this.fetchResources(payload);
+      this.loading = false;
     }
+  }
 </script>
 
 <style scoped>

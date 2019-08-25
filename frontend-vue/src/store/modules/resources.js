@@ -1,4 +1,5 @@
 import apiResource from '../../utils/apiResource';
+// eslint-disable-next-line
 import delayUtil from '../../utils/delayPromise';
 
 const state = {
@@ -20,7 +21,6 @@ const actions = {
         // The following in synchronous wait
         // await delayUtil.delayPromise(5000);
 
-        console.log('fetchResources:', payload);
         const { token } = rootState.auth;
         const { resource_name } = payload;
         const response = await apiResource.getList(resource_name, token);
@@ -28,18 +28,20 @@ const actions = {
     },
 
     async addResource ({ rootState, commit }, payload) {
+        // await delayUtil.delayPromise(5000);
+
         const { token } = rootState.auth;
         const {resource_name, instance} = payload;
-        console.log(resource_name, instance);
+
         const resource = await apiResource.post(resource_name, token, instance);
         commit('addResourceMut', resource);
-
+        return resource;
     },
 
     async updateResource ({ rootState, commit }, payload) {
         const { token } = rootState.auth;
         const {resource_name, instance} = payload;
-        console.log(resource_name, instance);
+
         const resource = await apiResource.put(resource_name, token, instance.id, instance);
         commit('updateResourceMut', resource);
     },

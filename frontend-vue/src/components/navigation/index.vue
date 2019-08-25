@@ -1,24 +1,23 @@
 <template>
-    <div class="navigation">
-        <ul>
-            <li>
-                <router-link class="brand" to="/">
-                    <!--<img src="../../assets/logo.png" width="40px"/>-->
-                    <strong>Document Analyzer</strong>
-                </router-link>
-            </li>
-        </ul>
-        <ul>
-            <li v-if="isProfileLoaded">
-                <router-link to="/account">{{name}}</router-link>
-            </li>
-            <li v-if="isAuthenticated" @click="logout">
-                <span class="logout">Logout</span>
-            </li>
-            <li v-if="!isAuthenticated && !authLoading">
-                <router-link to="/login">Login</router-link>
-            </li>
-        </ul>
+    <div>
+        <!-- https://bootstrap-vue.js.org/docs/components/navbar/ -->
+        <b-navbar toggleable="md" type="dark" variant="info">
+            <b-navbar-brand to="/">Document Analyzer</b-navbar-brand>
+            <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+            <b-collapse id="nav-collapse" is-nav>
+                <b-navbar-nav  class="ml-auto">
+                    <b-nav-item v-if="isProfileLoaded" to="/account">
+                        {{name}}
+                    </b-nav-item>
+                    <b-nav-item v-if="isAuthenticated" @click="logout">
+                        <span class="logout">Logout</span>
+                    </b-nav-item>
+                    <b-nav-item v-if="!isAuthenticated && !authLoading" to="/login">
+                        Login
+                    </b-nav-item>
+                </b-navbar-nav>
+            </b-collapse>
+        </b-navbar>
     </div>
 </template>
 

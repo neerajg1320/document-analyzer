@@ -1,11 +1,9 @@
 <template>
     <div>
         <navigation/>
-        <div class="main-container">
-            <center-container>
-                <router-view/>
-            </center-container>
-        </div>
+        <center-container>
+            <router-view/>
+        </center-container>
     </div>
 </template>
 
@@ -30,12 +28,6 @@
         margin: 0;
         padding: 0;
         list-style-type: none;
-    }
-</style>
-
-<style scoped>
-    .main-container {
-        min-height: calc(100vh - 70px);
     }
 </style>
 
