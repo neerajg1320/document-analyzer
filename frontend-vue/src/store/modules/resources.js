@@ -5,14 +5,23 @@ import delayUtil from '../../utils/delayPromise';
 const debug = true;
 
 const state = {
-    resources: []
+    instanceList: [],
+    instance: {},
+    resource: ''
 };
 
 const getters = {
-    allResources: state => state.resources
+    allInstances: state => state.instanceList,
+    currentInstance: state => state.instance
 };
 
 const actions = {
+    setCurrentResource({commit}, payload) {
+        console.log(payload);
+        const { resource, instance } = payload;
+        commit('setCurrentResourceMut', {resource, instance});
+    },
+
     async fetchResources({ rootState, commit }, payload) {
         // This is asynchronous wait
         // delayUtil.delayPromise(5000, "hello")
@@ -60,14 +69,20 @@ const actions = {
 };
 
 const mutations = {
+    setCurrentResourceMut: (state, {resource, instance}) => {
+        state.resource = resource;
+        state.instance = instance;
+        console.log(state.resource);
+        console.log(state.instance);
+    },
     setResourcesMut: (state, resources) => {
-        state.resources = resources;
+        state.instanceList = resources;
     },
     addResourceMut: (state, resource) => {
-        state.resources.push(resource);
+        state.instanceList.push(resource);
     },
     updateResourceMut: (state, resource) => {
-        state.resources = state.resources.map(item => {
+        state.instanceList = state.instanceList.map(item => {
             if (item.id === resource.id) {
                 return resource;
             }
@@ -75,7 +90,7 @@ const mutations = {
         });
     },
     deleteResourceMut: (state, id) => {
-        state.resources = state.resources.filter(item => {
+        state.instanceList = state.instanceList.filter(item => {
             return item.id != id;
         })
     }

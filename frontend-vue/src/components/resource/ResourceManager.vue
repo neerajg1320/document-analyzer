@@ -15,7 +15,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="resource in allResources" :key="resource.id">
+                    <tr v-for="resource in allInstances" :key="resource.id">
                         <td>{{ resource.id }}</td>
                         <td>{{ resource.title }}</td>
                         <td>{{ resource.type }}</td>
@@ -47,10 +47,10 @@
         </b-row>
         <b-row>
             <b-col>
-                <ResourceList></ResourceList>
+                <ResourceList :resource="resource_name"></ResourceList>
             </b-col>
             <b-col lg="5">
-                <!--<ResourceDetail></ResourceDetail>-->
+                <ResourceDetail :resource="resource_name"></ResourceDetail>
             </b-col>
         </b-row>
     </div>
@@ -98,15 +98,15 @@
       return {
         'resource_name': 'none',
         loading: false,
-        model: {}
+        instance: {}
       }
     },
-    computed: mapGetters(['allResources']),
+    computed: mapGetters(['allInstances']),
     methods: {
       ...mapActions(['fetchResources', 'addResource', 'updateResource', 'delResource',
                      'userRequest']),
 
-      resetModel() {
+      resetInstance() {
         this.model = {
           type: 'Extract',
           parameters: "None"
@@ -118,22 +118,22 @@
       },
 
       onCancel() {
-        this.resetModel();
+        this.resetInstance();
       },
 
       async addInstance() {
         const payload = {
           "resource_name": this.resource_name,
-          "instance": this.model
+          "instance": this.instance
         };
 
-        if (this.model.id) {
+        if (this.instance.id) {
           await this.updateResource(payload)
         } else {
           await this.addResource(payload)
         }
 
-        this.resetModel();
+        this.resetInstance();
       },
 
       async deleteInstance (id) {
@@ -160,7 +160,7 @@
       console.log("created:", this.$route.path);
       const resource_name = prvGetResourceNameFromPath(this.$route.path);
       this.resource_name = resource_name;
-      this.resetModel();
+      this.resetInstance();
       prvFetchResources(resource_name, this);
     },
 
@@ -170,7 +170,7 @@
       console.log("beforeRouteUpdate:", to.path);
       const resource_name = prvGetResourceNameFromPath(to.path);
       this.resource_name = resource_name;
-      this.resetModel();
+      this.resetInstance();
       prvFetchResources(resource_name, this);
       next();
     },
