@@ -44,22 +44,17 @@
 
     // Resource and Profile have a shared creation code
     async created() {
+      // eslint-disable-next-line
       console.log("created:", this.$route.path);
-
-      this.resource = path.getResourceFromPath(this.$route.path);
-      const payload = { 'resource': this.resource };
-      this.setCurrentResource(payload);
+      this.loadResource(path.getResourceFromPath(this.$route.path));
     },
 
     // https://stackoverflow.com/questions/43461882/update-vuejs-component-on-route-change
     // The reason we have this here is because the ResourceManager receives route update
     async beforeRouteUpdate (to, from, next) {
+      // eslint-disable-next-line
       console.log("beforeRouteUpdate:", to.path);
-
-      this.resource = path.getResourceFromPath(to.path);
-      const payload = { 'resource': this.resource };
-      this.setCurrentResource(payload);
-
+      this.loadResource(path.getResourceFromPath(to.path));
       next();
     },
   }
