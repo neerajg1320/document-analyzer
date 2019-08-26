@@ -28,8 +28,8 @@
                 </table>
             </b-col>
             <b-col lg="4">
-                <!-- Form for new post -->
-                <b-card :title="(model.id ? 'Edit Post ID#' + model.id : 'New Resource')">
+                <!-- Form for new resource -->
+                <b-card :title="(model.id ? 'Edit Resource ID#' + model.id : 'New Resource')">
                     <form @submit.prevent="addInstance">
                         <b-form-group label="Title">
                             <b-form-input type="text" v-model="model.title"></b-form-input>
@@ -70,7 +70,7 @@
       populateResourceToEdit (resource_instance) {
         // eslint-disable-next-line
         console.log(resource_instance.id);
-        // this.model = Object.assign({}, post)
+
         this.model = Object.assign({}, resource_instance)
       },
 
@@ -93,7 +93,6 @@
 
       async deleteInstance (id) {
         if (confirm('Are you sure you want to delete?')) {
-          // if we are editing a post we deleted, remove it from the form
           const payload = {resource_name, id};
           await this.delResource(payload)
         }
