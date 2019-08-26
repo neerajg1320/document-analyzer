@@ -34,7 +34,7 @@
     computed: mapGetters(['allInstances']),
     methods: {
       ...mapActions(['setCurrentInstance', 'delResource']),
-      
+
       selectResource(instance) {
         const payload = {
           instance

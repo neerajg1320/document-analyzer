@@ -50,7 +50,7 @@
                 <ResourceList :resource="resource_name"></ResourceList>
             </b-col>
             <b-col lg="5">
-                <ResourceDetail :resource="resource_name"></ResourceDetail>
+                <ResourceDetail></ResourceDetail>
             </b-col>
         </b-row>
     </div>
@@ -61,7 +61,7 @@
   import ResourceDetail from './ResourceDetail';
   import ResourceList from './ResourceList';
 
-  function prvGetResourceNameFromPath(path) {
+  function getResourceNameFromPath(path) {
     const path_split_array = path.split('/');
 
     var resource_name = "none";
@@ -70,15 +70,17 @@
     }
 
     return resource_name;
-  }
+  };
 
-  function prvFetchResources (resource_name, component) {
+  function fetchResources (resource, component) {
+    const payload = { resource };
+    component.setCurrentResource(payload);
+
     component.loading = true;
     // eslint-disable-next-line
     component.userRequest().then(resp => {
       // console.log(resp);
     });
-    const payload = {'resource_name': resource_name};
 
     component.fetchResources(payload)
         .then(resp => {
@@ -102,9 +104,10 @@
       }
     },
     computed: mapGetters(['allInstances']),
+
     methods: {
       ...mapActions(['fetchResources', 'addResource', 'updateResource', 'delResource',
-                     'userRequest']),
+                     'userRequest', 'setCurrentResource']),
 
       resetInstance() {
         this.model = {
@@ -158,20 +161,20 @@
     // Resource and Profile have a shared creation code
     async created() {
       console.log("created:", this.$route.path);
-      const resource_name = prvGetResourceNameFromPath(this.$route.path);
+      const resource_name = getResourceNameFromPath(this.$route.path);
       this.resource_name = resource_name;
       this.resetInstance();
-      prvFetchResources(resource_name, this);
+      fetchResources(resource_name, this);
     },
 
     // https://stackoverflow.com/questions/43461882/update-vuejs-component-on-route-change
     // The reason we have this here is because the ResourceManager receives route update
     async beforeRouteUpdate (to, from, next) {
       console.log("beforeRouteUpdate:", to.path);
-      const resource_name = prvGetResourceNameFromPath(to.path);
+      const resource_name = getResourceNameFromPath(to.path);
       this.resource_name = resource_name;
       this.resetInstance();
-      prvFetchResources(resource_name, this);
+      fetchResources(resource_name, this);
       next();
     },
   }

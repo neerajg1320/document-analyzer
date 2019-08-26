@@ -4,20 +4,34 @@ import delayUtil from '../../utils/delayPromise';
 
 const debug = true;
 
+const instanceInitState = {};
+const resourceInitState = '';
+
 const state = {
     instanceList: [],
-    instance: {},
-    resource: ''
+    instance: instanceInitState,
+    resource: resourceInitState
 };
 
 const getters = {
     allInstances: state => state.instanceList,
-    currentInstance: state => state.instance
+    currentInstance: state => state.instance,
+    currentResource: state => state.resource
 };
 
 const actions = {
+    setCurrentResource({commit}, payload) {
+        if (debug) {
+            console.log(payload);
+        }
+        const { resource } = payload;
+        commit('setCurrentResourceMut', resource);
+    },
+
     setCurrentInstance({commit}, payload) {
-        console.log(payload);
+        if (debug) {
+            console.log(payload);
+        }
         const { instance } = payload;
         commit('setCurrentInstanceMut', instance);
     },
@@ -33,9 +47,10 @@ const actions = {
         // await delayUtil.delayPromise(5000);
 
         const { token } = rootState.auth;
-        const { resource_name } = payload;
-        const response = await apiResource.getList(resource_name, token);
-        commit('setResourcesMut', response)
+        const { resource } = payload;
+        const response = await apiResource.getList(resource, token);
+        commit('setResourcesMut', response);
+
         if (debug) {
             console.log(response);
         }
@@ -69,10 +84,16 @@ const actions = {
 };
 
 const mutations = {
+    setCurrentResourceMut: (state, resource) => {
+        state.resource = resource;
+        console.log(state.resource);
+    },
+
     setCurrentInstanceMut: (state, instance) => {
         state.instance = instance;
         console.log(state.instance);
     },
+
     setResourcesMut: (state, resources) => {
         state.instanceList = resources;
     },

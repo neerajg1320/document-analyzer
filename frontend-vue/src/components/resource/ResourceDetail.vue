@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- Form for new resource -->
-        <b-card :title="(instance.id ? 'Edit ' + resource + ' ID#' + instance.id : 'New ' + resource )">
+        <b-card :title="(instance.id ? 'Edit ' + currentResource + ' ID#' + instance.id : 'New ' + currentResource )">
             <form @submit.prevent="addInstance">
                 <b-form-group label="Title">
                     <b-form-input type="text" v-model="instance.title"></b-form-input>
@@ -25,27 +25,32 @@
     name: "ResourceDetail",
     data () {
       return {
+        instanceInitState: {
+          type: 'Extract',
+          parameters: "None"
+        },
         instance: {}
       }
     },
-    computed: mapGetters(['currentInstance']),
-    props: ['resource'],
+    computed: mapGetters(['currentResource', 'currentInstance']),
 
     watch: {
-        currentInstance(newValue, oldValue) {
-          console.log(`Updating to  ${newValue.id} from ${oldValue.id}`);
-          this.instance  = Object.assign({}, this.currentInstance);
-        }
+      currentInstance(newValue, oldValue) {
+        console.log(`Updating instance to  ${newValue.id} from ${oldValue.id}`);
+        this.instance  = Object.assign({}, this.currentInstance);
+      },
+
+      currentResource(newValue, oldValue) {
+        console.log(`Updating resource to ${newValue.id} from ${oldValue.id}`);
+        this.instance  = this.instanceInitState;
+      },
     },
 
     methods: {
       ...mapActions(['addResource', 'updateResource', 'delResource']),
 
       resetInstance() {
-        this.instance = {
-          type: 'Extract',
-          parameters: "None"
-        };
+        this.instance = this.instanceInitState;
       },
 
       onCancel() {
@@ -54,7 +59,7 @@
 
       async addInstance() {
         const payload = {
-          "resource_name": this.resource,
+          "resource_name": this.currentResource,
           "instance": this.instance
         };
 
