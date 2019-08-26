@@ -33,13 +33,13 @@
     props: ['resource'],
     computed: mapGetters(['allInstances']),
     methods: {
-      ...mapActions(['setCurrentResource', 'delResource']),
+      ...mapActions(['setCurrentInstance', 'delResource']),
       selectResource(instance) {
         const payload = {
           'resource': this.resource,
           instance
         };
-        this.setCurrentResource(payload);
+        this.setCurrentInstance(payload);
       },
 
       async addInstance() {

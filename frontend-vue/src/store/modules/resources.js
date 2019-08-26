@@ -16,10 +16,10 @@ const getters = {
 };
 
 const actions = {
-    setCurrentResource({commit}, payload) {
+    setCurrentInstance({commit}, payload) {
         console.log(payload);
         const { resource, instance } = payload;
-        commit('setCurrentResourceMut', {resource, instance});
+        commit('setCurrentInstanceMut', {resource, instance});
     },
 
     async fetchResources({ rootState, commit }, payload) {
@@ -69,7 +69,7 @@ const actions = {
 };
 
 const mutations = {
-    setCurrentResourceMut: (state, {resource, instance}) => {
+    setCurrentInstanceMut: (state, {resource, instance}) => {
         state.resource = resource;
         state.instance = instance;
         console.log(state.resource);
