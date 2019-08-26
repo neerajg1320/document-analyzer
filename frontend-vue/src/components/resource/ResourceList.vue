@@ -1,5 +1,6 @@
 <template>
     <div>
+        <b-alert :show="loading" variant="info">Loading...</b-alert>
         <!-- List of Operations -->
         <table class="table table-hover">
             <thead>
@@ -16,8 +17,8 @@
                 <td>{{ resource.title }}</td>
                 <td>{{ resource.type }}</td>
                 <td class="text-right">
-                    <a href="#" @click.prevent="selectResource(resource)">Edit</a> -
-                    <a href="#" @click.prevent="deleteInstance(resource.id)">Delete</a>
+                    <a href="#" @click.prevent="selectInstance(resource)">Edit</a> -
+                    <a href="#" @click.prevent="confirmDeleteInstance(resource.id)">Delete</a>
                 </td>
             </tr>
             </tbody>
@@ -27,31 +28,62 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
+  import path from '../../utils/path';
 
   export default {
     name: "ResourceList",
-    props: ['resource'],
-    computed: mapGetters(['allInstances']),
+    computed: mapGetters(['currentResource', 'allInstances']),
+
+    data () {
+      return {
+        loading: false
+      };
+    },
 
     methods: {
-      ...mapActions(['setCurrentInstance', 'delResource']),
+      ...mapActions(['fetchResources', 'setCurrentInstance', 'delResource']),
 
-      selectResource(instance) {
+      selectInstance(instance) {
         const payload = { instance };
         this.setCurrentInstance(payload);
       },
 
-      async deleteInstance (id) {
+      async confirmDeleteInstance (id) {
         if (confirm('Are you sure you want to delete?')) {
           const payload = {
             "resource_name": this.resource,
             id
           };
           await this.delResource(payload)
+
+          this.setCurrentInstance({'instance': {}});
         }
+      },
+
+      async loadResource(resource) {
+        this.resource = resource;
+        this.loading = true;
+        const payload = { resource };
+        this.fetchResources(payload);
+        this.loading = false;
       }
+    },
+
+    watch: {
+      currentResource(newResource, oldResource) {
+        // eslint-disable-next-line
+        console.log(`Updating resource to '${newResource}' from '${oldResource}'`);
+
+        this.loadResource(newResource)
+      },
+    },
+
+    created() {
+      const resource = path.getResourceFromPath(this.$route.path);
+      this.loadResource(resource);
     }
   }
+
 </script>
 
 <style scoped>

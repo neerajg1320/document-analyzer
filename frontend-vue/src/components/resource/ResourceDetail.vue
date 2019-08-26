@@ -39,7 +39,7 @@
     },
 
     methods: {
-      ...mapActions(['addResource', 'updateResource', 'delResource']),
+      ...mapActions(['addResource', 'updateResource']),
 
       resetInstance() {
         this.instance = Object.assign({}, this.instanceInitState);
@@ -69,7 +69,12 @@
       currentInstance(newValue, oldValue) {
         // eslint-disable-next-line
         console.log(`Updating instance to  ${newValue.id} from ${oldValue.id}`);
-        this.instance  = Object.assign({}, this.currentInstance);
+        
+        if ('id' in newValue) {
+          this.instance = Object.assign({}, this.currentInstance);
+        } else {
+          this.resetInstance();
+        }
       },
 
       currentResource(newValue, oldValue) {
