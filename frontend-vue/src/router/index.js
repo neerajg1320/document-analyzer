@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 import Profile from '../components/profile/Profile'
 import Login from '../components/login/Login'
-import Resource from '../components/resource/ResourceManager'
+import Dashboard from '../components/resource/Dashboard'
 import store from '../store'
 
 Vue.use(Router)
@@ -30,7 +30,7 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      component: Resource,
+      component: Dashboard,
       beforeEnter: ifAuthenticated,
     },
     {
@@ -48,7 +48,7 @@ export default new Router({
     {
       path: '/resource/*',
       name: 'ResourceManager',
-      component: Resource,
+      component: Dashboard,
       beforeEnter: ifAuthenticated,
     },
   ],

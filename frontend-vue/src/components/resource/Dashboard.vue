@@ -19,7 +19,7 @@
   import path from '../../utils/path';
 
   export default {
-    name: "Resources",
+    name: "Dashboard",
 
     components: {
       ResourceDetail,
@@ -28,9 +28,7 @@
 
     data () {
       return {
-        resource: 'none',
-        loading: false,
-        instance: {}
+        resource: 'none'
       }
     },
 

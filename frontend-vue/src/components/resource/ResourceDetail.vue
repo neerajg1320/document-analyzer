@@ -69,7 +69,7 @@
       currentInstance(newValue, oldValue) {
         // eslint-disable-next-line
         console.log(`Updating instance to  ${newValue.id} from ${oldValue.id}`);
-        
+
         if ('id' in newValue) {
           this.instance = Object.assign({}, this.currentInstance);
         } else {
