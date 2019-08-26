@@ -37,9 +37,9 @@
                         <b-form-group label="Body">
                             <b-form-textarea rows="4" v-model="model.body"></b-form-textarea>
                         </b-form-group>
-                        <div>
+                        <div style="text-align: center">
                             <b-btn type="submit" variant="success">Save</b-btn>
-                            <b-btn type="cancel" variant="cancel" @click.prevent="onCancel" >Cancel</b-btn>
+                            <b-btn type="button" @click.prevent="onCancel" style="margin-left: 10px">Cancel</b-btn>
                         </div>
                     </form>
                 </b-card>
@@ -87,10 +87,7 @@
       return {
         'resource_name': 'none',
         loading: false,
-        model: {
-          type: 'Extract',
-          parameters: "None"
-        }
+        model: {}
       }
     },
     computed: mapGetters(['allResources']),
@@ -98,21 +95,22 @@
       ...mapActions(['fetchResources', 'addResource', 'updateResource', 'delResource',
                      'userRequest']),
 
-      populateResourceToEdit (resource_instance) {
-        // eslint-disable-next-line
-        // console.log(resource_instance.id);
+      resetModel() {
+        this.model = {
+          type: 'Extract',
+          parameters: "None"
+        };
+      },
 
+      populateResourceToEdit (resource_instance) {
+        console.log(resource_instance);
         this.model = Object.assign({}, resource_instance)
+        console.log(this.model);
       },
 
       onCancel() {
         this.model.id = '';
         this.resetModel();
-      },
-
-      resetModel() {
-        this.model.title = '';
-        this.model.body = '';
       },
 
       async addInstance() {
@@ -154,6 +152,7 @@
       console.log("created:", this.$route.path);
       const resource_name = prvGetResourceNameFromPath(this.$route.path);
       this.resource_name = resource_name;
+      this.resetModel();
       prvFetchResources(resource_name, this);
     },
 
@@ -162,6 +161,7 @@
       console.log("beforeRouteUpdate:", to.path);
       const resource_name = prvGetResourceNameFromPath(to.path);
       this.resource_name = resource_name;
+      this.resetModel();
       prvFetchResources(resource_name, this);
       next();
     },
