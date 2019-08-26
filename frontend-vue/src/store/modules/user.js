@@ -1,9 +1,12 @@
-import { USER_REQUEST, USER_ERROR, USER_SUCCESS } from '../actions/user'
 import apiAuth from '../../utils/apiAuth'
-import Vue from 'vue'
-import { AUTH_LOGOUT } from '../actions/auth'
+// eslint-disable-next-line
+import delayUtil from '../../utils/delayPromise'
 
-const state = { status: '', profile: {} }
+const state = {
+  status: '',
+  profile: {},
+  forceDelay: 0
+}
 
 const getters = {
   getProfile: state => state.profile,
@@ -11,7 +14,7 @@ const getters = {
 }
 
 const actions = {
-  [USER_REQUEST]: ({rootState, commit, dispatch}) => {
+  userRequest ({rootState, commit, dispatch}) {
     return new Promise((resolve, reject) => {
       const {token} = rootState.auth;
 
@@ -19,12 +22,15 @@ const actions = {
 
       apiAuth.getUserProfile(token)
           .then(resp => {
-            commit('userSuccess', resp);
-            resolve(resp);
+            delayUtil.delayPromise(rootState.user.forceDelay)
+                .then(() => {
+                  commit('userSuccess', resp);
+                  resolve(resp);
+                })
           })
           .catch(err => {
             commit('userError')
-            dispatch(AUTH_LOGOUT)
+            dispatch('authLogout') // This needs to be corrected or accepted
             reject(err);
           })
     });
@@ -37,12 +43,13 @@ const mutations = {
   },
   userSuccess (state, resp) {
     state.status = 'success'
-    Vue.set(state, 'profile', resp)
+    state.profile = resp
+    // Vue.set(state, 'profile', resp)
   },
   userError (state) {
     state.status = 'error'
   },
-  [AUTH_LOGOUT]: (state) => {
+  authLogout (state) {
     state.profile = {}
   }
 }

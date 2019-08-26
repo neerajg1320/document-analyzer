@@ -2,6 +2,8 @@ import apiResource from '../../utils/apiResource';
 // eslint-disable-next-line
 import delayUtil from '../../utils/delayPromise';
 
+const debug = true;
+
 const state = {
     resources: []
 };
@@ -25,6 +27,9 @@ const actions = {
         const { resource_name } = payload;
         const response = await apiResource.getList(resource_name, token);
         commit('setResourcesMut', response)
+        if (debug) {
+            console.log(response);
+        }
     },
 
     async addResource ({ rootState, commit }, payload) {

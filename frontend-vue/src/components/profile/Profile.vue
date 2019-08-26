@@ -5,6 +5,7 @@
       <!--<img src="../../assets/dog-profile.jpeg">-->
       <h1>Your Account Profile</h1>
     </div>
+    <b-alert :show="loading" variant="info">Loading...</b-alert>
     <p v-if="profile.name">
       <strong>Name:</strong> {{profile.title}} {{profile.name}}
     </p>
@@ -24,10 +25,26 @@
 </style>
 
 <script>
-  import { mapState } from 'vuex'
+  import { mapState, mapActions } from 'vuex'
 
-export default {
-    name: 'account',
-    computed: mapState({profile: state => state.user.profile})
+  export default {
+    name: 'profile',
+    data () {
+      return {
+        loading: true
+      }
+    },
+    computed: mapState({profile: state => state.user.profile}),
+    methods: {
+      ...mapActions(['userRequest'])
+    },
+
+    // Resource and Profile have a shared creation code
+    async created() {
+      this.loading = true;
+      // eslint-disable-next-line
+      await this.userRequest()
+      this.loading = false;
+    }
   }
 </script>

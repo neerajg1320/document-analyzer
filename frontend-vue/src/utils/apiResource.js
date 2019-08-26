@@ -1,9 +1,14 @@
 import axios from 'axios'
 
-const client = axios.create({
+const debug = true;
+
+const baseRequest = {
   baseURL: 'http://localhost:8000/api/docminer/',
   json: true
-})
+};
+
+const client = axios.create(baseRequest);
+
 
 export default {
   async execute (method, resource, token, data) {
@@ -11,16 +16,26 @@ export default {
     // in the browser.
     // Inject the accessToken for each request
     // let accessToken = await Vue.prototype.$auth.getAccessToken()
-    return client({
+    const request = {
       method,
       url: resource,
       data,
       headers: {
         Authorization: `token ${token}`
       }
-    }).then(req => {
-      return req.data
-    })
+    };
+
+    if (debug) {
+      console.log("request:", request);
+    }
+
+    return client(request)
+        .then(response => {
+          if (debug) {
+            console.log("response", response);
+          }
+          return response.data
+        })
   },
 
   getList (resource, token) {

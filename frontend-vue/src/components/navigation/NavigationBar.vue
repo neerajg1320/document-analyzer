@@ -7,9 +7,14 @@
             <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
             <b-collapse id="nav-collapse" is-nav>
                 <b-navbar-nav  class="ml-auto">
+                    <b-nav-item-dropdown text="Resource" right>
+                        <b-dropdown-item to="/resource/pipelines/">Pipelines</b-dropdown-item>
+                        <b-dropdown-item to="/resource/operations/">Operations</b-dropdown-item>
+                    </b-nav-item-dropdown>
+
                     <b-nav-item-dropdown v-if="isAuthenticated" right>
-                        <template slot="button-content"><em>User ({{name}})</em></template>
-                        <b-dropdown-item v-if="isProfileLoaded" to="/account">
+                        <template slot="button-content"><em>User <span v-if="isProfileLoaded">({{name}})</span></em></template>
+                        <b-dropdown-item v-if="isProfileLoaded" to="/profile">
                             Profile
                         </b-dropdown-item>
                         <b-dropdown-item v-if="isAuthenticated" @click="logout">
@@ -63,14 +68,17 @@
 </style>
 
 <script>
-    import { mapGetters, mapState } from 'vuex'
-    import { AUTH_LOGOUT } from '../../store/actions/auth'
+    import { mapActions, mapGetters, mapState } from 'vuex'
+    // import { AUTH_LOGOUT } from '../../store/actions/auth'
 
     export default {
         name: 'navigation',
         methods: {
+            ...mapActions(['authLogout']),
+
             logout: function () {
-                this.$store.dispatch(AUTH_LOGOUT).then(() => this.$router.push('/login'))
+                this.authLogout()
+                    .then(() => this.$router.push('/login'))
             }
         },
         computed: {

@@ -22,7 +22,8 @@
 </style>
 
 <script>
-  import {AUTH_REQUEST} from '../../store/actions/auth'
+
+  import { mapActions } from 'vuex';
 
   export default {
     name: 'login',
@@ -33,16 +34,22 @@
       }
     },
     methods: {
+      ...mapActions(['authRequest']),
+
       login: function () {
         const { email, password } = this;
-        this.$store.dispatch(AUTH_REQUEST, { email, password })
-          .then((resp) => {
-              this.$router.push('/')
-          })
-          .catch((err) => {
-            console.log(err);
-            alert(err['non_field_errors']);
-          })
+
+        this.authRequest({email, password})
+                .then((resp) => {
+                  // eslint-disable-next-line
+                  // console.log(resp);
+                  this.$router.push('/')
+                })
+                .catch((err) => {
+                  // eslint-disable-next-line
+                  // console.log(err);
+                  alert(err);
+                })
       }
     },
   }

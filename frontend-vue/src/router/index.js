@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Account from '../components/profile/Profile'
+import Profile from '../components/profile/Profile'
 import Login from '../components/login/Login'
 import Resource from '../components/resource/Resource'
 import store from '../store'
@@ -35,8 +35,8 @@ export default new Router({
     },
     {
       path: '/profile',
-      name: 'Account',
-      component: Account,
+      name: 'Profile',
+      component: Profile,
       beforeEnter: ifAuthenticated,
     },
     {
@@ -44,6 +44,12 @@ export default new Router({
       name: 'Login',
       component: Login,
       beforeEnter: ifNotAuthenticated,
+    },
+    {
+      path: '/resource/*',
+      name: 'ResourceManager',
+      component: Resource,
+      beforeEnter: ifAuthenticated,
     },
   ],
 })

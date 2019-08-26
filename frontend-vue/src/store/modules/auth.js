@@ -1,7 +1,3 @@
-/* eslint-disable promise/param-names */
-import { AUTH_REQUEST, AUTH_ERROR, AUTH_SUCCESS, AUTH_LOGOUT } from '../actions/auth'
-import { USER_REQUEST } from '../actions/user'
-import apiMock from '../../utils/apiMock'
 import apiAuth from '../../utils/apiAuth'
 
 const state = {
@@ -16,34 +12,30 @@ const getters = {
 }
 
 const actions = {
-  [AUTH_REQUEST]: ({commit, dispatch}, user) => {
+  authRequest ({commit, dispatch}, user) {
     return new Promise((resolve, reject) => {
-      commit(AUTH_REQUEST)
+      commit('authRequest')
 
-      // apiMock({url: 'auth', data: user, method: 'POST'})
       apiAuth.login(user)
       .then(resp => {
         localStorage.setItem('user-token', resp.token)
-        // Here set the header of your ajax library to the token value.
-        // example with axios
-        // axios.defaults.headers.common['Authorization'] = resp.token
-        commit(AUTH_SUCCESS, resp)
-        dispatch(USER_REQUEST)
+        commit('authSuccess', resp)
+        dispatch('userRequest')
         resolve(resp)
       })
       .catch(err => {
-        commit(AUTH_ERROR, err)
+        commit('authError', err)
         localStorage.removeItem('user-token')
         reject(err)
       })
     })
   },
 
-  [AUTH_LOGOUT]: ({rootState, commit, dispatch}) => {
+  authLogout ({rootState, commit}) {
     return new Promise((resolve, reject) => {
         localStorage.removeItem('user-token')
         const {token} = rootState.auth;
-        commit(AUTH_LOGOUT)
+        commit('authLogout')
 
         // apiMock({url: 'user/me/logout', data: {}, method: 'GET'})
         apiAuth.logout(token)
@@ -58,19 +50,19 @@ const actions = {
 }
 
 const mutations = {
-  [AUTH_REQUEST]: (state) => {
+  authRequest (state) {
     state.status = 'loading'
   },
-  [AUTH_SUCCESS]: (state, resp) => {
+  authSuccess (state, resp) {
     state.status = 'success'
     state.token = resp.token
     state.hasLoadedOnce = true
   },
-  [AUTH_ERROR]: (state) => {
+  authError (state) {
     state.status = 'error'
     state.hasLoadedOnce = true
   },
-  [AUTH_LOGOUT]: (state) => {
+  authLogout (state) {
     state.token = ''
   }
 }

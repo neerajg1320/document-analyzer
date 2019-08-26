@@ -48,9 +48,35 @@
 </template>
 
 <script>
-  import {USER_REQUEST} from '../../store/actions/user'
+  // import {USER_REQUEST} from '../../store/actions/user'
   import { mapActions, mapGetters } from 'vuex';
   const resource_name = 'operations';
+
+  const prvFetchResourceFromPath = function (path, component) {
+    const path_split_array = path.split('/');
+
+    var resource_name_from_path = "none";
+    if (path_split_array.length > 2) {
+      resource_name_from_path = path_split_array[2];
+    }
+
+    component.loading = true;
+    // eslint-disable-next-line
+    component.userRequest().then(resp => {
+      // console.log(resp);
+    });
+    const payload = {'resource_name': resource_name_from_path};
+
+    component.fetchResources(payload)
+        .then(resp => {
+          console.log(resp);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    component.loading = false;
+
+  };
 
   export default {
     name: "Resources",
@@ -65,7 +91,8 @@
     },
     computed: mapGetters(['allResources']),
     methods: {
-      ...mapActions(['fetchResources', 'addResource', 'updateResource', 'delResource']),
+      ...mapActions(['fetchResources', 'addResource', 'updateResource', 'delResource',
+                     'userRequest']),
 
       populateResourceToEdit (resource_instance) {
         // eslint-disable-next-line
@@ -99,17 +126,18 @@
       }
     },
 
+    // Resource and Profile have a shared creation code
     async created() {
-      this.loading = true;
-      // eslint-disable-next-line
-      this.$store.dispatch(USER_REQUEST).then(resp => {
-        // console.log(resp);
-      });
-      const payload = {resource_name};
+      console.log("created:", this.$route.path);
+      prvFetchResourceFromPath(this.$route.path, this);
+    },
 
-      await this.fetchResources(payload);
-      this.loading = false;
-    }
+    // https://stackoverflow.com/questions/43461882/update-vuejs-component-on-route-change
+    async beforeRouteUpdate (to, from, next) {
+      console.log("beforeRouteUpdate:", to.path);
+      prvFetchResourceFromPath(to.path, this);
+      next();
+    },
   }
 </script>
 
