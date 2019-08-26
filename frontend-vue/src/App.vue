@@ -8,14 +8,14 @@
 </template>
 
 <script>
-    import navigation from './components/navigation/'
+  import navigation from './components/navigation/NavigationBar'
 
-    export default {
-        name: "App",
-        components: {
-            navigation
-        }
+  export default {
+    name: "App",
+    components: {
+      navigation
     }
+  }
 </script>
 
 <style>

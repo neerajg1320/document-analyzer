@@ -3,7 +3,7 @@
   <div>
     <loading v-if="loading"/>
     <div v-if="isAuthenticated">
-      <feed-item v-for="(feed, index) in fakeFeed" :key="index" :feed="feed"/>
+      <feed-item v-for="(feed, index) in fakeFeed" :key="DogHome" :feed="feed"/>
     </div>
     <div v-if="!isAuthenticated && authStatus !== 'loading'">
       <h1>Welcome to DogeBook !</h1>
@@ -25,7 +25,7 @@
   import fakeFeed from './fakeFeed'
   import FeedItem from './feedItem.vue'
   import { mapGetters } from 'vuex'
-  import Login from '../login'
+  import Login from '../login/Login'
 
   export default {
     components: {

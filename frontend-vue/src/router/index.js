@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// import Home from '../components/doghome'
-import Account from '../components/account'
-import Login from '../components/login'
-import Resource from '../components/resource'
+
+import Account from '../components/profile/Profile'
+import Login from '../components/login/Login'
+import Resource from '../components/resource/Resource'
 import store from '../store'
 
 Vue.use(Router)
@@ -34,7 +34,7 @@ export default new Router({
       beforeEnter: ifAuthenticated,
     },
     {
-      path: '/account',
+      path: '/profile',
       name: 'Account',
       component: Account,
       beforeEnter: ifAuthenticated,
