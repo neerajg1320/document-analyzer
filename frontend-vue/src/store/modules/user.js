@@ -15,15 +15,15 @@ const actions = {
     return new Promise((resolve, reject) => {
       const {token} = rootState.auth;
 
-      commit(USER_REQUEST)
+      commit('userRequest')
 
       apiAuth.getUserProfile(token)
           .then(resp => {
-            commit(USER_SUCCESS, resp);
+            commit('userSuccess', resp);
             resolve(resp);
           })
           .catch(err => {
-            commit(USER_ERROR)
+            commit('userError')
             dispatch(AUTH_LOGOUT)
             reject(err);
           })
@@ -32,14 +32,14 @@ const actions = {
 }
 
 const mutations = {
-  [USER_REQUEST]: (state) => {
+  userRequest (state) {
     state.status = 'loading'
   },
-  [USER_SUCCESS]: (state, resp) => {
+  userSuccess (state, resp) {
     state.status = 'success'
     Vue.set(state, 'profile', resp)
   },
-  [USER_ERROR]: (state) => {
+  userError (state) {
     state.status = 'error'
   },
   [AUTH_LOGOUT]: (state) => {
