@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 import Profile from '../components/profile/Profile'
 import Login from '../components/login/Login'
-import Resource from '../components/resource/Resource'
+import Resource from '../components/resource/ResourceManager'
 import store from '../store'
 
 Vue.use(Router)

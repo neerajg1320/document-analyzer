@@ -45,11 +45,21 @@
                 </b-card>
             </b-col>
         </b-row>
+        <b-row>
+            <b-col>
+                <ResourceList></ResourceList>
+            </b-col>
+            <b-col lg="5">
+                <!--<ResourceDetail></ResourceDetail>-->
+            </b-col>
+        </b-row>
     </div>
 </template>
 
 <script>
   import { mapActions, mapGetters } from 'vuex';
+  import ResourceDetail from './ResourceDetail';
+  import ResourceList from './ResourceList';
 
   function prvGetResourceNameFromPath(path) {
     const path_split_array = path.split('/');
@@ -83,6 +93,7 @@
 
   export default {
     name: "Resources",
+    components: {ResourceDetail, ResourceList},
     data () {
       return {
         'resource_name': 'none',
@@ -103,13 +114,10 @@
       },
 
       populateResourceToEdit (resource_instance) {
-        console.log(resource_instance);
         this.model = Object.assign({}, resource_instance)
-        console.log(this.model);
       },
 
       onCancel() {
-        this.model.id = '';
         this.resetModel();
       },
 
