@@ -1,6 +1,6 @@
 <template>
     <div class="container-fluid mt-4">
-        <h2 class="text-center" style="margin-bottom: 25px">Resource Manager</h2>
+        <h2 class="text-center" style="margin-bottom: 25px">{{resource_name | capitalize}} Manager</h2>
         <b-alert :show="loading" variant="info">Loading...</b-alert>
         <b-row>
             <b-col>
@@ -29,7 +29,7 @@
             </b-col>
             <b-col lg="5">
                 <!-- Form for new resource -->
-                <b-card :title="(model.id ? 'Edit Resource ID#' + model.id : 'New Resource')">
+                <b-card :title="(model.id ? 'Edit ' + resource_name + ' ID#' + model.id : 'New ' + resource_name )">
                     <form @submit.prevent="addInstance">
                         <b-form-group label="Title">
                             <b-form-input type="text" v-model="model.title"></b-form-input>
@@ -39,6 +39,7 @@
                         </b-form-group>
                         <div>
                             <b-btn type="submit" variant="success">Save</b-btn>
+                            <b-btn type="cancel" variant="cancel" @click.prevent="onCancel" >Cancel</b-btn>
                         </div>
                     </form>
                 </b-card>
@@ -49,7 +50,7 @@
 
 <script>
   import { mapActions, mapGetters } from 'vuex';
-  
+
   function prvGetResourceNameFromPath(path) {
     const path_split_array = path.split('/');
 
@@ -104,6 +105,11 @@
         this.model = Object.assign({}, resource_instance)
       },
 
+      onCancel() {
+        this.model.id = '';
+        this.resetModel();
+      },
+
       resetModel() {
         this.model.title = '';
         this.model.body = '';
@@ -132,6 +138,14 @@
           };
           await this.delResource(payload)
         }
+      }
+    },
+
+    filters: {
+      capitalize: function (value) {
+        if (!value) return ''
+        value = value.toString()
+        return value.charAt(0).toUpperCase() + value.slice(1)
       }
     },
 
