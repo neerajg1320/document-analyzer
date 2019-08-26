@@ -36,25 +36,8 @@
       ...mapActions(['setCurrentInstance', 'delResource']),
 
       selectResource(instance) {
-        const payload = {
-          instance
-        };
+        const payload = { instance };
         this.setCurrentInstance(payload);
-      },
-
-      async addInstance() {
-        const payload = {
-          "resource_name": this.resource,
-          "instance": this.currentInstance
-        };
-
-        if (this.instance.id) {
-          await this.updateResource(payload)
-        } else {
-          await this.addResource(payload)
-        }
-
-        this.resetInstance();
       },
 
       async deleteInstance (id) {

@@ -2,7 +2,7 @@
     <div>
         <!-- Form for new resource -->
         <b-card :title="(instance.id ? 'Edit ' + currentResource + ' ID#' + instance.id : 'New ' + currentResource )">
-            <form @submit.prevent="addInstance">
+            <form @submit.prevent="saveInstance">
                 <b-form-group label="Title">
                     <b-form-input type="text" v-model="instance.title"></b-form-input>
                 </b-form-group>
@@ -57,7 +57,7 @@
         this.resetInstance();
       },
 
-      async addInstance() {
+      async saveInstance() {
         const payload = {
           "resource_name": this.currentResource,
           "instance": this.instance
@@ -71,6 +71,14 @@
 
         this.resetInstance();
       },
+    },
+
+    filters: {
+      capitalize: function (value) {
+        if (!value) return ''
+        value = value.toString()
+        return value.charAt(0).toUpperCase() + value.slice(1)
+      }
     },
 
     created() {
