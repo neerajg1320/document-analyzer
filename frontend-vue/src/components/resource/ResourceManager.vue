@@ -29,13 +29,13 @@
             </b-col>
             <b-col lg="5">
                 <!-- Form for new resource -->
-                <b-card :title="(model.id ? 'Edit ' + resource_name + ' ID#' + model.id : 'New ' + resource_name )">
+                <b-card :title="(instance.id ? 'Edit ' + resource_name + ' ID#' + instance.id : 'New ' + resource_name )">
                     <form @submit.prevent="addInstance">
                         <b-form-group label="Title">
-                            <b-form-input type="text" v-model="model.title"></b-form-input>
+                            <b-form-input type="text" v-model="instance.title"></b-form-input>
                         </b-form-group>
                         <b-form-group label="Body">
-                            <b-form-textarea rows="4" v-model="model.body"></b-form-textarea>
+                            <b-form-textarea rows="4" v-model="instance.body"></b-form-textarea>
                         </b-form-group>
                         <div style="text-align: center">
                             <b-btn type="submit" variant="success">Save</b-btn>
@@ -110,14 +110,14 @@
                      'userRequest', 'setCurrentResource']),
 
       resetInstance() {
-        this.model = {
+        this.instance = {
           type: 'Extract',
           parameters: "None"
         };
       },
 
       populateResourceToEdit (resource_instance) {
-        this.model = Object.assign({}, resource_instance)
+        this.instance = Object.assign({}, resource_instance)
       },
 
       onCancel() {

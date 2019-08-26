@@ -41,8 +41,8 @@
       },
 
       currentResource(newValue, oldValue) {
-        console.log(`Updating resource to ${newValue.id} from ${oldValue.id}`);
-        this.instance  = this.instanceInitState;
+        console.log(`Updating resource to '${newValue}' from '${oldValue}'`);
+        this.instance  = Object.assign({}, this.instanceInitState);
       },
     },
 
@@ -50,7 +50,7 @@
       ...mapActions(['addResource', 'updateResource', 'delResource']),
 
       resetInstance() {
-        this.instance = this.instanceInitState;
+        this.instance = Object.assign({}, this.instanceInitState);
       },
 
       onCancel() {
@@ -74,7 +74,6 @@
     },
 
     created() {
-      console.log(this.$route.path);
       this.resetInstance();
     }
   }
