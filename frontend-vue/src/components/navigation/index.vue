@@ -3,20 +3,26 @@
         <!-- https://bootstrap-vue.js.org/docs/components/navbar/ -->
         <b-navbar toggleable="md" type="dark" variant="info">
             <b-navbar-brand to="/">Document Analyzer</b-navbar-brand>
+
             <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
             <b-collapse id="nav-collapse" is-nav>
                 <b-navbar-nav  class="ml-auto">
-                    <b-nav-item v-if="isProfileLoaded" to="/account">
-                        {{name}}
-                    </b-nav-item>
-                    <b-nav-item v-if="isAuthenticated" @click="logout">
-                        <span class="logout">Logout</span>
-                    </b-nav-item>
-                    <b-nav-item v-if="!isAuthenticated && !authLoading" to="/login">
+                    <b-nav-item-dropdown v-if="isAuthenticated" right>
+                        <template slot="button-content"><em>User ({{name}})</em></template>
+                        <b-dropdown-item v-if="isProfileLoaded" to="/account">
+                            Profile
+                        </b-dropdown-item>
+                        <b-dropdown-item v-if="isAuthenticated" @click="logout">
+                            <span class="logout">Logout</span>
+                        </b-dropdown-item>
+
+                    </b-nav-item-dropdown>
+                    <b-dropdown-item v-if="!isAuthenticated && !authLoading" to="/login">
                         Login
-                    </b-nav-item>
+                    </b-dropdown-item>
                 </b-navbar-nav>
             </b-collapse>
+
         </b-navbar>
     </div>
 </template>

@@ -27,7 +27,7 @@
                     </tbody>
                 </table>
             </b-col>
-            <b-col lg="4">
+            <b-col lg="5">
                 <!-- Form for new resource -->
                 <b-card :title="(model.id ? 'Edit Resource ID#' + model.id : 'New Resource')">
                     <form @submit.prevent="addInstance">
@@ -69,7 +69,7 @@
 
       populateResourceToEdit (resource_instance) {
         // eslint-disable-next-line
-        console.log(resource_instance.id);
+        // console.log(resource_instance.id);
 
         this.model = Object.assign({}, resource_instance)
       },
@@ -98,15 +98,15 @@
         }
       }
     },
-    async created() {
-      // this.loading = false;
-      this.$store.dispatch(USER_REQUEST).then(resp => {
-        // eslint-disable-next-line
-        console.log(resp);
-      });
 
-      const payload = {resource_name};
+    async created() {
       this.loading = true;
+      // eslint-disable-next-line
+      this.$store.dispatch(USER_REQUEST).then(resp => {
+        // console.log(resp);
+      });
+      const payload = {resource_name};
+
       await this.fetchResources(payload);
       this.loading = false;
     }
