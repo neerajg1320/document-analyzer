@@ -33,15 +33,18 @@
     },
 
     methods: {
-      ...mapActions(['userRequest', 'setCurrentResource']),
+      ...mapActions(['setCurrentResource']),
 
+      loadResource(resource) {
+        this.resource = resource
+        const payload = { resource };
+        this.setCurrentResource(payload);
+      }
     },
 
     // Resource and Profile have a shared creation code
     async created() {
       console.log("created:", this.$route.path);
-
-      this.userRequest();
 
       this.resource = path.getResourceFromPath(this.$route.path);
       const payload = { 'resource': this.resource };

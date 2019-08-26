@@ -25,26 +25,23 @@
 </style>
 
 <script>
-  import { mapState, mapActions } from 'vuex'
+  import { mapState } from 'vuex'
 
   export default {
     name: 'profile',
     data () {
       return {
-        loading: true
+        loading: false
       }
     },
     computed: mapState({profile: state => state.user.profile}),
     methods: {
-      ...mapActions(['userRequest'])
+
     },
 
     // Resource and Profile have a shared creation code
     async created() {
-      this.loading = true;
-      // eslint-disable-next-line
-      await this.userRequest()
-      this.loading = false;
+
     }
   }
 </script>

@@ -74,7 +74,7 @@
     export default {
         name: 'navigation',
         methods: {
-            ...mapActions(['authLogout']),
+            ...mapActions(['authLogout', 'userRequest']),
 
             logout: function () {
                 this.authLogout()
@@ -88,5 +88,11 @@
                 name: state => `${state.user.profile.name}`,
             })
         },
+
+        created() {
+          if (this.isAuthenticated) {
+            this.userRequest();
+          }
+        }
     }
 </script>
