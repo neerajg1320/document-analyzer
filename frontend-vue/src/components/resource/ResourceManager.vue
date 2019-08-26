@@ -165,6 +165,7 @@
     },
 
     // https://stackoverflow.com/questions/43461882/update-vuejs-component-on-route-change
+    // The reason we have this here is because the ResourceManager receives route update
     async beforeRouteUpdate (to, from, next) {
       console.log("beforeRouteUpdate:", to.path);
       const resource_name = prvGetResourceNameFromPath(to.path);
