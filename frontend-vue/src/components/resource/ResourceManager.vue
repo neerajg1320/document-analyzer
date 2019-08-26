@@ -53,7 +53,12 @@
 
   export default {
     name: "Resources",
-    components: {ResourceDetail, ResourceList},
+
+    components: {
+      ResourceDetail,
+      ResourceList
+    },
+
     data () {
       return {
         'resource_name': 'none',
@@ -61,19 +66,10 @@
         instance: {}
       }
     },
-    computed: mapGetters(['allInstances']),
 
     methods: {
       ...mapActions(['fetchResources', 'userRequest', 'setCurrentResource']),
 
-    },
-
-    filters: {
-      capitalize: function (value) {
-        if (!value) return ''
-        value = value.toString()
-        return value.charAt(0).toUpperCase() + value.slice(1)
-      }
     },
 
     // Resource and Profile have a shared creation code

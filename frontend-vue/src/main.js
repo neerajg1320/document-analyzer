@@ -15,6 +15,17 @@ Vue.use(BootstrapVue);
 Vue.component('loading', Loading);
 Vue.component('center-container', CenterContainer);
 
+Vue.filter('capitalize', function (value) {
+    if (!value) return ''
+    value = value.toString()
+    return value.charAt(0).toUpperCase() + value.slice(1)
+});
+Vue.filter('singularize', function (value) {
+    if (!value) return ''
+    value = value.toString()
+    return value.slice(0, -1);
+});
+
 new Vue({
     router,
     store,

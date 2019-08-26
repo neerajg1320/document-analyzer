@@ -32,6 +32,7 @@
     name: "ResourceList",
     props: ['resource'],
     computed: mapGetters(['allInstances']),
+
     methods: {
       ...mapActions(['setCurrentInstance', 'delResource']),
 
