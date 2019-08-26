@@ -34,9 +34,9 @@
     computed: mapGetters(['allInstances']),
     methods: {
       ...mapActions(['setCurrentInstance', 'delResource']),
+      
       selectResource(instance) {
         const payload = {
-          'resource': this.resource,
           instance
         };
         this.setCurrentInstance(payload);
