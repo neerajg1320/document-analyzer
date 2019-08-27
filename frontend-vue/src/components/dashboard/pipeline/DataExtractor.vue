@@ -22,7 +22,7 @@
 </template>
 
 <script>
-  import ResourceDynamicForm from '../dashboard/ResourceDynamicForm';
+  import ResourceDynamicForm from '../resource/ResourceDynamicForm';
 
 
   export default {

@@ -18,7 +18,7 @@
   import ResourceList from './ResourceList';
   import ResourceDynamicForm from './ResourceDynamicForm'
   import ResourceSimpleForm from './ResourceSimpleForm'
-  import path from '../../utils/path';
+  import path from '../../../utils/path';
 
 
   export default {

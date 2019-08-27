@@ -22,7 +22,7 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
-  import formMixin from './mixin/FormMixin';
+  import formMixin from '../mixin/FormMixin';
 
   export default {
     name: "ResourceDynamicForm",

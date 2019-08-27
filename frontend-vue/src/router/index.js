@@ -3,12 +3,12 @@ import Router from 'vue-router'
 
 import Profile from '../components/profile/Profile'
 import Login from '../components/login/Login'
-import Dashboard from '../components/dashboard/ResouceDashboard'
+import Dashboard from '../components/dashboard/resource/ResouceDashboard'
 
-import PipelineStudio from '../components/pipeline/PipelineStudio'
-import Extractor from '../components/pipeline/DataExtractor'
-import Transformer from '../components/pipeline/DataTransformer'
-import Loader from '../components/pipeline/DataLoader'
+import PipelineStudio from '../components/dashboard/pipeline/PipelineStudio'
+import Extractor from '../components/dashboard/pipeline/DataExtractor'
+import Transformer from '../components/dashboard/pipeline/DataTransformer'
+import Loader from '../components/dashboard/pipeline/DataLoader'
 
 import store from '../store'
 

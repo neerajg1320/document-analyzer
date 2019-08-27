@@ -28,7 +28,7 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
-  import path from '../../utils/path';
+  import path from '../../../utils/path';
 
   export default {
     name: "ResourceList",
