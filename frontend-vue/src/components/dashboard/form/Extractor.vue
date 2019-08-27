@@ -1,5 +1,6 @@
 <template>
     <div>
+        <h3>Extractor</h3>
         <b-form-group label="Title">
             <b-form-input type="text" v-model="instance.title"></b-form-input>
         </b-form-group>
@@ -10,8 +11,12 @@
 </template>
 
 <script>
+  import ResourceDynamicForm from './ResourceDynamicForm';
+
   export default {
-    name: "BasicForm",
+    name: "Extractor",
+    extends: ResourceDynamicForm,
+
 
   }
 </script>
