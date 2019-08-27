@@ -33,6 +33,17 @@
         return this.instance.id ? 'Edit ' + this.resource + ' ID#' + this.instance.id : 'New ' + this.resource;
       }
     },
+
+    data() {
+      return {
+        res: "operation"
+      };
+    },
+
+    created() {
+      this.resource = "operations"
+      this.instance.type = "Extract";
+    }
   }
 </script>
 

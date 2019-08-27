@@ -21,45 +21,11 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
   import formMixin from '../mixin/FormMixin';
 
   export default {
     name: "ResourceDynamicForm",
     mixins: [formMixin],
 
-    computed: {
-      ...mapGetters(['currentResource', 'currentInstance']),
-    },
-
-    data () {
-      return {
-        instanceInitState: {
-          type: 'Extract',
-          parameters: "None"
-        },
-        instance: {},
-        resource: ''
-      }
-    },
-
-    methods: {
-      ...mapActions(['addResource', 'updateResource']),
-
-      async saveInstance() {
-        const payload = {
-          "resource_name": this.currentResource,
-          "instance": this.instance
-        };
-
-        if (this.instance.id) {
-          await this.updateResource(payload)
-        } else {
-          await this.addResource(payload)
-        }
-
-        this.resetInstance();
-      },
-    },
   }
 </script>
