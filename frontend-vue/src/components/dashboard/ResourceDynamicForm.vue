@@ -4,9 +4,12 @@
         <b-card :title="(instance.id ? 'Edit ' + resource + ' ID#' + instance.id : 'New ' + resource )">
             <form @submit.prevent="saveInstance">
 
-                <Extractor v-if="instance.type=='Extract'"></Extractor>
-                <Mapper v-if="instance.type=='Transform'"></Mapper>
-                <Loader v-if="instance.type=='Load'"></Loader>
+                <b-form-group label="Title">
+                    <b-form-input type="text" v-model="instance.title"></b-form-input>
+                </b-form-group>
+                <b-form-group label="Regex">
+                    <b-form-textarea rows="4" v-model="instance.body"></b-form-textarea>
+                </b-form-group>
 
                 <div style="text-align: center">
                     <b-btn type="submit" variant="success">Save</b-btn>
@@ -19,18 +22,9 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
-  import Extractor from './Extractor';
-  import Mapper from './Mapper';
-  import Loader from './Loader';
 
   export default {
     name: "ResourceDynamicForm",
-    components: {
-      Extractor,
-      Mapper,
-      Loader
-    },
-
     data () {
       return {
         instanceInitState: {
@@ -77,16 +71,6 @@
       currentInstance(newValue, oldValue) {
         // eslint-disable-next-line
         console.log(`Updating instance to  ${newValue.id} from ${oldValue.id}`);
-
-        if (newValue.type == 'Extract') {
-          const extractor_parameters = JSON.parse(newValue.parameters);
-          if (extractor_parameters.type == "regex") {
-            console.log(extractor_parameters);
-            const regex_extractor_parameters = extractor_parameters.parameters;
-            console.log(regex_extractor_parameters);
-            this.instance.body = regex_extractor_parameters.regex;
-          }
-        }
 
         if ('id' in newValue) {
           this.instance = Object.assign({}, this.currentInstance);

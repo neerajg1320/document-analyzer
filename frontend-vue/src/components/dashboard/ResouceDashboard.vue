@@ -6,8 +6,8 @@
                 <ResourceList></ResourceList>
             </b-col>
             <b-col lg="5">
-                <!--<ResourceDynamicForm></ResourceDynamicForm>-->
-                <ResourceSimpleForm></ResourceSimpleForm>
+                <ResourceDynamicForm></ResourceDynamicForm>
+                <!--<ResourceSimpleForm></ResourceSimpleForm>-->
             </b-col>
         </b-row>
     </div>
