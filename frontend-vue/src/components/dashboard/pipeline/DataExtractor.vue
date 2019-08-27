@@ -22,35 +22,17 @@
 </template>
 
 <script>
-  import ResourceDynamicForm from '../resource/ResourceDynamicForm';
-
+  import formMixin from '../mixin/FormMixin';
 
   export default {
     name: "Extractor",
-    extends: ResourceDynamicForm,
+    mixins: [formMixin],
 
     computed: {
       title() {
         return this.instance.id ? 'Edit ' + this.resource + ' ID#' + this.instance.id : 'New ' + this.resource;
       }
     },
-    data() {
-      return {
-        resource: "Extractor",
-
-      };
-    },
-
-    methods: {
-        simple() {
-          console.log(JSON.stringify(this.$parent.instance));
-        }
-    },
-
-    created() {
-      this.simple();
-    }
-
   }
 </script>
 
