@@ -32,7 +32,7 @@
 
   export default {
     name: "ResourceList",
-    computed: mapGetters(['currentResource', 'allInstances']),
+    computed: mapGetters(['currentResource', 'currentInstance', 'allInstances']),
 
     data () {
       return {
@@ -56,7 +56,11 @@
           };
           await this.delResource(payload)
 
-          this.setCurrentInstance({'instance': {}});
+          console.log(this.currentInstance.id);
+          if (('id' in this.currentInstance) && (this.currentInstance.id == id))
+          {
+            this.setCurrentInstance({'instance': {}});
+          }
         }
       },
 
