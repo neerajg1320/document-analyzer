@@ -6,7 +6,8 @@
                 <ResourceList></ResourceList>
             </b-col>
             <b-col lg="5">
-                <ResourceDetail></ResourceDetail>
+                <!--<ResourceSimpleForm></ResourceSimpleForm>-->
+                <ResourceFormEncap></ResourceFormEncap>
             </b-col>
         </b-row>
     </div>
@@ -14,15 +15,17 @@
 
 <script>
   import { mapActions } from 'vuex';
-  import ResourceDetail from './ResourceDetail';
+  import ResourceSimpleForm from './ResourceSimpleForm';
   import ResourceList from './ResourceList';
   import path from '../../utils/path';
+  import ResourceFormEncap from "./form/ResourceFormEncap";
 
   export default {
     name: "Dashboard",
 
     components: {
-      ResourceDetail,
+      ResourceSimpleForm,
+      ResourceFormEncap,
       ResourceList
     },
 
