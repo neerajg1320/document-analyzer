@@ -16,7 +16,7 @@
 <script>
   import { mapActions } from 'vuex';
   import ResourceList from './ResourceList';
-  import ResourceDynamicForm from './form/ResourceDynamicForm'
+  import ResourceDynamicForm from './ResourceDynamicForm'
   import ResourceSimpleForm from './ResourceSimpleForm'
   import path from '../../utils/path';
 
@@ -25,7 +25,7 @@
     name: "Dashboard",
 
     components: {
-      ResourceSimpleForm,
+      // ResourceSimpleForm,
       ResourceDynamicForm,
       ResourceList
     },

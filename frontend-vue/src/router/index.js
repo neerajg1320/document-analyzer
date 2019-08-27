@@ -3,7 +3,13 @@ import Router from 'vue-router'
 
 import Profile from '../components/profile/Profile'
 import Login from '../components/login/Login'
-import Dashboard from '../components/dashboard/Dashboard'
+import Dashboard from '../components/dashboard/ResouceDashboard'
+
+import PipelineStudio from '../components/pipeline/PipelineStudio'
+import Extractor from '../components/pipeline/DataExtractor'
+import Transformer from '../components/pipeline/DataTransformer'
+import Loader from '../components/pipeline/DataLoader'
+
 import store from '../store'
 
 Vue.use(Router)
@@ -47,8 +53,32 @@ export default new Router({
     },
     {
       path: '/resource/*',
-      name: 'ResourceManager',
+      name: 'Dashboard',
       component: Dashboard,
+      beforeEnter: ifAuthenticated,
+    },
+    {
+      path: '/pipeline/studio',
+      name: 'PipelineStudio',
+      component: PipelineStudio,
+      beforeEnter: ifAuthenticated,
+    },
+    {
+      path: '/pipeline/extractor',
+      name: 'Extractor',
+      component: Extractor,
+      beforeEnter: ifAuthenticated,
+    },
+    {
+      path: '/pipeline/transformer',
+      name: 'Transformer',
+      component: Transformer,
+      beforeEnter: ifAuthenticated,
+    },
+    {
+      path: '/pipeline/loader',
+      name: 'Extractor',
+      component: Loader,
       beforeEnter: ifAuthenticated,
     },
   ],
