@@ -7,8 +7,8 @@
                 <b-form-group label="Title">
                     <b-form-input type="text" v-model="instance.title"></b-form-input>
                 </b-form-group>
-                <b-form-group label="Regex">
-                    <b-form-textarea rows="4" v-model="instance.body"></b-form-textarea>
+                <b-form-group label="Type">
+                    <b-form-textarea rows="4" v-model="instance.type"></b-form-textarea>
                 </b-form-group>
 
                 <div style="text-align: center">
@@ -22,9 +22,16 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
+  import formMixin from './mixin/FormMixin';
 
   export default {
     name: "ResourceDynamicForm",
+    mixins: [formMixin],
+
+    computed: {
+      ...mapGetters(['currentResource', 'currentInstance']),
+    },
+
     data () {
       return {
         instanceInitState: {
@@ -36,20 +43,8 @@
       }
     },
 
-    computed: {
-      ...mapGetters(['currentResource', 'currentInstance']),
-    },
-
     methods: {
       ...mapActions(['addResource', 'updateResource']),
-
-      resetInstance() {
-        this.instance = Object.assign({}, this.instanceInitState);
-      },
-
-      onCancel() {
-        this.resetInstance();
-      },
 
       async saveInstance() {
         const payload = {
@@ -66,30 +61,5 @@
         this.resetInstance();
       },
     },
-
-    watch: {
-      currentInstance(newValue, oldValue) {
-        // eslint-disable-next-line
-        console.log(`Updating instance to  ${newValue.id} from ${oldValue.id}`);
-
-        if ('id' in newValue) {
-          this.instance = Object.assign({}, this.currentInstance);
-        } else {
-          this.resetInstance();
-        }
-      },
-
-      currentResource(newValue, oldValue) {
-        // eslint-disable-next-line
-        console.log(`Updating resource to '${newValue}' from '${oldValue}'`);
-        this.resource = newValue;
-        this.instance  = Object.assign({}, this.instanceInitState);
-      },
-    },
-
-    created() {
-      this.resetInstance();
-      this.resource = this.currentResource;
-    }
   }
 </script>

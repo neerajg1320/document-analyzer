@@ -1,5 +1,5 @@
 <template>
-    <h1>Mapper</h1>
+    <h3>Mapper</h3>
 </template>
 
 <script>
