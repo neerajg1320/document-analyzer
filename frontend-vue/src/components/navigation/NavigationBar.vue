@@ -15,8 +15,13 @@
                     </b-nav-item-dropdown>
 
                     <b-nav-item-dropdown text="ResourceDashboard" right>
-                        <b-dropdown-item to="/resource/pipelines/">Pipelines</b-dropdown-item>
+                        <b-dropdown-item to="/resource/files/">Files</b-dropdown-item>
+                        <b-dropdown-item to="/resource/documents/">Documents</b-dropdown-item>
+                        <b-dropdown-item to="/resource/schemas/">Schemas</b-dropdown-item>
+                        <b-dropdown-item to="/resource/datastores/">Datastores</b-dropdown-item>
+                        <b-dropdown-item to="/resource/datastoretypes/">DatastoreTypes</b-dropdown-item>
                         <b-dropdown-item to="/resource/operations/">Operations</b-dropdown-item>
+                        <b-dropdown-item to="/resource/pipelines/">Pipelines</b-dropdown-item>
                     </b-nav-item-dropdown>
 
                     <b-nav-item-dropdown right>
