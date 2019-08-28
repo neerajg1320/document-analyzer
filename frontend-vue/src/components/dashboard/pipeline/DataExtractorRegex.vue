@@ -23,12 +23,12 @@
                 </b-form-group>
             </form>
         </b-card>
-        <div style="display: inline-block; width: 95%;">
-            <VueTable
+        <div style="display: inline-block; width: 60%;">
+            <VueTable v-if="table_data && table_data.length"
                     ref="tabulator"
                     v-model="table_data"
                     :options="table_options"
-                    :integration="{ updateStrategy: 'REPLACE' }" >
+                    :integration="{ updateStrategy: 'SET' }" >
             </VueTable>
         </div>
     </div>
@@ -38,6 +38,7 @@
   import formMixin from '../mixin/FormMixin';
   import Etrade from '../presets/etrade/Etrade';
   import { mapActions } from  'vuex';
+
 
   export default {
     name: "Extractor",
