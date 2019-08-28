@@ -1,4 +1,4 @@
-import apiAuth from '../../utils/apiAuth'
+import apiAuth from '../../api/apiAuth'
 // eslint-disable-next-line
 import delayUtil from '../../utils/delayPromise'
 

@@ -1,4 +1,4 @@
-import apiResource from '../../utils/apiResource';
+import apiResource from '../../api/apiResource';
 // eslint-disable-next-line
 import delayUtil from '../../utils/delayPromise';
 

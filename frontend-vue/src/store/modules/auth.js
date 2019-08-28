@@ -1,4 +1,4 @@
-import apiAuth from '../../utils/apiAuth'
+import apiAuth from '../../api/apiAuth'
 
 const state = {
   token: localStorage.getItem('user-token') || '',
