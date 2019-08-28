@@ -29,5 +29,8 @@ export default {
   },
   del (resource, token, id) {
     return apiAxios.execute({client, method:'delete', url:`/${resource}/${id}/`, token})
-  }
+  },
+  action (resource, action, token, data) {
+    return apiAxios.execute({client, method:'post', url:`/${resource}/${action}/`, token, data})
+  },
 }

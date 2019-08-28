@@ -1,7 +1,7 @@
 <template>
-    <div style="margin-top: 10px; margin-bottom: 10px;">
+    <div style=" width:100%;  padding: 20px; text-align: center;">
         <!-- Form for new resource -->
-        <b-card header-tag="header" >
+        <b-card header-tag="header" style="margin-bottom: 20px; width:60%; text-align: left; display: inline-flex;">
             <div slot="header" class="mb-0">
                 {{card_header}}
                 <b-btn type="success" @click="apply" style="float: right;">Apply</b-btn>
@@ -21,21 +21,23 @@
                 <b-form-group label="Sample Text">
                     <b-form-textarea rows="8" cols="80" v-model="sample_str"></b-form-textarea>
                 </b-form-group>
-                <VueTable
-                        ref="tabulator"
-                        v-model="table_data"
-                        :options="table_options"
-                        :integration="{ updateStrategy: 'REPLACE' }" >
-                </VueTable>
-
             </form>
         </b-card>
+        <div style="display: inline-block; width: 100%;">
+            <VueTable
+                    ref="tabulator"
+                    v-model="table_data"
+                    :options="table_options"
+                    :integration="{ updateStrategy: 'REPLACE' }" >
+            </VueTable>
+        </div>
     </div>
 </template>
 
 <script>
   import formMixin from '../mixin/FormMixin';
   import Etrade from '../presets/etrade/Etrade';
+  import { mapActions } from  'vuex';
 
   export default {
     name: "Extractor",
@@ -56,14 +58,16 @@
         regex_str: Etrade.regex_str,
         sample_str: Etrade.sample_str,
 
+
         table_data: [
-          {id:1, value:100},
-          {id:2, value:200}
+          // {id:100, value:"200"},
+          // {id:101, value:"400"},
         ],
 
         table_options: {
           autoColumns: true,
-          layout: "fitColumns"
+          layout: "fitWidth",
+          layoutColumnsOnNewData:true,
 
           // columns: [
           //   {
@@ -85,6 +89,8 @@
     },
 
     methods: {
+      ...mapActions(['actionResource']),
+
       prepareExtractorInstance () {
         const extractor_parameters = {
           type: "regex",
@@ -106,9 +112,25 @@
 
       apply () {
         this.prepareExtractorInstance();
-        let dataframe_json = [{'text': text}];
+        let dataframe_json = [{'text': this.sample_str}];
 
-        console.log(this.instance);
+
+        console.log(this.instance, dataframe_json);
+        const payload = {
+          action: "apply",
+          resource_name: this.resource,
+          data: {
+            "operation_params": JSON.stringify(this.instance),
+            "dataframe_json": JSON.stringify(dataframe_json)
+          },
+        }
+
+        this.actionResource(payload)
+          .then(resp => {
+            console.log(resp.transactions);
+            this.table_data = resp.transactions;
+            console.log(this.$refs.tabulator)
+          });
       },
 
       // This is called by saveInstance from the FormMixin

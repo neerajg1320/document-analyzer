@@ -81,6 +81,12 @@ const actions = {
         await apiResource.del(resource_name, token, id);
         commit('deleteResourceMut', id);
     },
+
+    async actionResource ({rootState}, payload) {
+        const { token } = rootState.auth;
+        const {resource_name, action, data} = payload;
+        return apiResource.action(resource_name, action, token, data);
+    },
 };
 
 const mutations = {
