@@ -3,10 +3,15 @@
         <!-- Form for new resource -->
         <b-card header-tag="header" >
             <div slot="header" class="mb-0">
-                {{title}}
+                {{card_header}}
                 <b-btn type="success" @click="apply" style="float: right;">Apply</b-btn>
             </div>
-            <form @submit.prevent="saveOperationExtractorRegex">
+            <form @submit.prevent="saveInstance">
+                <div style="text-align: center; margin-top: 20px;">
+                    <b-btn type="submit" variant="success">Save</b-btn>
+                    <b-btn type="button" @click.prevent="onCancel" style="margin-left: 10px">Cancel</b-btn>
+                </div>
+
                 <b-form-group label="Title" >
                     <b-form-input type="text" v-model="extractor_title"></b-form-input>
                 </b-form-group>
@@ -22,10 +27,7 @@
                         :options="table_options"
                         :integration="{ updateStrategy: 'REPLACE' }" >
                 </VueTable>
-                <div style="text-align: center; margin-top: 20px;">
-                    <b-btn type="submit" variant="success">Save</b-btn>
-                    <b-btn type="button" @click.prevent="onCancel" style="margin-left: 10px">Cancel</b-btn>
-                </div>
+
             </form>
         </b-card>
     </div>
@@ -39,7 +41,7 @@
     mixins: [formMixin],
 
     computed: {
-      title() {
+      card_header () {
         return this.extractor_id ? this.operator + ' ID#' + this.extractor_id : 'New ' + this.operator;
       }
     },
@@ -86,8 +88,8 @@
         console.log(this.instance);
       },
 
-      async saveOperationExtractorRegex() {
-
+      // This is called by saveInstance from the FormMixin
+      beforeSave () {
         const extractor_parameters = {
           type: "regex",
           parameters: {
@@ -102,12 +104,14 @@
         }
 
         if (this.extractor_id) {
-            this.instance.id = this.extractor_id;
+          this.instance.id = this.extractor_id;
         }
+      },
+    },
 
-        console.log("DataExtractorRegex:saveOperationExtractorRegex", this.instance);
-        this.saveInstance();
-      }
+    // Note the extractor id has to be updated after save
+    afterSave() {
+
     },
 
     created() {

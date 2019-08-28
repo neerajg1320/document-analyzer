@@ -45,6 +45,10 @@ export default {
     },
 
     async saveInstance() {
+      if (this.beforeSave) {
+        this.beforeSave();
+      }
+
       const payload = {
         "resource_name": this.resource,
         "instance": this.instance
