@@ -8,7 +8,10 @@
                     <b-form-input type="text" v-model="instance.title"></b-form-input>
                 </b-form-group>
                 <b-form-group label="Type">
-                    <b-form-textarea rows="4" v-model="instance.type"></b-form-textarea>
+                    <b-form-input type="text" v-model="instance.type"></b-form-input>
+                </b-form-group>
+                <b-form-group label="Parameters">
+                    <b-form-textarea rows="4" v-model="instance.parameters"></b-form-textarea>
                 </b-form-group>
 
                 <div style="text-align: center">
