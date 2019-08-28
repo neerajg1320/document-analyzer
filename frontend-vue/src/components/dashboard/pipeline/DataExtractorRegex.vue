@@ -60,32 +60,14 @@
         extractor_title: "",
         regex_str: Etrade.regex_str,
         sample_str: Etrade.sample_str,
-
-
-        table_data: [
-          // {id:100, value:"200"},
-          // {id:101, value:"400"},
-        ],
+        
+        table_data: [],
 
         table_options: {
           autoColumns: true,
           layout: "fitWidth",
           layoutColumnsOnNewData:true,
-          // columns: [
-          //   {
-          //     title: 'ID',
-          //     field: 'id',
-          //     // width: 200,
-          //     // editor: true,
-          //   },
-          //   {
-          //     title: 'Value',
-          //     field: 'value',
-          //     sorter: 'string',
-          //     // width: 200,
-          //     editor: true,
-          //   },
-          // ],
+          height: "300",
         }
       };
     },
