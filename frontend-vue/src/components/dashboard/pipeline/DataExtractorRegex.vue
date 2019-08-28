@@ -35,6 +35,7 @@
 
 <script>
   import formMixin from '../mixin/FormMixin';
+  import Etrade from '../presets/etrade/Etrade';
 
   export default {
     name: "Extractor",
@@ -50,10 +51,10 @@
       return {
         operator: "Extractor",
 
-        extractor_id:"",
+        extractor_id: "",
         extractor_title: "",
-        regex_str:"",
-        sample_str:"",
+        regex_str: Etrade.regex_str,
+        sample_str: Etrade.sample_str,
 
         table_data: [
           {id:1, value:100},
@@ -84,12 +85,7 @@
     },
 
     methods: {
-      apply () {
-        console.log(this.instance);
-      },
-
-      // This is called by saveInstance from the FormMixin
-      beforeSave () {
+      prepareExtractorInstance () {
         const extractor_parameters = {
           type: "regex",
           parameters: {
@@ -106,6 +102,16 @@
         if (this.extractor_id) {
           this.instance.id = this.extractor_id;
         }
+      },
+
+      apply () {
+        this.prepareExtractorInstance();
+        console.log(this.instance);
+      },
+
+      // This is called by saveInstance from the FormMixin
+      beforeSave () {
+        this.prepareExtractorInstance();
       },
     },
 
