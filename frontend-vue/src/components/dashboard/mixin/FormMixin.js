@@ -13,35 +13,21 @@ export default {
     }
   },
 
-  watch: {
-    currentInstance (newValue, oldValue) {
-      // eslint-disable-next-line
-      console.log(`Updating instance to  ${newValue.id} from ${oldValue.id}`);
-
-      if ('id' in newValue) {
-        this.instance = Object.assign({}, this.currentInstance);
-      } else {
-        this.resetInstance();
-      }
-    },
-
-    currentResource (newValue, oldValue) {
-      // eslint-disable-next-line
-      console.log(`Updating resource to '${newValue}' from '${oldValue}'`);
-      this.resource = newValue;
-      this.instance  = Object.assign({}, this.instanceInitState);
-    },
-  },
-
   methods: {
-    ...mapActions(['addResource', 'updateResource']),
+    ...mapActions(['addResource', 'updateResource', 'setCurrentInstance']),
 
-    resetInstance() {
-      this.instance = Object.assign({}, this.instanceInitState);
+    assignInstance (dstInstance) {
+      this.instance = Object.assign({}, dstInstance);
+    },
+
+    resetInstance () {
+      this.assignInstance(this.instanceInitState);
     },
 
     onCancel() {
       this.resetInstance();
+      const payload = { instance: this.instance };
+      this.setCurrentInstance(payload);
     },
 
     async saveInstance() {
@@ -62,6 +48,26 @@ export default {
         await this.addResource(payload)
       }
 
+      this.resetInstance();
+    },
+  },
+
+  watch: {
+    currentInstance (newValue, oldValue) {
+      // eslint-disable-next-line
+      console.log(`Updating instance to  ${newValue.id} from ${oldValue.id}`);
+
+      if ('id' in newValue) {
+        this.assignInstance(this.currentInstance);
+      } else {
+        this.resetInstance();
+      }
+    },
+
+    currentResource (newValue, oldValue) {
+      // eslint-disable-next-line
+      console.log(`Updating resource to '${newValue}' from '${oldValue}'`);
+      this.resource = newValue;
       this.resetInstance();
     },
   },

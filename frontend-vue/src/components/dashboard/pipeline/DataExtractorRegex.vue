@@ -54,13 +54,15 @@
 
     data() {
       return {
+        // resource, instance belong to formMixin
+
         operator: "Extractor",
 
         extractor_id: "",
         extractor_title: "",
         regex_str: Etrade.regex_str,
         sample_str: Etrade.sample_str,
-        
+
         table_data: [],
 
         table_options: {
@@ -113,7 +115,6 @@
 
         this.actionResource(payload)
           .then(resp => {
-            console.log(resp.transactions);
             this.table_data = resp.transactions;
           });
       },
