@@ -4,7 +4,7 @@
         <b-card header-tag="header" style="margin-bottom: 20px; width:60%; text-align: left; display: inline-flex;">
             <div slot="header" class="mb-0">
                 {{card_header}}
-                <b-btn type="success" @click="apply" style="float: right;">Apply</b-btn>
+                <b-btn type="success" @click="applyExtractor" style="float: right;">Apply</b-btn>
             </div>
             <form @submit.prevent="saveInstance">
                 <div style="text-align: center; margin-top: 20px;">
@@ -23,16 +23,20 @@
                 </b-form-group>
             </form>
         </b-card>
-        <div style="display: inline-block; width: 60%;">
-            <VueTable v-if="table_data && table_data.length"
-                    ref="tabulator"
+
+        <!-- We are using v-show instead of v-if because we need tabulator in this.$refs -->
+        <div v-show="table_data && table_data.length"
+                style="display: inline-block; width: 60%;">
+            <VueTable
+                    ref="vueTable"
                     v-model="table_data"
                     :options="table_options"
                     :integration="{ updateStrategy: 'SET' }"
                     class="thead-dark">
             </VueTable>
-        </div>
 
+            <b-btn @click="downloadTable($refs.vueTable)" style="margin-top: 10px;">Download</b-btn>
+        </div>
     </div>
 </template>
 
@@ -40,7 +44,6 @@
   import formMixin from '../mixin/FormMixin';
   import Etrade from '../presets/etrade/Etrade';
   import { mapActions } from  'vuex';
-
 
   export default {
     name: "Extractor",
@@ -74,6 +77,10 @@
       };
     },
 
+    downloadTable () {
+
+    },
+
     methods: {
       ...mapActions(['actionResource']),
 
@@ -100,7 +107,7 @@
         return [{'text': this.sample_str}];
       },
 
-      apply () {
+      applyExtractor () {
         this.prepareExtractorInstance();
         const dataframeArray = this.prepareDataFrameArray();
 
@@ -115,14 +122,22 @@
 
         this.actionResource(payload)
           .then(resp => {
-            this.table_data = resp.transactions;
+            this.table_data = resp.schema;
           });
+
       },
 
       // This is called by saveInstance from the FormMixin
       beforeSave () {
-        this.prepareExtractorInstance();
+        this.prepareTransformerInstance();
       },
+
+      downloadTable (table_ref) {
+        if (table_ref) {
+          const tabulatorInstance = table_ref.getInstance();
+          tabulatorInstance.download("json", "table.json");
+        }
+      }
     },
 
     // Note the extractor id has to be updated after save
@@ -133,7 +148,8 @@
     created() {
       // This line has to be here as it sets the resource in formMixin
       this.resource = "operations"
-    }
+    },
+
   }
 </script>
 
