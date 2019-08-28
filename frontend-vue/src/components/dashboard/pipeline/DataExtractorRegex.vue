@@ -23,7 +23,7 @@
                 </b-form-group>
             </form>
         </b-card>
-        <div style="display: inline-block; width: 100%;">
+        <div style="display: inline-block; width: 95%;">
             <VueTable
                     ref="tabulator"
                     v-model="table_data"
@@ -129,7 +129,6 @@
           .then(resp => {
             console.log(resp.transactions);
             this.table_data = resp.transactions;
-            console.log(this.$refs.tabulator)
           });
       },
 
