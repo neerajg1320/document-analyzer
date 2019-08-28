@@ -7,10 +7,7 @@ export default {
 
   data () {
     return {
-      instanceInitState: {
-        type: 'Extract',
-        parameters: "None"
-      },
+      instanceInitState: {},
       instance: {},
       resource: ''
     }
@@ -53,6 +50,8 @@ export default {
         "instance": this.instance
       };
 
+      console.log("formMixin:saveInstance");
+      console.log(payload);
       if (this.instance.id) {
         await this.updateResource(payload)
       } else {

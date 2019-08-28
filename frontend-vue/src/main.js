@@ -5,15 +5,18 @@ import store from './store';
 
 import Loading from './components/lib/loading'
 import CenterContainer from './components/lib/center-container'
+Vue.component('loading', Loading);
+Vue.component('center-container', CenterContainer);
 
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-
 Vue.use(BootstrapVue);
 
-Vue.component('loading', Loading);
-Vue.component('center-container', CenterContainer);
+import VueTabulator from 'vue-tabulator';
+Vue.use(VueTabulator, {
+    name: 'VueTable'
+});
 
 Vue.filter('capitalize', function (value) {
     if (!value) return ''
