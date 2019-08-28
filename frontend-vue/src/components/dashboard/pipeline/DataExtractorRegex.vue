@@ -28,9 +28,11 @@
                     ref="tabulator"
                     v-model="table_data"
                     :options="table_options"
-                    :integration="{ updateStrategy: 'SET' }" >
+                    :integration="{ updateStrategy: 'SET' }"
+                    class="thead-dark">
             </VueTable>
         </div>
+
     </div>
 </template>
 
@@ -69,7 +71,6 @@
           autoColumns: true,
           layout: "fitWidth",
           layoutColumnsOnNewData:true,
-
           // columns: [
           //   {
           //     title: 'ID',
@@ -111,18 +112,20 @@
         }
       },
 
+      prepareDataFrameArray () {
+        return [{'text': this.sample_str}];
+      },
+
       apply () {
         this.prepareExtractorInstance();
-        let dataframe_json = [{'text': this.sample_str}];
+        const dataframeArray = this.prepareDataFrameArray();
 
-
-        console.log(this.instance, dataframe_json);
         const payload = {
           action: "apply",
           resource_name: this.resource,
           data: {
             "operation_params": JSON.stringify(this.instance),
-            "dataframe_json": JSON.stringify(dataframe_json)
+            "dataframe_json": JSON.stringify(dataframeArray)
           },
         }
 
