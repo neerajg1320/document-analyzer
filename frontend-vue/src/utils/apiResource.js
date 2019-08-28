@@ -1,5 +1,5 @@
 import axios from "axios";
-import apiDocMiner from './apiAxios';
+import apiAxios from './apiAxios';
 
 
 const baseRequest = {
@@ -12,22 +12,22 @@ const client = axios.create(baseRequest);
 export default {
 
   getList (resource, token) {
-    return apiDocMiner.execute({client, method:'get', url:`/${resource}/`, token})
+    return apiAxios.execute({client, method:'get', url:`/${resource}/`, token})
   },
 
   get (resource, token, id) {
-    return apiDocMiner.execute({client, method:'get', url:`/${resource}/${id}/`, token})
+    return apiAxios.execute({client, method:'get', url:`/${resource}/${id}/`, token})
   },
   post (resource, token, data) {
-    return apiDocMiner.execute({client, method:'post', url:`/${resource}/`, token, data})
+    return apiAxios.execute({client, method:'post', url:`/${resource}/`, token, data})
   },
   put (resource, token, id, data) {
-    return apiDocMiner.execute({client, method:'put', url:`/${resource}/${id}/`, token, data})
+    return apiAxios.execute({client, method:'put', url:`/${resource}/${id}/`, token, data})
   },
   patch (resource, token, id, data) {
-    return apiDocMiner.execute({client, method:'patch', url:`/${resource}/${id}/`, token, data})
+    return apiAxios.execute({client, method:'patch', url:`/${resource}/${id}/`, token, data})
   },
   del (resource, token, id) {
-    return apiDocMiner.execute({client, method:'delete', url:`/${resource}/${id}/`, token})
+    return apiAxios.execute({client, method:'delete', url:`/${resource}/${id}/`, token})
   }
 }
