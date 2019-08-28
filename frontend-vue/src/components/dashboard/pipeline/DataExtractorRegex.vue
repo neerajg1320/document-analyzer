@@ -106,6 +106,8 @@
 
       apply () {
         this.prepareExtractorInstance();
+        let dataframe_json = [{'text': text}];
+
         console.log(this.instance);
       },
 
