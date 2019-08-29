@@ -1,5 +1,18 @@
 <template>
   <div style=" width:100%;  padding: 20px; text-align: center;">
+    <div v-show="true">
+      <div class="smart-table">
+        <VueTable
+            ref="vueMappedTable"
+            v-model="mapped_table_data"
+            :options="mapped_table_options"
+            :integration="{ updateStrategy: 'SET' }"
+            class="thead-dark">
+        </VueTable>
+      </div>
+      <div style="margin-bottom: 40px;"></div>
+    </div>
+
     <b-card header-tag="header" style="margin-bottom: 20px; width:60%; text-align: left; display: inline-flex;">
       <div slot="header" class="mb-0">
         {{card_header}}
@@ -26,11 +39,13 @@
 
 <script>
   import formMixin from '../mixin/FormMixin';
+  import tableMixin from '../mixin/TableMixin';
   import { mapActions } from 'vuex';
+  import Trades from '../presets/etrade/Loader';
 
   export default {
     name: "Loader",
-    mixins: [formMixin],
+    mixins: [formMixin, tableMixin],
 
     computed: {
       card_header () {
@@ -53,6 +68,13 @@
           { value: null, text: 'Please select a Datastore' },
           { value: '4', text: 'Local Postgres' },
         ],
+
+        mapped_table_data: [],
+        mapped_table_options: {
+          autoColumns: true,
+          layout: "fitWidth",
+          layoutColumnsOnNewData:true,
+        },
       };
     },
 
@@ -80,7 +102,7 @@
       },
 
       getDataFrameArray () {
-        return this.getTableJson(this.$refs.vueTable);
+        return this.getTableJson(this.$refs.vueMappedTable);
       },
 
       applyLoader () {
@@ -118,6 +140,7 @@
     created() {
       // This line has to be here as it sets the resource in formMixin
       this.resource = "operations"
+      this.mapped_table_data = JSON.parse(Trades.mapped_trades);
     },
   }
 </script>
