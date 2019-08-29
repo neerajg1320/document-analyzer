@@ -129,13 +129,13 @@
         }
       },
 
-      prepareDataFrameArray () {
+      getDataFrameArray () {
         return [{'text': this.sample_str}];
       },
 
       applyExtractor () {
         this.prepareExtractorInstance();
-        const dataframeArray = this.prepareDataFrameArray();
+        const dataframeArray = this.getDataFrameArray();
 
         const payload = {
           action: "apply",

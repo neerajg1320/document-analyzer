@@ -76,6 +76,18 @@
                 </div>
             </div>
         </b-card>
+        <div v-show="mapped_table_data && mapped_table_data.length" class="smart-table">
+            <VueTable
+                ref="vueMappedTable"
+                v-model="mapped_table_data"
+                :options="mapped_table_options"
+                :integration="{ updateStrategy: 'SET' }"
+                class="thead-dark">
+            </VueTable>
+            <div style="padding: 10px;">
+                <b-btn @click="downloadTable($refs.vueMappedTable)" style="float: right; margin-left: 10px;">Download</b-btn>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -127,9 +139,8 @@
         table_data: [],
         schema_table_data: [],
         mapper_table_data: [],
-        newfields_table_data: [
-          // {"type": "", "temp_name": "", "dst": "", "value":"None"}
-        ],
+        newfields_table_data: [],
+        mapped_table_data: [],
 
         table_options: {
           autoColumns: true,
@@ -263,8 +274,13 @@
               }
             },
           ],
-        }
+        },
 
+        mapped_table_options: {
+          autoColumns: true,
+          layout: "fitWidth",
+          layoutColumnsOnNewData:true,
+        },
 
       };
     },
@@ -273,13 +289,15 @@
       ...mapActions(['actionResource']),
 
       prepareTransformerInstance () {
-        console.log(this.getTableJson(this.$refs.vueMapperTable));
+
+        const newfieldsTableJson = this.getTableJson(this.$refs.vueNewFieldsTable);
+        newfieldsTableJson.forEach(row => row['value'] = row['value'].replace(/\\/g, "\\\\"));
 
         // We need three fields destination_table, existing_fields, new_fields
         const transformer_parameters = {
           destination_table: this.selected,
           existing_fields: JSON.stringify(this.getTableJson(this.$refs.vueMapperTable)),
-          new_fields: JSON.stringify(this.getTableJson(this.$refs.vueNewFieldsTable))
+          new_fields: JSON.stringify(newfieldsTableJson),
         };
 
         // We should assign the instance here
@@ -294,13 +312,13 @@
         }
       },
 
-      prepareDataFrameArray () {
-        return [{'text': this.sample_str}];
+      getDataFrameArray () {
+        return this.getTableJson(this.$refs.vueTable);
       },
 
       applyTransformer () {
         this.prepareTransformerInstance();
-        const dataframeArray = this.prepareDataFrameArray();
+        const dataframeArray = this.getDataFrameArray();
 
         const payload = {
           action: "apply",
@@ -313,7 +331,8 @@
 
         this.actionResource(payload)
           .then(resp => {
-
+            console.log(resp);
+            this.mapped_table_data = JSON.parse(resp.mapped_df_json);
           });
 
       },
