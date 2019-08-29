@@ -37,49 +37,55 @@ const actions = {
     },
 
     async fetchResources({ rootState, commit }, payload) {
-        // This is asynchronous wait
-        // delayUtil.delayPromise(5000, "hello")
-        //     .then(resp => {
-        //         console.log("Delay completed: ", resp);
-        //     });
-
-        // The following in synchronous wait
-        // await delayUtil.delayPromise(5000);
-
-        const { token } = rootState.auth;
-        const { resource } = payload;
-        const response = await apiResource.getList(resource, token);
-        commit('setResourcesMut', response);
-
-        if (debug) {
-            console.log(response);
-        }
+      return new Promise((resolve, reject) => {
+        const {token} = rootState.auth;
+        const {resource} = payload;
+        apiResource.getList(resource, token)
+          .then(resp => {
+            commit('setResourcesMut', resp);
+            resolve(resp)
+          });
+      });
     },
 
     async addResource ({ rootState, commit }, payload) {
-        // await delayUtil.delayPromise(5000);
-
-        const { token } = rootState.auth;
+      return new Promise((resolve, reject) => {
+        const {token} = rootState.auth;
         const {resource_name, instance} = payload;
 
-        const resource = await apiResource.post(resource_name, token, instance);
-        commit('addResourceMut', resource);
-        return resource;
+        apiResource.post(resource_name, token, instance)
+          .then(resp => {
+            commit('addResourceMut', resp);
+            resolve(resp);
+          });
+      });
     },
 
     async updateResource ({ rootState, commit }, payload) {
-        const { token } = rootState.auth;
+      return new Promise((resolve, reject) => {
+        const {token} = rootState.auth;
         const {resource_name, instance} = payload;
 
-        const resource = await apiResource.put(resource_name, token, instance.id, instance);
-        commit('updateResourceMut', resource);
+        apiResource.put(resource_name, token, instance.id, instance)
+          .then(resp => {
+            commit('updateResourceMut', resp);
+            resolve(resp);
+          });
+
+      });
     },
 
     async delResource ({ rootState, commit }, payload) {
-        const { token } = rootState.auth;
+      return new Promise((resolve, reject) => {
+        const {token} = rootState.auth;
         const {resource_name, id} = payload;
-        await apiResource.del(resource_name, token, id);
-        commit('deleteResourceMut', id);
+        apiResource.del(resource_name, token, id)
+          .then(resp => {
+            commit('deleteResourceMut', id);
+            resolve(resp);
+          });
+
+      });
     },
 
     async actionResource ({rootState}, payload) {

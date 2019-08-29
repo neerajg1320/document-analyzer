@@ -38,7 +38,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       if (operation.id) {
         commit('addOperationMut', operation)
-
+        console.log(rootState.pipeline.operations);
       } else {
         const {token} = rootState.auth;
         apiResource.post('operations', token, operation)

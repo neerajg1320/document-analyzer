@@ -165,9 +165,8 @@
         this.prepareOperatorInstance();
       },
 
-      // Note the extractor id has to be updated after save
-      afterSave() {
-
+      afterSave (instance) {
+        this.operator_id = instance.id;
       },
     },
 

@@ -41,11 +41,16 @@ export default {
       };
 
       console.log("formMixin:saveInstance", payload);
-      console.log(payload);
+
+      var resp = {};
       if (this.instance.id) {
-        await this.updateResource(payload)
+        resp = await this.updateResource(payload);
       } else {
-        await this.addResource(payload)
+        resp = await this.addResource(payload);
+      }
+
+      if (this.afterSave) {
+        this.afterSave(resp);
       }
 
       this.resetInstance();
