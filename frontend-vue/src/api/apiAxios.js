@@ -2,7 +2,7 @@ const debug = true;
 
 export default {
 
-  async execute ({ client, method, url, auth_token, data }) {
+  async execute ({ client, method, url, token, data }) {
     // When you authenticate with OIDC, an access token is persisted locally
     // in the browser.
     // Inject the accessToken for each request
@@ -17,11 +17,11 @@ export default {
     }
 
     const headers = {};
-    if (auth_token) {
-      headers.Authorization = `token ${auth_token}`;
+    if (token) {
+      headers.Authorization = `token ${token}`;
     }
 
-    if (headers.length > 0) {
+    if (Object.keys(headers).length > 0) {
       request.headers = headers;
     }
 
