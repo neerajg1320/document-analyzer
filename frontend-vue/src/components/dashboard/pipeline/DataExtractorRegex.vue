@@ -55,12 +55,13 @@
 
 <script>
   import formMixin from '../mixin/FormMixin';
+  import tableMixin from '../mixin/TableMixin';
   import Etrade from '../presets/etrade/Etrade';
   import { mapActions } from  'vuex';
 
   export default {
     name: "Extractor",
-    mixins: [formMixin],
+    mixins: [formMixin, tableMixin],
 
     computed: {
       card_header () {
@@ -96,10 +97,6 @@
           height: "300",
         },
       };
-    },
-
-    downloadTable () {
-
     },
 
     methods: {
@@ -153,15 +150,6 @@
       beforeSave () {
         this.prepareTransformerInstance();
       },
-
-      downloadTable (table_ref) {
-        if (table_ref) {
-          const tabulatorInstance = table_ref.getInstance();
-          if (tabulatorInstance) {
-            tabulatorInstance.download("json", "table.json");
-          }
-        }
-      }
     },
 
     // Note the extractor id has to be updated after save

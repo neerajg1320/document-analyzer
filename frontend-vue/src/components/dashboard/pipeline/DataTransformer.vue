@@ -54,7 +54,7 @@
                         :integration="{ updateStrategy: 'SET' }"
                         class="thead-dark">
                 </VueTable>
-                <b-btn @click="addRowNewFieldTable(newfields_table_data)" style="margin-top: 10px;">Add</b-btn>
+                <b-btn @click="addEmptyRow(newfields_table_data)" style="margin-top: 10px;">Add</b-btn>
             </div>
         </b-card>
 
@@ -63,6 +63,7 @@
 
 <script>
   import formMixin from '../mixin/FormMixin';
+  import tableMixin from '../mixin/TableMixin';
   import Trades from '../presets/etrade/Trades';
   import { mapActions } from  'vuex';
 
@@ -82,7 +83,7 @@
 
   export default {
     name: "Transformer",
-    mixins: [formMixin],
+    mixins: [formMixin, tableMixin],
 
     computed: {
       card_header () {
