@@ -684,6 +684,13 @@ $("#btn_download_mapper").click(function () {
     g_document_mapper_table.download("json", "mapper.json");
 });
 
+$("#btn_upload_newfields_table").click(function () {
+    g_document_mapper_newfields_table.setDataFromLocalFile();
+});
+
+$("#btn_download_newfields_table").click(function () {
+    g_document_mapper_newfields_table.download("json", "mapper.json");
+});
 
 $("#btn_documentize").click(function() {
     var file_id = $("#input_file_id").val();
