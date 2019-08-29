@@ -27,28 +27,36 @@
         <!-- We are using v-show instead of v-if because we need tabulator in this.$refs -->
         <div v-show="table_data && table_data.length"
              style="display: inline-block; width: 60%;">
-            <VueTable
+            <div class="smart-table">
+                <VueTable
                     ref="vueTable"
                     v-model="table_data"
                     :options="table_options"
                     :integration="{ updateStrategy: 'SET' }"
                     class="thead-dark">
-            </VueTable>
-
-            <b-btn @click="downloadTable($refs.vueTable)" style="margin-top: 10px;">Download</b-btn>
+                </VueTable>
+                <div v-if="false" style="padding: 10px;">
+                    <b-btn @click="downloadTable($refs.vueTable)" style="float: right; margin-left: 10px;">Download</b-btn>
+                    <b-btn @click="uploadTable($refs.vueTable)" style="float: right;">Upload</b-btn>
+                </div>
+            </div>
         </div>
         <div style="margin-bottom: 20px;"></div>
         <div v-show="table_data && table_data.length"
                 style="display: inline-block; width: 60%;">
-            <VueTable
+            <div class="smart-table">
+                <VueTable
                     ref="vueSchemaTable"
                     v-model="schema_table_data"
                     :options="schema_table_options"
                     :integration="{ updateStrategy: 'SET' }"
                     class="thead-dark">
-            </VueTable>
-
-            <b-btn @click="downloadTable($refs.vueTable)" style="margin-top: 10px;">Download</b-btn>
+                </VueTable>
+                <div  v-if="false" style="padding: 10px;">
+                    <b-btn @click="downloadTable($refs.vueSchemaTable)" style="float: right; margin-left: 10px;">Download</b-btn>
+                    <b-btn @click="uploadTable($refs.vueSchemaTable)" style="float: right;">Upload</b-btn>
+                </div>
+            </div>
         </div>
     </div>
 </template>

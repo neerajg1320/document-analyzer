@@ -3,21 +3,21 @@
         <!-- We are using v-show instead of v-if because we need tabulator in this.$refs -->
         <div v-show="false" style="display: inline-block; width: 80%;">
             <VueTable
-                    ref="vueTable"
-                    v-model="table_data"
-                    :options="table_options"
-                    :integration="{ updateStrategy: 'SET' }"
-                    class="thead-dark">
+                ref="vueTable"
+                v-model="table_data"
+                :options="table_options"
+                :integration="{ updateStrategy: 'SET' }"
+                class="thead-dark">
             </VueTable>
         </div>
 
         <div v-show="false"  style="display: inline-block; width: 80%;">
             <VueTable
-                    ref="vueSchemaTable"
-                    v-model="schema_table_data"
-                    :options="table_options"
-                    :integration="{ updateStrategy: 'SET' }"
-                    class="thead-dark">
+                ref="vueSchemaTable"
+                v-model="schema_table_data"
+                :options="table_options"
+                :integration="{ updateStrategy: 'SET' }"
+                class="thead-dark">
             </VueTable>
         </div>
 
@@ -38,26 +38,37 @@
 
             </form>
             <div style="margin-bottom: 40px;"></div>
-            <div>
-                <VueTable
+            <div style="text-align: center;">
+                <div class="smart-table">
+                    <VueTable
                         ref="vueMapperTable"
                         v-model="mapper_table_data"
                         :options="mapper_table_options"
                         :integration="{ updateStrategy: 'SET' }"
                         class="thead-dark">
-                </VueTable>
+                    </VueTable>
+                    <div style="padding: 10px;">
+                        <b-btn @click="downloadTable($refs.vueMapperTable)" style="float: right; margin-left: 10px;">Download</b-btn>
+                        <b-btn @click="uploadTable($refs.vueMapperTable)" style="float: right;">Upload</b-btn>
+                    </div>
+                </div>
                 <div style="margin-bottom: 40px;"></div>
-                <VueTable
+                <div class="smart-table">
+                    <VueTable
                         ref="vueNewFieldsTable"
                         v-model="newfields_table_data"
                         :options="newfields_table_options"
                         :integration="{ updateStrategy: 'SET' }"
                         class="thead-dark">
-                </VueTable>
-                <b-btn @click="addEmptyRow(newfields_table_data)" style="margin-top: 10px;">Add</b-btn>
+                    </VueTable>
+                    <div style="padding: 10px;">
+                        <b-btn @click="addEmptyRow(newfields_table_data)" style="float: left;">Add</b-btn>
+                        <b-btn @click="downloadTable($refs.vueNewFieldsTable)" style="float: right; margin-left: 10px;">Download</b-btn>
+                        <b-btn @click="uploadTable($refs.vueNewFieldsTable)" style="float: right;">Upload</b-btn>
+                    </div>
+                </div>
             </div>
         </b-card>
-
     </div>
 </template>
 
@@ -105,7 +116,7 @@
         schema_table_data: [],
         mapper_table_data: [],
         newfields_table_data: [
-          {"type": "", "temp_name": "", "dst": "", "value":"None"}
+          // {"type": "", "temp_name": "", "dst": "", "value":"None"}
         ],
 
         table_options: {
@@ -306,12 +317,6 @@
         this.prepareTransformerInstance();
       },
 
-      downloadTable () {
-        if (this.table_ref) {
-          const tabulatorInstance = this.table_ref.getInstance();
-          tabulatorInstance.download("json", "table.json");
-        }
-      }
     },
 
     // Note the transformer id has to be updated after save
