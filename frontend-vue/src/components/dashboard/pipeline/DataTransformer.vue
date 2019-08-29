@@ -11,7 +11,7 @@
             </VueTable>
         </div>
 
-        <div v-show="false"  style="display: inline-block; width: 80%;">
+        <div v-show="false" style="display: inline-block; width: 80%;">
             <VueTable
                 ref="vueSchemaTable"
                 v-model="schema_table_data"
@@ -26,17 +26,24 @@
                 {{card_header}}
                 <b-btn type="success" @click="applyTransformer" style="float: right;">Apply</b-btn>
             </div>
+
             <form @submit.prevent="saveInstance">
                 <div style="text-align: center; margin-top: 20px;">
                     <b-btn type="submit" variant="success">Save</b-btn>
                     <b-btn type="button" @click.prevent="onCancel" style="margin-left: 10px">Cancel</b-btn>
                 </div>
 
-                <b-form-group label="Title" >
-                    <b-form-input type="text" v-model="transformer_title"></b-form-input>
-                </b-form-group>
+                <div style="width: 40%;">
+                    <b-form-group label="Title" >
+                        <b-form-input type="text" v-model="transformer_title"></b-form-input>
+                    </b-form-group>
 
+                    <b-form-group label="Schema" >
+                        <b-form-select v-model="selected" :options="options"></b-form-select>
+                    </b-form-group>
+                </div>
             </form>
+
             <div style="margin-bottom: 40px;"></div>
             <div style="text-align: center;">
                 <div class="smart-table">
@@ -75,7 +82,7 @@
 <script>
   import formMixin from '../mixin/FormMixin';
   import tableMixin from '../mixin/TableMixin';
-  import Trades from '../presets/etrade/Trades';
+  import Trades from '../presets/etrade/Transformer';
   import { mapActions } from  'vuex';
 
   let temp_mapper_type_edit_check = function(cell){
@@ -108,9 +115,14 @@
 
         operator: "Transformer",
         transformer_id: "",
-        transformer_title: "",
+        transformer_title: "EVT",
 
-        table_ref: "",
+        selected: '2',
+        options: [
+              { value: null, text: 'Please select an option' },
+              { value: '2', text: 'Contract Note' },
+              { value: '7', text: 'Bank Statement' },
+        ],
 
         table_data: [],
         schema_table_data: [],
@@ -261,18 +273,21 @@
       ...mapActions(['actionResource']),
 
       prepareTransformerInstance () {
+        console.log(this.getTableJson(this.$refs.vueMapperTable));
+
+        // We need three fields destination_table, existing_fields, new_fields
         const transformer_parameters = {
-          type: "regex",
-          parameters: {
-            regex: this.regex_str
-          }
-        }
+          destination_table: this.selected,
+          existing_fields: JSON.stringify(this.getTableJson(this.$refs.vueMapperTable)),
+          new_fields: JSON.stringify(this.getTableJson(this.$refs.vueNewFieldsTable))
+        };
+
         // We should assign the instance here
         this.instance = {
           title: this.transformer_title,
           type: "Transform",
           parameters: JSON.stringify(transformer_parameters)
-        }
+        };
 
         if (this.transformer_id) {
           this.instance.id = this.transformer_id;
@@ -298,8 +313,7 @@
 
         this.actionResource(payload)
           .then(resp => {
-            this.table_data = resp.transactions;
-            this.table_ref = this.$refs.vueTable;
+
           });
 
       },

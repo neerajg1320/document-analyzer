@@ -64,7 +64,7 @@
 <script>
   import formMixin from '../mixin/FormMixin';
   import tableMixin from '../mixin/TableMixin';
-  import Etrade from '../presets/etrade/Etrade';
+  import Etrade from '../presets/etrade/Extractor';
   import { mapActions } from  'vuex';
 
   export default {

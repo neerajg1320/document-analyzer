@@ -9,6 +9,15 @@
         this.addRow(table_data, {})
       },
 
+      getTableJson(table_ref) {
+        if (table_ref) {
+          const tabulatorInstance = table_ref.getInstance();
+          if (tabulatorInstance) {
+            return tabulatorInstance.getData("json");
+          }
+        }
+      },
+
       downloadTable(table_ref) {
         if (table_ref) {
           const tabulatorInstance = table_ref.getInstance();
