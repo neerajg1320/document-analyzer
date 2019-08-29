@@ -3,7 +3,7 @@ import delayUtil from "../../utils/delayPromise";
 import apiResource from "../../api/apiResource";
 
 const state = {
-  id: "",
+  pipeline_id: "",
   operations: [],
 
   input_file_path: "",
@@ -54,22 +54,19 @@ const actions = {
   savePipeline ({rootState, commit, dispatch}) {
     return new Promise((resolve, reject) => {
       const {token} = rootState.auth;
+      const pipeline = {
+        "title": "EVP-101",
+        "institute_name": "Etrade",
+        "document_type": "ContractNote",
+        "operations": rootState.pipeline.operations,
+      };
 
-      commit('userRequest')
-
-      apiAuth.getUserProfile(token)
+      apiResource.post('pipelines', token, pipeline)
         .then(resp => {
-          delayUtil.delayPromise(rootState.user.forceDelay)
-            .then(() => {
-              commit('userSuccess', resp);
-              resolve(resp);
-            })
-        })
-        .catch(err => {
-          commit('userError')
-          dispatch('authLogout') // This needs to be corrected or accepted
-          reject(err);
-        })
+          commit('setPipelineId', resp.id);
+          console.log(resp);
+          resolve(resp);
+        });
     });
   },
 
@@ -78,6 +75,10 @@ const actions = {
 
 
 const mutations = {
+  setPipelineId(state, id) {
+    state.pipeline_id = id;
+  },
+
   setRawTable (state, table_data) {
     state.raw_table_data = table_data;
   },

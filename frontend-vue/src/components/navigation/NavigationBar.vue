@@ -12,6 +12,7 @@
                         <b-dropdown-item to="/pipeline/extractor/">Extractor</b-dropdown-item>
                         <b-dropdown-item to="/pipeline/transformer">Transformer</b-dropdown-item>
                         <b-dropdown-item to="/pipeline/loader">Loader</b-dropdown-item>
+                        <b-dropdown-item @click="onClickSavePipeline">Save Pipeline</b-dropdown-item>
                     </b-nav-item-dropdown>
 
                     <b-nav-item-dropdown text="ResourceDashboard" right>
@@ -88,12 +89,16 @@
     export default {
         name: 'navigation',
         methods: {
-            ...mapActions(['authLogout', 'userRequest']),
+            ...mapActions(['authLogout', 'userRequest', 'savePipeline']),
 
             logout: function () {
                 this.authLogout()
                     .then(() => this.$router.push('/login'))
-            }
+            },
+
+            onClickSavePipeline () {
+                this.savePipeline();
+            },
         },
         computed: {
             ...mapGetters(['getProfile', 'isAuthenticated', 'isProfileLoaded']),
