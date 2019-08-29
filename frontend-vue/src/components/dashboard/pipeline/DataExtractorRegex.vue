@@ -26,11 +26,24 @@
 
         <!-- We are using v-show instead of v-if because we need tabulator in this.$refs -->
         <div v-show="table_data && table_data.length"
-                style="display: inline-block; width: 60%;">
+             style="display: inline-block; width: 60%;">
             <VueTable
                     ref="vueTable"
                     v-model="table_data"
                     :options="table_options"
+                    :integration="{ updateStrategy: 'SET' }"
+                    class="thead-dark">
+            </VueTable>
+
+            <b-btn @click="downloadTable($refs.vueTable)" style="margin-top: 10px;">Download</b-btn>
+        </div>
+        <div style="margin-bottom: 20px;"></div>
+        <div v-show="table_data && table_data.length"
+                style="display: inline-block; width: 60%;">
+            <VueTable
+                    ref="vueSchemaTable"
+                    v-model="schema_table_data"
+                    :options="schema_table_options"
                     :integration="{ updateStrategy: 'SET' }"
                     class="thead-dark">
             </VueTable>
@@ -67,13 +80,21 @@
         sample_str: Etrade.sample_str,
 
         table_data: [],
+        schema_table_data: [],
 
         table_options: {
           autoColumns: true,
           layout: "fitWidth",
           layoutColumnsOnNewData:true,
           height: "300",
-        }
+        },
+
+        schema_table_options:  {
+          autoColumns: true,
+          layout: "fitWidth",
+          layoutColumnsOnNewData:true,
+          height: "300",
+        },
       };
     },
 
@@ -122,7 +143,8 @@
 
         this.actionResource(payload)
           .then(resp => {
-            this.table_data = resp.schema;
+            this.table_data = resp.transactions;
+            this.schema_table_data = resp.schema;
           });
 
       },
@@ -135,7 +157,9 @@
       downloadTable (table_ref) {
         if (table_ref) {
           const tabulatorInstance = table_ref.getInstance();
-          tabulatorInstance.download("json", "table.json");
+          if (tabulatorInstance) {
+            tabulatorInstance.download("json", "table.json");
+          }
         }
       }
     },
