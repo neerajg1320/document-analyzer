@@ -1,0 +1,116 @@
+[
+	{
+		"src": "trade_date",
+		"srctype": "datetime64[ns]",
+		"select": true,
+		"dst": "trade_date"
+	},
+	{
+		"src": "setl_date",
+		"srctype": "datetime64[ns]",
+		"select": true,
+		"dst": "setl_date"
+	},
+	{
+		"src": "mkt",
+		"srctype": "object",
+		"select": true,
+		"dst": "mkt"
+	},
+	{
+		"src": "cap",
+		"srctype": "object",
+		"select": true,
+		"dst": "cap"
+	},
+	{
+		"src": "symbol",
+		"srctype": "object",
+		"select": true,
+		"dst": "symbol"
+	},
+	{
+		"src": "trade_type",
+		"srctype": "object",
+		"select": true,
+		"dst": "trade_type"
+	},
+	{
+		"src": "trade_qty",
+		"srctype": "object",
+		"select": true,
+		"dst": "trade_qty"
+	},
+	{
+		"src": "trade_rate",
+		"srctype": "object",
+		"select": true,
+		"dst": "trade_rate"
+	},
+	{
+		"src": "acct_type",
+		"srctype": "object",
+		"select": true,
+		"dst": "acct_type"
+	},
+	{
+		"src": "marker_principal",
+		"srctype": "object",
+		"select": true,
+		"dst": "marker_principal"
+	},
+	{
+		"src": "principal",
+		"srctype": "object",
+		"select": true,
+		"dst": "principal"
+	},
+	{
+		"src": "option",
+		"srctype": "object",
+		"select": true,
+		"dst": "option"
+	},
+	{
+		"src": "opt_type",
+		"srctype": "object",
+		"select": true,
+		"dst": "opt_type"
+	},
+	{
+		"src": "opt_name",
+		"srctype": "object",
+		"select": true,
+		"dst": "opt_name"
+	},
+	{
+		"src": "expiry_date",
+		"srctype": "datetime64[ns]",
+		"select": true,
+		"dst": "expiry_date"
+	},
+	{
+		"src": "strike_price",
+		"srctype": "object",
+		"select": true,
+		"dst": "strike_price"
+	},
+	{
+		"src": "scrip_commission_fee",
+		"srctype": "object",
+		"select": true,
+		"dst": "scrip_commission_fee"
+	},
+	{
+		"src": "marker_net_amount",
+		"srctype": "object",
+		"select": true,
+		"dst": "marker_net_amount"
+	},
+	{
+		"src": "net_amount",
+		"srctype": "object",
+		"select": true,
+		"dst": "net_amount"
+	}
+]
