@@ -1,37 +1,48 @@
 <template>
     <div style=" width:100%;  padding: 20px; text-align: center;">
 
-        <!-- We are using v-show instead of v-if because we need ref vueTable in this.$refs -->
-        <div v-show="false" style="display: inline-block; width: 80%;">
-            <VueTable
-                ref="vueTable"
-                v-model="table_data"
-                :options="table_options"
-                :integration="{ updateStrategy: 'SET' }"
-                class="thead-dark">
-            </VueTable>
+        <div v-show="true" style="display: inline-block; width: 80%;">
+            <!-- We are using v-show instead of v-if because we need ref vueInputTable in this.$refs -->
+            <div class="smart-table">
+                <VueTable
+                    ref="vueInputTable"
+                    v-model="table_data"
+                    :options="table_options"
+                    :integration="{ updateStrategy: 'SET' }"
+                    class="thead-dark">
+                </VueTable>
+                <div style="padding: 10px;">
+                    <b-btn @click="uploadTable($refs.vueInputTable)" style="float: right;">Upload</b-btn>
+                </div>
+            </div>
+            <div style="margin-bottom: 40px;"></div>
+            <div class="smart-table">
+                <VueTable
+                    ref="vueSchemaTable"
+                    v-model="schema_table_data"
+                    :options="table_options"
+                    :integration="{ updateStrategy: 'SET' }"
+                    class="thead-dark">
+                </VueTable>
+                <div style="padding: 10px;">
+                    <b-btn @click="uploadTable($refs.vueSchemaTable)" style="float: right;">Upload</b-btn>
+                </div>
+            </div>
+            <div style="margin-bottom: 40px;"></div>
         </div>
 
-        <div v-show="false" style="display: inline-block; width: 80%;">
-            <VueTable
-                ref="vueSchemaTable"
-                v-model="schema_table_data"
-                :options="table_options"
-                :integration="{ updateStrategy: 'SET' }"
-                class="thead-dark">
-            </VueTable>
-        </div>
 
-        <b-card header-tag="header" style="margin-bottom: 20px; width:80%; text-align: left; display: inline-flex;">
+        <b-card header-tag="header" style="width:80%; text-align: left; display: inline-flex;">
             <div slot="header" class="mb-0">
                 {{card_header}}
-                <b-btn type="success" @click="applyTransformer" style="float: right;">Apply</b-btn>
+                <b-btn type="success" @click="applyOperator" style="float: right;">Apply</b-btn>
             </div>
 
             <form @submit.prevent="saveInstance">
                 <div style="text-align: center; margin-top: 20px;">
                     <b-btn type="submit" variant="success">Save</b-btn>
                     <b-btn type="button" @click.prevent="onCancel" style="margin-left: 10px">Cancel</b-btn>
+                    <b-btn type="button" @click.prevent="addToPipeline" style="float: right">Pipeline</b-btn>
                 </div>
 
                 <div style="width: 40%;">
@@ -79,15 +90,16 @@
         </b-card>
 
         <div v-show="mapped_table_data && mapped_table_data.length" class="smart-table">
+            <div style="margin-bottom: 40px;"></div>
             <VueTable
-                ref="vueMappedTable"
+                ref="vueOutputTable"
                 v-model="mapped_table_data"
                 :options="mapped_table_options"
                 :integration="{ updateStrategy: 'SET' }"
                 class="thead-dark">
             </VueTable>
             <div style="padding: 10px;">
-                <b-btn @click="downloadTable($refs.vueMappedTable)" style="float: right; margin-left: 10px;">Download</b-btn>
+                <b-btn @click="downloadTable($refs.vueOutputTable)" style="float: right; margin-left: 10px;">Download</b-btn>
             </div>
         </div>
     </div>
@@ -135,7 +147,7 @@
         options: [
               { value: null, text: 'Please select a Schema' },
               { value: '2', text: 'Contract Note' },
-              { value: '7', text: 'Bank Statement' },
+              { value: '11', text: 'Bank Statement' },
         ],
 
         table_data: [],
@@ -288,9 +300,17 @@
     },
 
     methods: {
-      ...mapActions(['actionResource']),
+      ...mapActions(['actionResource', 'addOperationToPipeline']),
 
-      prepareTransformerInstance () {
+      addToPipeline () {
+        this.prepareOperatorInstance();
+        this.addOperationToPipeline(this.instance)
+          .then(resp => {
+            console.log(resp);
+          })
+      },
+
+      prepareOperatorInstance () {
 
         const newfieldsTableJson = this.getTableJson(this.$refs.vueNewFieldsTable);
         newfieldsTableJson.forEach(row => row['value'] = row['value'].replace(/\\/g, "\\\\"));
@@ -315,11 +335,11 @@
       },
 
       getDataFrameArray () {
-        return this.getTableJson(this.$refs.vueTable);
+        return this.getTableJson(this.$refs.vueInputTable);
       },
 
-      applyTransformer () {
-        this.prepareTransformerInstance();
+      applyOperator () {
+        this.prepareOperatorInstance();
         const dataframeArray = this.getDataFrameArray();
 
         const payload = {
@@ -341,7 +361,7 @@
 
       // This is called by saveInstance from the FormMixin
       beforeSave () {
-        this.prepareTransformerInstance();
+        this.prepareOperatorInstance();
       },
 
       // Note the transformer id has to be updated after save

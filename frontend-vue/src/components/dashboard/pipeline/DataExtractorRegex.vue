@@ -4,12 +4,13 @@
         <b-card header-tag="header" style="margin-bottom: 20px; width:60%; text-align: left; display: inline-flex;">
             <div slot="header" class="mb-0">
                 {{card_header}}
-                <b-btn type="success" @click="applyExtractor" style="float: right;">Apply</b-btn>
+                <b-btn type="success" @click="applyOperator" style="float: right;">Apply</b-btn>
             </div>
             <form @submit.prevent="saveInstance">
                 <div style="text-align: center; margin-top: 20px;">
                     <b-btn type="submit" variant="success">Save</b-btn>
                     <b-btn type="button" @click.prevent="onCancel" style="margin-left: 10px">Cancel</b-btn>
+                    <b-btn type="button" @click.prevent="addToPipeline" style="float: right">Pipeline</b-btn>
                 </div>
 
                 <b-form-group label="Title" >
@@ -26,7 +27,7 @@
 
         <!-- We are using v-show instead of v-if because we need tabulator in this.$refs -->
         <div v-show="table_data && table_data.length"
-             style="display: inline-block; width: 60%;">
+             style="display: inline-block; width: 80%;">
             <div class="smart-table">
                 <VueTable
                     ref="vueTable"
@@ -40,10 +41,7 @@
                     <b-btn @click="uploadTable($refs.vueTable)" style="float: right;">Upload</b-btn>
                 </div>
             </div>
-        </div>
-        <div style="margin-bottom: 20px;"></div>
-        <div v-show="table_data && table_data.length"
-                style="display: inline-block; width: 60%;">
+            <div style="margin-bottom: 20px;"></div>
             <div class="smart-table">
                 <VueTable
                     ref="vueSchemaTable"
@@ -84,7 +82,7 @@
         operator: "Extractor",
 
         operator_id: "",
-        operator_title: "",
+        operator_title: "Ext-101",
         regex_str: Etrade.regex_str,
         sample_str: Etrade.sample_str,
 
@@ -108,9 +106,17 @@
     },
 
     methods: {
-      ...mapActions(['actionResource']),
+      ...mapActions(['actionResource', 'addOperationToPipeline']),
 
-      prepareExtractorInstance () {
+      addToPipeline () {
+        this.prepareOperatorInstance();
+        this.addOperationToPipeline(this.instance)
+          .then(resp => {
+            console.log(resp);
+          })
+      },
+
+      prepareOperatorInstance () {
         const extractor_parameters = {
           type: "regex",
           parameters: {
@@ -133,8 +139,8 @@
         return [{'text': this.sample_str}];
       },
 
-      applyExtractor () {
-        this.prepareExtractorInstance();
+      applyOperator () {
+        this.prepareOperatorInstance();
         const dataframeArray = this.getDataFrameArray();
 
         const payload = {
@@ -156,7 +162,7 @@
 
       // This is called by saveInstance from the FormMixin
       beforeSave () {
-        this.prepareTransformerInstance();
+        this.prepareOperatorInstance();
       },
 
       // Note the extractor id has to be updated after save
