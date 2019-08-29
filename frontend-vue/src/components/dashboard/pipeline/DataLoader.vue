@@ -9,6 +9,9 @@
             :integration="{ updateStrategy: 'SET' }"
             class="thead-dark">
         </VueTable>
+        <div style="padding: 10px;">
+          <b-btn @click="uploadTable($refs.vueMappedTable)" style="float: right;">Upload</b-btn>
+        </div>
       </div>
       <div style="margin-bottom: 40px;"></div>
     </div>
@@ -63,7 +66,7 @@
 
         datastore_table: "Trades",
 
-        selected: '2',
+        selected: '4',
         options: [
           { value: null, text: 'Please select a Datastore' },
           { value: '4', text: 'Local Postgres' },
