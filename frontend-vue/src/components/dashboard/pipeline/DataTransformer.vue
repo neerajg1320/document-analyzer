@@ -1,6 +1,7 @@
 <template>
     <div style=" width:100%;  padding: 20px; text-align: center;">
-        <!-- We are using v-show instead of v-if because we need tabulator in this.$refs -->
+
+        <!-- We are using v-show instead of v-if because we need ref vueTable in this.$refs -->
         <div v-show="false" style="display: inline-block; width: 80%;">
             <VueTable
                 ref="vueTable"
@@ -35,7 +36,7 @@
 
                 <div style="width: 40%;">
                     <b-form-group label="Title" >
-                        <b-form-input type="text" v-model="transformer_title"></b-form-input>
+                        <b-form-input type="text" v-model="operator_title"></b-form-input>
                     </b-form-group>
 
                     <b-form-group label="Schema" >
@@ -76,6 +77,7 @@
                 </div>
             </div>
         </b-card>
+
         <div v-show="mapped_table_data && mapped_table_data.length" class="smart-table">
             <VueTable
                 ref="vueMappedTable"
@@ -117,7 +119,7 @@
 
     computed: {
       card_header () {
-        return this.transformer_id ? this.operator + ' ID#' + this.transformer_id : 'New ' + this.operator;
+        return this.operator_id ? this.operator + ' ID#' + this.operator_id : 'New ' + this.operator;
       }
     },
 
@@ -126,12 +128,12 @@
         // resource, instance belong to formMixin
 
         operator: "Transformer",
-        transformer_id: "",
-        transformer_title: "EVT",
+        operator_id: "",
+        operator_title: "EVT",
 
         selected: '2',
         options: [
-              { value: null, text: 'Please select an option' },
+              { value: null, text: 'Please select a Schema' },
               { value: '2', text: 'Contract Note' },
               { value: '7', text: 'Bank Statement' },
         ],
@@ -302,13 +304,13 @@
 
         // We should assign the instance here
         this.instance = {
-          title: this.transformer_title,
+          title: this.operator_title,
           type: "Transform",
           parameters: JSON.stringify(transformer_parameters)
         };
 
-        if (this.transformer_id) {
-          this.instance.id = this.transformer_id;
+        if (this.operator_id) {
+          this.instance.id = this.operator_id;
         }
       },
 
@@ -342,12 +344,14 @@
         this.prepareTransformerInstance();
       },
 
+      // Note the transformer id has to be updated after save
+      afterSave() {
+
+      },
+
     },
 
-    // Note the transformer id has to be updated after save
-    afterSave() {
 
-    },
 
     created() {
       // This line has to be here as it sets the resource in formMixin

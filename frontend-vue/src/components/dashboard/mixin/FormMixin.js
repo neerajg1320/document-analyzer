@@ -40,7 +40,7 @@ export default {
         "instance": this.instance
       };
 
-      console.log("formMixin:saveInstance");
+      console.log("formMixin:saveInstance", payload);
       console.log(payload);
       if (this.instance.id) {
         await this.updateResource(payload)

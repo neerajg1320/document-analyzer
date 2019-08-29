@@ -1,6 +1,6 @@
 <template>
     <div style=" width:100%;  padding: 20px; text-align: center;">
-        <!-- Form for new resource -->
+
         <b-card header-tag="header" style="margin-bottom: 20px; width:60%; text-align: left; display: inline-flex;">
             <div slot="header" class="mb-0">
                 {{card_header}}
@@ -13,7 +13,7 @@
                 </div>
 
                 <b-form-group label="Title" >
-                    <b-form-input type="text" v-model="extractor_title"></b-form-input>
+                    <b-form-input type="text" v-model="operator_title"></b-form-input>
                 </b-form-group>
                 <b-form-group label="Regex">
                     <b-form-textarea rows="8" cols="80" v-model="regex_str"></b-form-textarea>
@@ -73,7 +73,7 @@
 
     computed: {
       card_header () {
-        return this.extractor_id ? this.operator + ' ID#' + this.extractor_id : 'New ' + this.operator;
+        return this.operator_id ? this.operator + ' ID#' + this.operator_id : 'New ' + this.operator;
       }
     },
 
@@ -83,8 +83,8 @@
 
         operator: "Extractor",
 
-        extractor_id: "",
-        extractor_title: "",
+        operator_id: "",
+        operator_title: "",
         regex_str: Etrade.regex_str,
         sample_str: Etrade.sample_str,
 
@@ -119,13 +119,13 @@
         }
         // We should assign the instance here
         this.instance = {
-          title: this.extractor_title,
+          title: this.operator_title,
           type: "Extract",
           parameters: JSON.stringify(extractor_parameters)
         }
 
-        if (this.extractor_id) {
-          this.instance.id = this.extractor_id;
+        if (this.operator_id) {
+          this.instance.id = this.operator_id;
         }
       },
 
@@ -158,11 +158,11 @@
       beforeSave () {
         this.prepareTransformerInstance();
       },
-    },
 
-    // Note the extractor id has to be updated after save
-    afterSave() {
+      // Note the extractor id has to be updated after save
+      afterSave() {
 
+      },
     },
 
     created() {
