@@ -335,8 +335,11 @@
       this.resource = "operations"
       this.table_data = JSON.parse(Trades.raw_trades);
       this.schema_table_data = JSON.parse(Trades.raw_trades_schema);
-      this.mapper_table_data = this.schema_table_data;
-      this.mapper_table_data.forEach(row => row['mapping'] = "RENAME");
+
+      this.mapper_table_data = JSON.parse(Trades.existing_fields_mapper_table);
+      // this.mapper_table_data.forEach(row => row['mapping'] = "RENAME");
+      this.newfields_table_data = JSON.parse(Trades.newfields_transformer_table);
+
     },
 
   }

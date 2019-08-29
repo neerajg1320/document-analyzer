@@ -211,6 +211,7 @@ export default {
 		"net_amount": "$290.17"
 	}
 ]`,
+
   raw_trades_schema: String.raw`[
 	{
 		"src": "trade_date",
@@ -327,4 +328,164 @@ export default {
 		"dst": "net_amount"
 	}
 ]`,
+
+  existing_fields_mapper_table: String.raw`[
+	{
+		"src": "trade_date",
+		"srctype": "datetime64[ns]",
+		"select": true,
+		"dst": "TransactionDate",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "setl_date",
+		"srctype": "datetime64[ns]",
+		"select": true,
+		"dst": "SettlementDate",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "mkt",
+		"srctype": "object",
+		"select": true,
+		"dst": "mkt",
+		"mapping": "IGNORE"
+	},
+	{
+		"src": "cap",
+		"srctype": "object",
+		"select": true,
+		"dst": "cap",
+		"mapping": "IGNORE"
+	},
+	{
+		"src": "symbol",
+		"srctype": "object",
+		"select": true,
+		"dst": "symbol",
+		"mapping": "IGNORE"
+	},
+	{
+		"src": "trade_type",
+		"srctype": "object",
+		"select": true,
+		"dst": "TradeType",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "trade_qty",
+		"srctype": "object",
+		"select": true,
+		"dst": "Quantity",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "trade_rate",
+		"srctype": "object",
+		"select": true,
+		"dst": "Rate",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "acct_type",
+		"srctype": "object",
+		"select": true,
+		"dst": "acct_type",
+		"mapping": "IGNORE"
+	},
+	{
+		"src": "marker_principal",
+		"srctype": "object",
+		"select": true,
+		"dst": "marker_principal",
+		"mapping": "IGNORE"
+	},
+	{
+		"src": "principal",
+		"srctype": "object",
+		"select": true,
+		"dst": "PrincipalAmount",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "option",
+		"srctype": "object",
+		"select": true,
+		"dst": "option",
+		"mapping": "IGNORE"
+	},
+	{
+		"src": "opt_type",
+		"srctype": "object",
+		"select": true,
+		"dst": "Scrip",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "opt_name",
+		"srctype": "object",
+		"select": true,
+		"dst": "Scrip",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "expiry_date",
+		"srctype": "datetime64[ns]",
+		"select": true,
+		"dst": "Scrip",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "strike_price",
+		"srctype": "object",
+		"select": true,
+		"dst": "Scrip",
+		"mapping": "RENAME"
+	},
+	{
+		"src": "scrip_commission_fee",
+		"srctype": "object",
+		"select": true,
+		"dst": "Summary",
+		"mapping": "SPLIT_REGEX_DYNAMIC"
+	},
+	{
+		"src": "marker_net_amount",
+		"srctype": "object",
+		"select": true,
+		"dst": "marker_net_amount",
+		"mapping": "IGNORE"
+	},
+	{
+		"src": "net_amount",
+		"srctype": "object",
+		"select": true,
+		"dst": "NetAmount",
+		"mapping": "RENAME"
+	}
+]
+`,
+
+  newfields_transformer_table: String.raw`[
+	{
+		"active": true,
+		"type": "Generate-Regex",
+		"src": "scrip_commission_fee",
+		"value": "{\"regex\": \"(?P<Scrip>.*)[\\s](?:COMMISSION)[\\s](?:[$]?)(?P<Commission>[.\\d]+)[\\s](?P<FeeStr_str>[\\s\\S]*)\"}"
+	},
+	{
+		"active": true,
+		"type": "Generate-Regex",
+		"temp_name": "FeeStr",
+		"value": "{\"regex\": \"(?:.*)[$](?P<Fee1_float_0>[.\\d]+)(?:[\\s](?P<Fee2_float_0>[.\\d]+))?(?:[\\s](?P<Fee3_float_0>[.\\d]+))?\"}"
+	},
+	{
+		"active": true,
+		"type": "Generate-Final",
+		"dst": "Fees",
+		"value": "df.apply (lambda row: float(row['Fee1']) + float(row['Fee2']) + float(row['Fee3']), axis=1)"
+	}
+]`,
+
+
 }

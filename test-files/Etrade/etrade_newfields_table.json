@@ -2,14 +2,14 @@
 	{
 		"active": true,
 		"type": "Generate-Regex",
-		"temp_name": "FeeStr",
-		"value": "{\"regex\": \"(?:.*)[$](?P<Fee1_float_0>[.\\d]+)(?:[\\s](?P<Fee2_float_0>[.\\d]+))?(?:[\\s](?P<Fee3_float_0>[.\\d]+))?\"}"
+		"src": "scrip_commission_fee",
+		"value": "{\"regex\": \"(?P<Scrip>.*)[\\s](?:COMMISSION)[\\s](?:[$]?)(?P<Commission>[.\\d]+)[\\s](?P<FeeStr_str>[\\s\\S]*)\"}"
 	},
 	{
 		"active": true,
 		"type": "Generate-Regex",
-		"src": "scrip_commission_fee",
-		"value": "{\"regex\": \"(?P<Scrip>.*)[\\s](?:COMMISSION)[\\s](?:[$]?)(?P<Commission>[.\\d]+)[\\s](?P<FeeStr_str>[\\s\\S]*)\"}"
+		"temp_name": "FeeStr",
+		"value": "{\"regex\": \"(?:.*)[$](?P<Fee1_float_0>[.\\d]+)(?:[\\s](?P<Fee2_float_0>[.\\d]+))?(?:[\\s](?P<Fee3_float_0>[.\\d]+))?\"}"
 	},
 	{
 		"active": true,
