@@ -59,6 +59,7 @@ const actions = {
         "institute_name": "Etrade",
         "document_type": "ContractNote",
         "operations": rootState.pipeline.operations,
+        "operations_json" : JSON.stringify(rootState.pipeline.operations),
       };
 
       apiResource.post('pipelines', token, pipeline)
