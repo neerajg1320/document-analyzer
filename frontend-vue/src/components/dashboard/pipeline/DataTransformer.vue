@@ -257,16 +257,8 @@
       };
     },
 
-    downloadTable () {
-
-    },
-
     methods: {
       ...mapActions(['actionResource']),
-
-      addRowNewFieldTable (table_data) {
-        table_data.push({});
-      },
 
       prepareTransformerInstance () {
         const transformer_parameters = {
