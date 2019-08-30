@@ -315,6 +315,14 @@
 
       },
 
+
+      // unloadInstance is called from Mixin's created hence refs won't be available.
+      unloadInstance (parameters) {
+        this.selected = parameters.destination_table;
+        this.mapper_table_data = JSON.parse(parameters.existing_fields);
+        this.newfields_table_data = JSON.parse(parameters.new_fields);
+      },
+
       // Called by apply operation
       getDataFrameArray () {
         return this.getTableJson(this.$refs.vueInputTable);
@@ -326,9 +334,14 @@
       },
     },
 
+    mounted () {
+      console.log(this.$options.name, ".mounted().$refs: ", this.$refs);
+    },
 
     created() {
-      console.log('DataTransformer.created:', JSON.stringify(this.instance));
+      console.log('DataTransformer.created:');
+
+      console.log(this.$options.name, ".created().$refs: ", this.$refs);
 
       this.operator_title = "EVT";
       this.operator_type = "Transformer";

@@ -117,21 +117,27 @@
 
       },
 
+      // This is called before created() from the DataOperatorCompMixin's created
+      unloadInstance (parameters) {
+        this.regex_str = parameters.parameters.regex;
+      },
+
       // Called by apply operation
       getDataFrameArray () {
         return [{'text': this.sample_str}];
       },
 
       // Need to see if 'this' behaves properly, this is called from callback in applyOperation
-      applyOperatorCompleted(resp) {
+      applyOperatorCompleted (resp) {
         console.log(resp);
         this.table_data = resp.transactions;
         this.schema_table_data = resp.schema;
       },
+
     },
 
     created() {
-      console.log('DataExtractorRegex.created:', JSON.stringify(this.instance));
+      console.log('DataExtractorRegex.created:', this.instance);
       this.operator_title = "EVE"
       this.operator_type = "Extractor"
 

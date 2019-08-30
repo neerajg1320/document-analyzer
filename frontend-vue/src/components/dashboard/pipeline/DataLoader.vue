@@ -93,6 +93,10 @@
 
       },
 
+      unloadInstance (parameters) {
+        console.log(parameters);
+      },
+
       // Called by apply operation
       getDataFrameArray () {
         return this.getTableJson(this.$refs.vueMappedTable);

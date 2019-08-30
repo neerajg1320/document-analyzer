@@ -62,7 +62,16 @@
       console.log('DataOperatorCompMixin.created:');
 
       // This line has to be here as it sets the resource in formMixin
-      this.resource = "operations"
+      this.resource = "operations";
+
+      if (this.instance.parameters) {
+        const parameters = JSON.parse(this.instance.parameters);
+        if (parameters) {
+          if (this.unloadInstance) {
+            this.unloadInstance(parameters);
+          }
+        }
+      }
     }
   }
 </script>

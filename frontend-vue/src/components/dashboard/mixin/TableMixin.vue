@@ -18,6 +18,16 @@
         }
       },
 
+      setTableJson(table_ref, table_json) {
+        if (table_ref) {
+          const tabulatorInstance = table_ref.getInstance();
+          if (tabulatorInstance) {
+            console.log(table_json);
+            return tabulatorInstance.setData(table_json);
+          }
+        }
+      },
+
       downloadTable(table_ref) {
         if (table_ref) {
           const tabulatorInstance = table_ref.getInstance();
