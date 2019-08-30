@@ -62,7 +62,7 @@
 
 <script>
   import tableMixin from '../mixin/TableMixin';
-  import dataOperatorMixin from '../mixin/DataOperatorMixin';
+  import dataOperatorMixin from '../mixin/DataOperatorCompMixin';
 
   import Etrade from '../presets/etrade/Extractor';
   import { mapActions } from  'vuex';

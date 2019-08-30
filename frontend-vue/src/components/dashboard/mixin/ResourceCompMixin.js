@@ -83,8 +83,7 @@ export default {
     // this.resetInstance();
     this.resource = this.currentResource;
     this.instance = this.currentInstance;
-
-    console.log('FormMixin.created:', this.resource);
-    console.log('FormMixin.created:', this.instance);
+    
+    console.log('ResourceCompMixin.created:', this.resource, this.instance);
   },
 }

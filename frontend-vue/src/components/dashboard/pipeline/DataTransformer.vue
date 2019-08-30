@@ -107,7 +107,7 @@
 
 <script>
   import tableMixin from '../mixin/TableMixin';
-  import dataOperatorMixin from '../mixin/DataOperatorMixin';
+  import dataOperatorMixin from '../mixin/DataOperatorCompMixin';
 
   import Trades from '../presets/etrade/Transformer';
   import { mapActions } from  'vuex';

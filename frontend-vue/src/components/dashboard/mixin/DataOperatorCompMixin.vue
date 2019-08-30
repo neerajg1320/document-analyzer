@@ -1,9 +1,9 @@
 <script>
-  import formMixin from './FormMixin'
+  import resourceCompMixin from './ResourceCompMixin'
 
   export default {
     props: ['mode'],
-    mixins: [formMixin],
+    mixins: [resourceCompMixin],
 
     computed: {
       card_header () {
@@ -19,7 +19,7 @@
     },
 
     created () {
-      console.log('DataOperatorMixin.created:');
+      console.log('DataOperatorCompMixin.created:');
 
       // This line has to be here as it sets the resource in formMixin
       this.resource = "operations"
