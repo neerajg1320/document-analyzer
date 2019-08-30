@@ -35,21 +35,14 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
-  import formMixin from '../mixin/ResourceCompMixin';
+  import resourceCompMixin from '../mixin/ResourceCompMixin';
   import DataExtractorRegex from '../pipeline/DataExtractorRegex';
   import DataTransformer from '../pipeline/DataTransformer';
   import DataLoader from '../pipeline/DataLoader';
 
   export default {
     name: "ResourceDynamicForm",
-    mixins: [formMixin],
+    mixins: [resourceCompMixin],
     components: { DataExtractorRegex, DataTransformer, DataLoader },
-
-    computed: {
-      ...mapGetters(['currentResource']),
-
-    },
-
   }
 </script>
