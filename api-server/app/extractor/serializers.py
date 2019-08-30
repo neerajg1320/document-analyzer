@@ -150,7 +150,7 @@ class PipelineSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Pipeline
-        fields = ('id', 'title', 'institute_name', 'document_type', 'operations')
+        fields = ('id', 'title', 'institute_name', 'document_type', 'operations', 'operations_json')
         read_only_fields = ('id',)
 
 

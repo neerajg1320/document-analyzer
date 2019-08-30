@@ -1534,9 +1534,22 @@ def apply_loader_on_dataframe(loader_parameters, df):
 def apply_pipeline_on_text(file_text, pipeline):
     current_df = pd.DataFrame()
 
+    operations_array = pipeline.operations.all()
+
+    operations_order_array = json.loads(pipeline.operations_json)
+
+    if operations_order_array and len(operations_order_array):
+        sorted_operations_array = []
+        for op_id in operations_order_array:
+            for op in operations_array:
+                if op.id == op_id:
+                    sorted_operations_array.append(op)
+                    break
+        operations_array = sorted_operations_array
+
     # We need the pipeline operations array in order
     # TBD
-    for operation in pipeline.operations.all():
+    for operation in operations_array:
         # frameinfo = getframeinfo(currentframe())
         # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), "%s" % (operation.type))
         parameters = json.loads(operation.parameters)

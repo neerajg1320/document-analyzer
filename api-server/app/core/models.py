@@ -236,3 +236,4 @@ class Pipeline(models.Model):
     document_type = models.CharField(max_length=255, blank=False)
     title = models.CharField(max_length=128, blank=False)
     operations = models.ManyToManyField('Operation')
+    operations_json = models.CharField(max_length=2048, blank=False)
