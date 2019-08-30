@@ -133,7 +133,7 @@
 
     computed: {
       card_header () {
-        return this.operator_id ? this.operator + ' ID#' + this.operator_id : 'New ' + this.operator;
+        return this.operator_id ? this.operator_type + ' ID#' + this.operator_id : 'New ' + this.operator_type;
       }
     },
 
@@ -141,7 +141,7 @@
       return {
         // resource, instance belong to formMixin
 
-        operator: "Transformer",
+        operator_type: "Transformer",
         operator_id: "",
         operator_title: "EVT",
 

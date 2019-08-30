@@ -61,7 +61,6 @@
 </template>
 
 <script>
-  import formMixin from '../mixin/FormMixin';
   import tableMixin from '../mixin/TableMixin';
   import dataOperatorMixin from '../mixin/DataOperatorMixin';
 
@@ -70,21 +69,14 @@
 
   export default {
     name: "Extractor",
-    mixins: [formMixin, tableMixin, dataOperatorMixin],
+    mixins: [tableMixin, dataOperatorMixin],
 
-    computed: {
-      card_header () {
-        return this.instance.id ? this.operator + ' ID#' + this.instance.id : 'New ' + this.operator;
-      }
-    },
+
 
     data() {
       return {
         // resource, instance belong to formMixin
 
-        operator: "Extractor",
-
-        operator_title: "Ext-101",
         regex_str: Etrade.regex_str,
         sample_str: Etrade.sample_str,
 
@@ -171,8 +163,8 @@
 
     created() {
       console.log('DataExtractorRegex.created:', JSON.stringify(this.instance));
-      // This line has to be here as it sets the resource in formMixin
-      this.resource = "operations"
+      this.operator_title = "Ext-101"
+      this.operator_type = "Extractor"
     },
 
   }
