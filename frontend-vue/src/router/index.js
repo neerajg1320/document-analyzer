@@ -61,7 +61,7 @@ export default new Router({
       component: Dashboard,
       beforeEnter: ifAuthenticated,
     },
-
+ 
     // PipelineStudio
     {
       path: '/pipeline/extractor',
@@ -79,7 +79,7 @@ export default new Router({
     },
     {
       path: '/pipeline/loader',
-      name: 'Extractor',
+      name: 'Loader',
       component: Loader,
       props: { mode: 'studio' },
       beforeEnter: ifAuthenticated,

@@ -1,18 +1,18 @@
 <template>
     <div>
 
-        <div v-if="instance.type == 'Extract'">
+        <div v-if="resource == 'operations' && instance.type == 'Extract'">
             <DataExtractorRegex></DataExtractorRegex>
         </div>
-        <div v-if="instance.type == 'Transform'">
+        <div v-if="resource == 'operations' && instance.type == 'Transform'">
             <DataTransformer></DataTransformer>
         </div>
-        <div v-if="instance.type == 'Load'">
+        <div v-if="resource == 'operations' && instance.type == 'Load'">
             <DataLoader></DataLoader>
         </div>
 
         <!-- Form for new resource -->
-        <b-card v-if="this.resource != 'operations'" :title="(instance.id ? 'Edit ' + resource + ' ID#' + instance.id : 'New ' + resource )">
+        <b-card v-if="resource != 'operations'" :title="(instance.id ? 'Edit ' + resource + ' ID#' + instance.id : 'New ' + resource )">
             <form @submit.prevent="saveInstance">
 
                 <b-form-group label="Title">

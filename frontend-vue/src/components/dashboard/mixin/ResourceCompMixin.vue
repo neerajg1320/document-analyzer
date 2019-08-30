@@ -1,3 +1,4 @@
+<script>
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -83,7 +84,8 @@ export default {
     // this.resetInstance();
     this.resource = this.currentResource;
     this.instance = this.currentInstance;
-    
+
     console.log('ResourceCompMixin.created:', this.resource, this.instance);
   },
 }
+</script>

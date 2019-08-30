@@ -149,13 +149,13 @@
 
         table_options: {
           autoColumns: true,
-          layout: "fitWidth",
+          layout: "fitData",
           layoutColumnsOnNewData:true,
           height: "300",
         },
 
         mapper_table_options: {
-          layout: "fitWidth",
+          layout: "fitData",
           layoutColumnsOnNewData:true,
           height: "300",
           movableRows: true,
@@ -206,13 +206,13 @@
         },
 
         newfields_table_options : {
-          layout: "fitWidth",
+          layout: "fitData",
           layoutColumnsOnNewData: true,
           height: "300",
           movableRows: true,
 
           columns:[
-            {title:"Active", field:"active", editor:"tick", formatter:"tick", editable:true},
+            {title:"Active", field:"active", editor:"tickCross", formatter:"tickCross", editable:true},
             {title:"Rule-Type", field:"type", editor:"select", editable:true, editorParams: function(cell) {
                 console.log(cell.getRow().getData());
 
@@ -283,7 +283,7 @@
 
         mapped_table_options: {
           autoColumns: true,
-          layout: "fitWidth",
+          layout: "fitData",
           layoutColumnsOnNewData:true,
         },
 
