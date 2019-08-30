@@ -83,14 +83,14 @@
 
         table_options: {
           autoColumns: true,
-          layout: "fitWidth",
+          layout: "fitData",
           layoutColumnsOnNewData:true,
           height: "300",
         },
 
         schema_table_options:  {
           autoColumns: true,
-          layout: "fitWidth",
+          layout: "fitData",
           layoutColumnsOnNewData:true,
           height: "300",
         },
@@ -122,27 +122,12 @@
         return [{'text': this.sample_str}];
       },
 
-      applyOperator () {
-        this.prepareOperatorInstance();
-        const dataframeArray = this.getDataFrameArray();
-
-        const payload = {
-          action: "apply",
-          resource_name: this.resource,
-          data: {
-            "operation_params": JSON.stringify(this.instance),
-            "dataframe_json": JSON.stringify(dataframeArray)
-          },
-        }
-
-        this.actionResource(payload)
-          .then(resp => {
-            this.table_data = resp.transactions;
-            this.schema_table_data = resp.schema;
-          });
-
+      // Need to see if 'this' behaves properly, this is called from callback in applyOperation
+      applyOperatorCompleted(resp) {
+        console.log(resp);
+        this.table_data = resp.transactions;
+        this.schema_table_data = resp.schema;
       },
-
     },
 
     created() {

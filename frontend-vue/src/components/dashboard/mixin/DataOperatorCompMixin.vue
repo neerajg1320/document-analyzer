@@ -35,6 +35,27 @@
       afterSave (saved_instance) {
 
       },
+
+
+      applyOperator () {
+        this.prepareOperatorInstance();
+        const dataframeArray = this.getDataFrameArray();
+
+        const payload = {
+          action: "apply",
+          resource_name: this.resource,
+          data: {
+            "operation_params": JSON.stringify(this.instance),
+            "dataframe_json": JSON.stringify(dataframeArray)
+          },
+        }
+
+        const $this = this;
+        this.actionResource(payload)
+          .then(resp => {
+            $this.applyOperatorCompleted(resp);
+          });
+      },
     },
 
     created () {

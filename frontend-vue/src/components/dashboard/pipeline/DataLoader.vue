@@ -66,7 +66,7 @@
         mapped_table_data: [],
         mapped_table_options: {
           autoColumns: true,
-          layout: "fitWidth",
+          layout: "fitData",
           layoutColumnsOnNewData:true,
         },
       };
@@ -98,27 +98,10 @@
         return this.getTableJson(this.$refs.vueMappedTable);
       },
 
-      applyOperator () {
-        this.prepareOperatorInstance();
-        const dataframeArray = this.getDataFrameArray();
-
-        const payload = {
-          action: "apply",
-          resource_name: this.resource,
-          data: {
-            "operation_params": JSON.stringify(this.instance),
-            "dataframe_json": JSON.stringify(dataframeArray)
-          },
-        }
-
-        this.actionResource(payload)
-          .then(resp => {
-            console.log(resp);
-
-          });
-
+      // Need to see if 'this' behaves properly, this is called from callback in applyOperation
+      applyOperatorCompleted(resp) {
+        console.log(resp);
       },
-
     },
 
 
