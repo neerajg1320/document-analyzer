@@ -5,6 +5,8 @@ export default {
     ...mapGetters(['currentResource', 'currentInstance']),
   },
 
+  props: ['init'],
+
   data () {
     return {
       instanceInitState: {},
@@ -78,8 +80,10 @@ export default {
   },
 
   created() {
-    this.resetInstance();
+    // this.resetInstance();
     this.resource = this.currentResource;
+    this.instance = this.currentInstance;
+
     console.log('FormMixin.created:', this.resource);
     console.log('FormMixin.created:', this.instance);
   },
