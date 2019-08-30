@@ -55,9 +55,9 @@
     data() {
       return {
         // resource, instance belong to formMixin
-        datastore_table: "Trades",
+        datastore_table: "",
 
-        selected: '4',
+        selected: null,
         options: [
           { value: null, text: 'Please select a Datastore' },
           { value: '4', text: 'Local Postgres' },
@@ -138,11 +138,13 @@
     created() {
       console.log('DataLoader.created:', JSON.stringify(this.instance));
 
-      this.operator_type = "Loader";
       this.operator_title = "EVL";
+      this.operator_type = "Loader";
 
         // This line has to be here as it sets the resource in formMixin
       if (this.mode && this.mode == 'studio') {
+        this.datastore_table = "Trades";
+        this.selected = '4';
         this.mapped_table_data = JSON.parse(Trades.mapped_trades);
       }
     },

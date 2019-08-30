@@ -75,8 +75,8 @@
       return {
         // resource, instance belong to formMixin
 
-        regex_str: Etrade.regex_str,
-        sample_str: Etrade.sample_str,
+        regex_str: "",
+        sample_str: "",
 
         table_data: [],
         schema_table_data: [],
@@ -161,8 +161,13 @@
 
     created() {
       console.log('DataExtractorRegex.created:', JSON.stringify(this.instance));
-      this.operator_title = "Ext-101"
+      this.operator_title = "EVE"
       this.operator_type = "Extractor"
+
+      if (this.mode && this.mode == 'studio') {
+        this.regex_str = Etrade.regex_str;
+        this.sample_str = Etrade.sample_str;
+      }
     },
 
   }

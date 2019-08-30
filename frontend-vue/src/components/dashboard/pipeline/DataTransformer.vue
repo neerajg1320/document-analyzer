@@ -134,7 +134,7 @@
       return {
         // resource, instance belong to formMixin
 
-        selected: '2',
+        selected: null,
         options: [
               { value: null, text: 'Please select a Schema' },
               { value: '2', text: 'Contract Note' },
@@ -363,10 +363,12 @@
     created() {
       console.log('DataTransformer.created:', JSON.stringify(this.instance));
 
-      this.operator_type = "Transformer";
       this.operator_title = "EVT";
+      this.operator_type = "Transformer";
 
       if (this.mode && this.mode == 'studio') {
+        this.selected = '2';
+
         this.table_data = JSON.parse(Trades.raw_trades);
         this.schema_table_data = JSON.parse(Trades.raw_trades_schema);
 
@@ -374,6 +376,8 @@
         // this.mapper_table_data.forEach(row => row['mapping'] = "RENAME");
         this.newfields_table_data = JSON.parse(Trades.newfields_transformer_table);
       }
+
+      // We have to support the loader.
     },
 
   }
