@@ -5,7 +5,6 @@ import Profile from '../components/profile/Profile'
 import Login from '../components/login/Login'
 import Dashboard from '../components/dashboard/resource/ResouceDashboard'
 
-import PipelineStudio from '../components/dashboard/pipeline/PipelineStudio'
 import Extractor from '../components/dashboard/pipeline/DataExtractorRegex'
 import Transformer from '../components/dashboard/pipeline/DataTransformer'
 import Loader from '../components/dashboard/pipeline/DataLoader'
@@ -33,18 +32,15 @@ const ifAuthenticated = (to, from, next) => {
 export default new Router({
   mode: 'history',
   routes: [
+    // Home
     {
       path: '/',
       name: 'Home',
       component: Dashboard,
       beforeEnter: ifAuthenticated,
     },
-    {
-      path: '/profile',
-      name: 'Profile',
-      component: Profile,
-      beforeEnter: ifAuthenticated,
-    },
+
+    // User
     {
       path: '/login',
       name: 'Login',
@@ -52,17 +48,21 @@ export default new Router({
       beforeEnter: ifNotAuthenticated,
     },
     {
+      path: '/profile',
+      name: 'Profile',
+      component: Profile,
+      beforeEnter: ifAuthenticated,
+    },
+
+    // ResourceDashboard
+    {
       path: '/resource/*',
       name: 'Dashboard',
       component: Dashboard,
       beforeEnter: ifAuthenticated,
     },
-    {
-      path: '/pipeline/studio',
-      name: 'PipelineStudio',
-      component: PipelineStudio,
-      beforeEnter: ifAuthenticated,
-    },
+
+    // PipelineStudio
     {
       path: '/pipeline/extractor',
       name: 'Extractor',

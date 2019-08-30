@@ -1,5 +1,5 @@
 import axios from 'axios'
-import apiAxios from './apiAxios'
+import apiAxios from './apiBaseAxios'
 
 const client = axios.create({
   baseURL: 'http://localhost:8000/',
