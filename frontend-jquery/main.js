@@ -1482,10 +1482,10 @@ $("#sel-pipeline").on('change', function() {
     let pipeline_id = this.value;
     let pipeline =  g_table_pipeline_dict[pipeline_id];
 
-    console.log(pipeline_id, pipeline, pipeline.operations);
+    console.log(pipeline_id, pipeline, pipeline.operations, pipeline.operations_json);
 
     g_operations_array.length = 0;
-    g_operation_pipeline_array = pipeline.operations;
+    g_operation_pipeline_array = JSON.parse(pipeline.operations_json);
     g_operation_array_current_index = 0;
 
     fetch_operation_by_id(g_operation_pipeline_array[g_operation_array_current_index++],
