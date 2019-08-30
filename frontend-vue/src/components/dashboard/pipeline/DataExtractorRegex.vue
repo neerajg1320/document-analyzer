@@ -117,7 +117,7 @@
 
       },
 
-      // This is called before created() from the DataOperatorCompMixin's created
+      // unloadInstance is called from Mixin's created hence this.$refs won't be available.
       unloadInstance (parameters) {
         this.regex_str = parameters.parameters.regex;
       },
@@ -129,11 +129,9 @@
 
       // Need to see if 'this' behaves properly, this is called from callback in applyOperation
       applyOperatorCompleted (resp) {
-        console.log(resp);
         this.table_data = resp.transactions;
         this.schema_table_data = resp.schema;
       },
-
     },
 
     created() {

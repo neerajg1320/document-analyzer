@@ -93,8 +93,8 @@
 
       },
 
+      // unloadInstance is called from Mixin's created hence this.$refs won't be available.
       unloadInstance (parameters) {
-        console.log(parameters);
         this.datastore_table = parameters.table;
         this.selected = parameters.datastore_id;
       },
@@ -112,7 +112,7 @@
 
 
     created() {
-      console.log('DataLoader.created:', JSON.stringify(this.instance));
+      console.log('DataLoader.created:');
 
       this.operator_title = "EVL";
       this.operator_type = "Loader";

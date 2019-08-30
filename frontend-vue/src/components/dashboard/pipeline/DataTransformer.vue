@@ -315,8 +315,7 @@
 
       },
 
-
-      // unloadInstance is called from Mixin's created hence refs won't be available.
+      // unloadInstance is called from Mixin's created hence this.$refs won't be available.
       unloadInstance (parameters) {
         this.selected = parameters.destination_table;
         this.mapper_table_data = JSON.parse(parameters.existing_fields);
@@ -329,7 +328,6 @@
       },
 
       applyOperatorCompleted (resp) {
-        console.log(resp);
         this.mapped_table_data = JSON.parse(resp.mapped_df_json);
       },
     },
