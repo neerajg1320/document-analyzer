@@ -1,5 +1,5 @@
 <template>
-    <div class="container-fluid mt-4" style="border: dotted;">
+    <div class="container-fluid mt-4">
         <h2 class="text-center" style="margin-bottom: 25px">{{resource | capitalize}} Manager</h2>
         <b-row>
             <b-col lg="6">
