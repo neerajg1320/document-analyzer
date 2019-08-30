@@ -42,7 +42,6 @@
 </template>
 
 <script>
-  import formMixin from '../mixin/FormMixin';
   import tableMixin from '../mixin/TableMixin';
   import dataOperatorMixin from '../mixin/DataOperatorMixin';
 
@@ -51,22 +50,11 @@
 
   export default {
     name: "Loader",
-    mixins: [formMixin, tableMixin, dataOperatorMixin],
-
-    computed: {
-      card_header () {
-        return this.operator_id ? this.operator_type + ' ID#' + this.operator_id : 'New ' + this.operator_type;
-      }
-    },
+    mixins: [tableMixin, dataOperatorMixin],
 
     data() {
       return {
         // resource, instance belong to formMixin
-
-        operator_type: "Loader",
-        operator_id: "",
-        operator_title: "EVL",
-
         datastore_table: "Trades",
 
         selected: '4',
@@ -110,9 +98,6 @@
           parameters: JSON.stringify(loader_parameters)
         };
 
-        if (this.operator_id) {
-          this.instance.id = this.operator_id;
-        }
       },
 
       getDataFrameArray () {
@@ -146,16 +131,20 @@
       },
 
       afterSave (instance) {
-        this.operator_id = instance.id;
+
       },
     },
 
     created() {
       console.log('DataLoader.created:', JSON.stringify(this.instance));
 
-      // This line has to be here as it sets the resource in formMixin
-      this.resource = "operations"
-      this.mapped_table_data = JSON.parse(Trades.mapped_trades);
+      this.operator_type = "Loader";
+      this.operator_title = "EVL";
+
+        // This line has to be here as it sets the resource in formMixin
+      if (this.mode && this.mode == 'studio') {
+        this.mapped_table_data = JSON.parse(Trades.mapped_trades);
+      }
     },
   }
 </script>

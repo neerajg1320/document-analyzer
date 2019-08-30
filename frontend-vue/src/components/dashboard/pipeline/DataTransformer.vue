@@ -106,7 +106,6 @@
 </template>
 
 <script>
-  import formMixin from '../mixin/FormMixin';
   import tableMixin from '../mixin/TableMixin';
   import dataOperatorMixin from '../mixin/DataOperatorMixin';
 
@@ -129,21 +128,11 @@
 
   export default {
     name: "Transformer",
-    mixins: [formMixin, tableMixin, dataOperatorMixin],
-
-    computed: {
-      card_header () {
-        return this.operator_id ? this.operator_type + ' ID#' + this.operator_id : 'New ' + this.operator_type;
-      }
-    },
+    mixins: [tableMixin, dataOperatorMixin],
 
     data() {
       return {
         // resource, instance belong to formMixin
-
-        operator_type: "Transformer",
-        operator_id: "",
-        operator_title: "EVT",
 
         selected: '2',
         options: [
@@ -331,9 +320,6 @@
           parameters: JSON.stringify(transformer_parameters)
         };
 
-        if (this.operator_id) {
-          this.instance.id = this.operator_id;
-        }
       },
 
       getDataFrameArray () {
@@ -367,7 +353,7 @@
       },
 
       afterSave (instance) {
-        this.operator_id = instance.id;
+
       },
 
     },
@@ -377,15 +363,17 @@
     created() {
       console.log('DataTransformer.created:', JSON.stringify(this.instance));
 
-      // This line has to be here as it sets the resource in formMixin
-      this.resource = "operations"
-      this.table_data = JSON.parse(Trades.raw_trades);
-      this.schema_table_data = JSON.parse(Trades.raw_trades_schema);
+      this.operator_type = "Transformer";
+      this.operator_title = "EVT";
 
-      this.mapper_table_data = JSON.parse(Trades.existing_fields_mapper_table);
-      // this.mapper_table_data.forEach(row => row['mapping'] = "RENAME");
-      this.newfields_table_data = JSON.parse(Trades.newfields_transformer_table);
+      if (this.mode && this.mode == 'studio') {
+        this.table_data = JSON.parse(Trades.raw_trades);
+        this.schema_table_data = JSON.parse(Trades.raw_trades_schema);
 
+        this.mapper_table_data = JSON.parse(Trades.existing_fields_mapper_table);
+        // this.mapper_table_data.forEach(row => row['mapping'] = "RENAME");
+        this.newfields_table_data = JSON.parse(Trades.newfields_transformer_table);
+      }
     },
 
   }

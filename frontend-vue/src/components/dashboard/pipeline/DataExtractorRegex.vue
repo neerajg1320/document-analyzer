@@ -71,8 +71,6 @@
     name: "Extractor",
     mixins: [tableMixin, dataOperatorMixin],
 
-
-
     data() {
       return {
         // resource, instance belong to formMixin
