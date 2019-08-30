@@ -95,6 +95,8 @@
 
       unloadInstance (parameters) {
         console.log(parameters);
+        this.datastore_table = parameters.table;
+        this.selected = parameters.datastore_id;
       },
 
       // Called by apply operation
