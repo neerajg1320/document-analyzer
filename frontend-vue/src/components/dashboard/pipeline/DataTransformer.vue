@@ -293,14 +293,6 @@
     methods: {
       ...mapActions(['actionResource', 'addOperationToPipeline']),
 
-      addToPipeline () {
-        this.prepareOperatorInstance();
-        this.addOperationToPipeline(this.instance)
-          .then(resp => {
-            console.log(resp);
-          })
-      },
-
       prepareOperatorInstance () {
 
         const newfieldsTableJson = this.getTableJson(this.$refs.vueNewFieldsTable);
@@ -347,14 +339,6 @@
 
       },
 
-      // This is called by saveInstance from the FormMixin
-      beforeSave () {
-        this.prepareOperatorInstance();
-      },
-
-      afterSave (instance) {
-
-      },
 
     },
 

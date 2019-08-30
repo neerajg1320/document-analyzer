@@ -124,15 +124,7 @@
           });
 
       },
-
-      // This is called by saveInstance from the FormMixin
-      beforeSave () {
-        this.prepareOperatorInstance();
-      },
-
-      afterSave (instance) {
-
-      },
+      
     },
 
     created() {

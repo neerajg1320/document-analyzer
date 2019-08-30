@@ -77,6 +77,8 @@ export default {
       console.log(`Updating resource to '${newValue}' from '${oldValue}'`);
       this.resource = newValue;
       this.resetInstance();
+      const payload = {instance: this.instance};
+      this.setCurrentInstance(payload);
     },
   },
 
@@ -85,7 +87,7 @@ export default {
     this.resource = this.currentResource;
     this.instance = this.currentInstance;
 
-    console.log('ResourceCompMixin.created:', this.resource, this.instance);
+    console.log(this.$options.name, ':ResourceCompMixin.created:', this.resource, this.instance);
   },
 }
 </script>

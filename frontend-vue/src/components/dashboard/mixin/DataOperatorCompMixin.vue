@@ -18,6 +18,25 @@
       };
     },
 
+    methods: {
+      addToPipeline () {
+        this.prepareOperatorInstance();
+        this.addOperationToPipeline(this.instance)
+          .then(resp => {
+            console.log(resp);
+          })
+      },
+
+      // This is called by saveInstance from the FormMixin
+      beforeSave () {
+        this.prepareOperatorInstance();
+      },
+
+      afterSave (saved_instance) {
+
+      },
+    },
+
     created () {
       console.log('DataOperatorCompMixin.created:');
 
