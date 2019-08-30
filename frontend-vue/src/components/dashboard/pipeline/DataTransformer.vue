@@ -293,6 +293,7 @@
     methods: {
       ...mapActions(['actionResource', 'addOperationToPipeline']),
 
+      // Called by apply and save operations
       prepareOperatorInstance () {
 
         const newfieldsTableJson = this.getTableJson(this.$refs.vueNewFieldsTable);
@@ -314,6 +315,7 @@
 
       },
 
+      // Called by apply operation
       getDataFrameArray () {
         return this.getTableJson(this.$refs.vueInputTable);
       },

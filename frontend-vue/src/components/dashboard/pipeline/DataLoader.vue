@@ -83,6 +83,7 @@
           })
       },
 
+      // Called by apply and save operations
       prepareOperatorInstance () {
 
         // We need three fields destination_table, existing_fields, new_fields
@@ -100,6 +101,7 @@
 
       },
 
+      // Called by apply operation
       getDataFrameArray () {
         return this.getTableJson(this.$refs.vueMappedTable);
       },
@@ -124,7 +126,7 @@
           });
 
       },
-      
+
     },
 
     created() {

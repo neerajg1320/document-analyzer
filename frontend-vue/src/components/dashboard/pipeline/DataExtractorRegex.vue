@@ -100,6 +100,7 @@
     methods: {
       ...mapActions(['actionResource', 'addOperationToPipeline']),
 
+      // Called by apply and save operations
       prepareOperatorInstance () {
         const extractor_parameters = {
           type: "regex",
@@ -116,6 +117,7 @@
 
       },
 
+      // Called by apply operation
       getDataFrameArray () {
         return [{'text': this.sample_str}];
       },
