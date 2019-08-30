@@ -1,8 +1,8 @@
 <template>
     <div style=" width:100%;  padding: 20px; text-align: center;">
 
-        <div v-show="true" style="display: inline-block; width: 80%;">
-            <!-- We are using v-show instead of v-if because we need ref vueInputTable in this.$refs -->
+        <!-- We are using v-show instead of v-if because we need ref vueInputTable in this.$refs -->
+        <div v-show="mode && mode == 'studio'"  style="display: inline-block; width: 80%;">
             <div class="smart-table">
                 <VueTable
                     ref="vueInputTable"
@@ -89,7 +89,7 @@
             </div>
         </b-card>
 
-        <div v-show="mapped_table_data && mapped_table_data.length" class="smart-table">
+        <div v-show="mode && mode == 'studio' && mapped_table_data && mapped_table_data.length" class="smart-table">
             <div style="margin-bottom: 40px;"></div>
             <VueTable
                 ref="vueOutputTable"
@@ -108,6 +108,8 @@
 <script>
   import formMixin from '../mixin/FormMixin';
   import tableMixin from '../mixin/TableMixin';
+  import dataOperatorMixin from '../mixin/DataOperatorMixin';
+
   import Trades from '../presets/etrade/Transformer';
   import { mapActions } from  'vuex';
 
@@ -127,7 +129,7 @@
 
   export default {
     name: "Transformer",
-    mixins: [formMixin, tableMixin],
+    mixins: [formMixin, tableMixin, dataOperatorMixin],
 
     computed: {
       card_header () {
@@ -373,6 +375,8 @@
 
 
     created() {
+      console.log('DataTransformer.created:', JSON.stringify(this.instance));
+
       // This line has to be here as it sets the resource in formMixin
       this.resource = "operations"
       this.table_data = JSON.parse(Trades.raw_trades);

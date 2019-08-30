@@ -5,7 +5,7 @@
             <b-col lg="5">
                 <ResourceList></ResourceList>
             </b-col>
-            <b-col>
+            <b-col lg="6">
                 <ResourceDynamicForm></ResourceDynamicForm>
                 <!--<ResourceSimpleForm></ResourceSimpleForm>-->
             </b-col>

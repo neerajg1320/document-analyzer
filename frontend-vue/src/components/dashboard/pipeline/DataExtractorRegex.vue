@@ -27,7 +27,7 @@
 
         <!-- This needs to go out of DataExtractor Component -->
         <!-- We are using v-show instead of v-if because we need tabulator in this.$refs -->
-        <div v-show="table_data && table_data.length"
+        <div v-show="mode && mode == 'studio' && table_data && table_data.length"
              style="display: inline-block; width: 80%;">
             <div class="smart-table">
                 <VueTable
@@ -63,17 +63,18 @@
 <script>
   import formMixin from '../mixin/FormMixin';
   import tableMixin from '../mixin/TableMixin';
+  import dataOperatorMixin from '../mixin/DataOperatorMixin';
+
   import Etrade from '../presets/etrade/Extractor';
   import { mapActions } from  'vuex';
 
   export default {
     name: "Extractor",
-    mixins: [formMixin, tableMixin],
-    props: ['mode'],
+    mixins: [formMixin, tableMixin, dataOperatorMixin],
 
     computed: {
       card_header () {
-        return this.operator_id ? this.operator + ' ID#' + this.operator_id : 'New ' + this.operator;
+        return this.instance.id ? this.operator + ' ID#' + this.instance.id : 'New ' + this.operator;
       }
     },
 
@@ -83,7 +84,6 @@
 
         operator: "Extractor",
 
-        operator_id: "",
         operator_title: "Ext-101",
         regex_str: Etrade.regex_str,
         sample_str: Etrade.sample_str,
@@ -132,9 +132,6 @@
           parameters: JSON.stringify(extractor_parameters)
         }
 
-        if (this.operator_id) {
-          this.instance.id = this.operator_id;
-        }
       },
 
       getDataFrameArray () {
@@ -168,11 +165,12 @@
       },
 
       afterSave (instance) {
-        this.operator_id = instance.id;
+
       },
     },
 
     created() {
+      console.log('DataExtractorRegex.created:', JSON.stringify(this.instance));
       // This line has to be here as it sets the resource in formMixin
       this.resource = "operations"
     },

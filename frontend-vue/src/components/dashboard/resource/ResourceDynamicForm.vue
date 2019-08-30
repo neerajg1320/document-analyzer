@@ -1,7 +1,18 @@
 <template>
     <div>
+
+        <div v-if="instance.type == 'Extract'">
+            <DataExtractorRegex></DataExtractorRegex>
+        </div>
+        <div v-if="instance.type == 'Transform'">
+            <DataTransformer></DataTransformer>
+        </div>
+        <div v-if="instance.type == 'Load'">
+            <DataLoader></DataLoader>
+        </div>
+
         <!-- Form for new resource -->
-        <b-card  :title="(instance.id ? 'Edit ' + resource + ' ID#' + instance.id : 'New ' + resource )">
+        <b-card v-if="this.resource != 'operations'" :title="(instance.id ? 'Edit ' + resource + ' ID#' + instance.id : 'New ' + resource )">
             <form @submit.prevent="saveInstance">
 
                 <b-form-group label="Title">
@@ -20,10 +31,6 @@
                 </div>
             </form>
         </b-card>
-
-        <div v-if="currentResource == 'operations'">
-            <DataExtractorRegex></DataExtractorRegex>
-        </div>
     </div>
 </template>
 
@@ -31,11 +38,13 @@
   import { mapGetters } from 'vuex';
   import formMixin from '../mixin/FormMixin';
   import DataExtractorRegex from '../pipeline/DataExtractorRegex';
+  import DataTransformer from '../pipeline/DataTransformer';
+  import DataLoader from '../pipeline/DataLoader';
 
   export default {
     name: "ResourceDynamicForm",
     mixins: [formMixin],
-    components: { DataExtractorRegex },
+    components: { DataExtractorRegex, DataTransformer, DataLoader },
 
     computed: {
       ...mapGetters(['currentResource']),

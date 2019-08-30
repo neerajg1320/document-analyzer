@@ -1,6 +1,6 @@
 <template>
     <div style=" width:100%;  padding: 20px; text-align: center;">
-        <div v-show="true">
+        <div v-show="mode && mode == 'studio'">
             <div class="smart-table">
                 <VueTable
                     ref="vueMappedTable"
@@ -44,12 +44,14 @@
 <script>
   import formMixin from '../mixin/FormMixin';
   import tableMixin from '../mixin/TableMixin';
+  import dataOperatorMixin from '../mixin/DataOperatorMixin';
+
   import { mapActions } from 'vuex';
   import Trades from '../presets/etrade/Loader';
 
   export default {
     name: "Loader",
-    mixins: [formMixin, tableMixin],
+    mixins: [formMixin, tableMixin, dataOperatorMixin],
 
     computed: {
       card_header () {
@@ -149,6 +151,8 @@
     },
 
     created() {
+      console.log('DataLoader.created:', JSON.stringify(this.instance));
+
       // This line has to be here as it sets the resource in formMixin
       this.resource = "operations"
       this.mapped_table_data = JSON.parse(Trades.mapped_trades);
