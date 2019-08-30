@@ -75,14 +75,6 @@
     methods: {
       ...mapActions(['actionResource', 'addOperationToPipeline']),
 
-      addToPipeline () {
-        this.prepareOperatorInstance();
-        this.addOperationToPipeline(this.instance)
-          .then(resp => {
-            console.log(resp);
-          })
-      },
-
       // Called by apply and save operations
       prepareOperatorInstance () {
 
@@ -128,6 +120,7 @@
       },
 
     },
+
 
     created() {
       console.log('DataLoader.created:', JSON.stringify(this.instance));

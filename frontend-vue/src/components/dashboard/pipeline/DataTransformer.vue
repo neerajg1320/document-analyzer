@@ -345,7 +345,6 @@
     },
 
 
-
     created() {
       console.log('DataTransformer.created:', JSON.stringify(this.instance));
 
