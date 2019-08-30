@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- Form for new resource -->
-        <b-card :title="(instance.id ? 'Edit ' + resource + ' ID#' + instance.id : 'New ' + resource )">
+        <b-card  :title="(instance.id ? 'Edit ' + resource + ' ID#' + instance.id : 'New ' + resource )">
             <form @submit.prevent="saveInstance">
 
                 <b-form-group label="Title">
@@ -20,15 +20,27 @@
                 </div>
             </form>
         </b-card>
+
+        <div v-if="currentResource == 'operations'">
+            <DataExtractorRegex></DataExtractorRegex>
+        </div>
     </div>
 </template>
 
 <script>
+  import { mapGetters } from 'vuex';
   import formMixin from '../mixin/FormMixin';
+  import DataExtractorRegex from '../pipeline/DataExtractorRegex';
 
   export default {
     name: "ResourceDynamicForm",
     mixins: [formMixin],
+    components: { DataExtractorRegex },
+
+    computed: {
+      ...mapGetters(['currentResource']),
+
+    },
 
   }
 </script>

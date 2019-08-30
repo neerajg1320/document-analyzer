@@ -1,11 +1,11 @@
 <template>
-    <div class="container-fluid mt-4">
+    <div class="container-fluid mt-4" style="border: dotted;">
         <h2 class="text-center" style="margin-bottom: 25px">{{resource | capitalize}} Manager</h2>
         <b-row>
-            <b-col>
+            <b-col lg="5">
                 <ResourceList></ResourceList>
             </b-col>
-            <b-col lg="5">
+            <b-col>
                 <ResourceDynamicForm></ResourceDynamicForm>
                 <!--<ResourceSimpleForm></ResourceSimpleForm>-->
             </b-col>

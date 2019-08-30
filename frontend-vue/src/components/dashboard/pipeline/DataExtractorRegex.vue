@@ -1,7 +1,7 @@
 <template>
     <div style=" width:100%;  padding: 20px; text-align: center;">
 
-        <b-card header-tag="header" style="margin-bottom: 20px; width:60%; text-align: left; display: inline-flex;">
+        <b-card header-tag="header" style="margin-bottom: 20px; text-align: left; display: inline-flex;">
             <div slot="header" class="mb-0">
                 {{card_header}}
                 <b-btn type="success" @click="applyOperator" style="float: right;">Apply</b-btn>
@@ -19,12 +19,13 @@
                 <b-form-group label="Regex">
                     <b-form-textarea rows="8" cols="80" v-model="regex_str"></b-form-textarea>
                 </b-form-group>
-                <b-form-group label="Sample Text">
+                <b-form-group v-if="mode && mode == 'studio'" label="Sample Text">
                     <b-form-textarea rows="8" cols="80" v-model="sample_str"></b-form-textarea>
                 </b-form-group>
             </form>
         </b-card>
 
+        <!-- This needs to go out of DataExtractor Component -->
         <!-- We are using v-show instead of v-if because we need tabulator in this.$refs -->
         <div v-show="table_data && table_data.length"
              style="display: inline-block; width: 80%;">
@@ -68,6 +69,7 @@
   export default {
     name: "Extractor",
     mixins: [formMixin, tableMixin],
+    props: ['mode'],
 
     computed: {
       card_header () {
