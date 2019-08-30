@@ -16,7 +16,7 @@
 <script>
   import { mapActions } from 'vuex';
   import ResourceList from './ResourceList';
-  import ResourceDynamicForm from './ResourceDynamicForm'
+  import ResourceDynamicForm from './ResourceDemuxComp'
   import ResourceSimpleForm from './ResourceSimpleForm'
   import path from '../../../utils/path';
 
