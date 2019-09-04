@@ -1,0 +1,20 @@
+[2019-09-04 09:25:26,401] {scheduler_job.py:146} INFO - Started process (PID=1147) to work on /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py
+[2019-09-04 09:25:26,409] {scheduler_job.py:1493} INFO - Processing file /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py for tasks to queue
+[2019-09-04 09:25:26,410] {logging_mixin.py:95} INFO - [2019-09-04 09:25:26,410] {dagbag.py:90} INFO - Filling up the DagBag from /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py
+[2019-09-04 09:25:26,420] {scheduler_job.py:1505} INFO - DAG(s) dict_keys(['my_simple_dag']) retrieved from /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py
+[2019-09-04 09:25:26,451] {scheduler_job.py:152} INFO - Processing /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py took 0.051 seconds
+[2019-09-04 09:26:08,501] {scheduler_job.py:146} INFO - Started process (PID=1179) to work on /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py
+[2019-09-04 09:26:08,509] {scheduler_job.py:1493} INFO - Processing file /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py for tasks to queue
+[2019-09-04 09:26:08,509] {logging_mixin.py:95} INFO - [2019-09-04 09:26:08,509] {dagbag.py:90} INFO - Filling up the DagBag from /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py
+[2019-09-04 09:26:08,521] {scheduler_job.py:1505} INFO - DAG(s) dict_keys(['my_simple_dag']) retrieved from /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py
+[2019-09-04 09:26:08,548] {scheduler_job.py:152} INFO - Processing /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py took 0.046 seconds
+[2019-09-04 09:26:50,598] {scheduler_job.py:146} INFO - Started process (PID=1255) to work on /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py
+[2019-09-04 09:26:50,606] {scheduler_job.py:1493} INFO - Processing file /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py for tasks to queue
+[2019-09-04 09:26:50,607] {logging_mixin.py:95} INFO - [2019-09-04 09:26:50,607] {dagbag.py:90} INFO - Filling up the DagBag from /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py
+[2019-09-04 09:26:50,618] {scheduler_job.py:1505} INFO - DAG(s) dict_keys(['my_simple_dag']) retrieved from /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py
+[2019-09-04 09:26:50,647] {scheduler_job.py:152} INFO - Processing /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py took 0.049 seconds
+[2019-09-04 09:27:22,893] {scheduler_job.py:146} INFO - Started process (PID=1300) to work on /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py
+[2019-09-04 09:27:22,901] {scheduler_job.py:1493} INFO - Processing file /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py for tasks to queue
+[2019-09-04 09:27:22,902] {logging_mixin.py:95} INFO - [2019-09-04 09:27:22,902] {dagbag.py:90} INFO - Filling up the DagBag from /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py
+[2019-09-04 09:27:22,915] {scheduler_job.py:1505} INFO - DAG(s) dict_keys(['my_simple_dag']) retrieved from /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py
+[2019-09-04 09:27:22,944] {scheduler_job.py:152} INFO - Processing /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/dags/my_simple_dag.py took 0.052 seconds
