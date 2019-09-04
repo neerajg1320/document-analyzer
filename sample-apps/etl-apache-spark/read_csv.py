@@ -9,7 +9,7 @@ def read_small_csv_files():
     sdfData.show()
 
 
-def read_kaggle_csv_file():
+def read_csv_file():
     data_file = './supermarket_sales.csv'
     sdfData = scSpark.read.csv(data_file, header=True, sep=",").cache()
     return sdfData
@@ -32,18 +32,14 @@ def transform_data(sdfData):
     #  .coalesce(1) is to create a single file
     # output.coalesce(1).write.format('json').save('filtered.json')
 
-    output = scSpark.sql('SELECT COUNT(*) as total, City from sales GROUP BY City')
-
-    # output.show()
-    # output.write.format('jdbc') \
-    #     .options(
-    #     url='jdbc:mysql://localhost/app',
-    #     # driver='com.mysql.cj.jdbc.Driver',
-    #     driver='org.postgresql.Driver',
-    #     dbtable='city',
-    #     user='postgres',
-    #     password='Postgres123'
-    # ).mode('overwrite').save()
+    # Following worked
+    url = """jdbc:postgresql://localhost/app?user=postgres&password=Postgres123"""
+    output.write\
+        .format('jdbc') \
+        .option("url", url) \
+        .option("dbtable", "city")\
+        .mode('overwrite')\
+        .save()
 
 
 def load_from_postgres():
@@ -67,6 +63,8 @@ if __name__ == '__main__':
 
     # read_small_csv_files()
 
-    df1 = read_kaggle_csv_file()
-    # transform_data(df1)
+    df1 = read_csv_file()
+
+    transform_data(df1)
+
     load_from_postgres()
