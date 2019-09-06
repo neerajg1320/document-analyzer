@@ -3,6 +3,8 @@ from pyspark.sql import Row
 from pyspark.sql import SQLContext
 from pyspark import SparkFiles
 
+from pyspark.sql.types import *
+
 
 def square_nums(sc):
     # Create an array of numbers
@@ -25,26 +27,51 @@ def infer_schema(sc):
     return DF_ppl
 
 
-def infer_csv_schema(sc):
+def read_csv_with_schema(sc, flagInferSchema):
     # Basic Operation with Pyspark
 
-    url = "https://raw.githubusercontent.com/guru99-edu/R-Programming/master/adult_data.csv"
+    # url = "https://raw.githubusercontent.com/guru99-edu/R-Programming/master/adult_data.csv"
+    url = "./adult_data.csv"
     sc.addFile(url)
     sqlContext = SQLContext(sc)
     df = sqlContext.read.csv(SparkFiles.get("adult_data.csv"),
                              header=True,
-                             inferSchema=True)
-    df.printSchema()
+                             inferSchema=flagInferSchema)
 
     return df
+
+
+# A custom function to convert the data type of DataFrame columns
+def convertColumn(df, names, newType):
+    for name in names:
+        df = df.withColumn(name, df[name].cast(newType))
+    return df
+
+
+def demo_spark_sql_dataframe(sc):
+    # square_nums(sc)
+    # infer_schema(sc)
+    df = read_csv_with_schema(sc, False)
+    print(type(df))
+    df.printSchema()
+    df.show(5, truncate=False)
+    # List of float features
+    FLOAT_FEATURES = ['age', 'fnlwgt', 'capital-gain', 'educational-num', 'capital-loss', 'hours-per-week']
+    df = convertColumn(df, FLOAT_FEATURES, FloatType())
+    df.printSchema()
+    df.select('age', 'fnlwgt').show(5)
+    # Groupby and sort
+    df.groupBy("education").count().sort("count", ascending=True).show()
+    # df.describe().show()
+    df.describe('capital-gain').show()
+    df.crosstab('age', 'income').sort("age_income").show()
+    print("People above 40: ", df.filter(df.age > 40).count())
+    # Group by
+    df.groupby('marital-status').agg({'capital-gain': 'mean'}).show()
 
 
 if __name__ == '__main__':
     # Get SparkContext
     sc = SparkContext()
 
-    # square_nums(sc)
-    # infer_schema(sc)
-    df = infer_csv_schema(sc)
-    df.show(5, truncate=False)
-
+    demo_spark_sql_dataframe(sc)
