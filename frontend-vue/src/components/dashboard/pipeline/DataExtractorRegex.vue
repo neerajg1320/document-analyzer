@@ -1,7 +1,7 @@
 <template>
     <div style=" width:100%;  padding: 20px; text-align: center;">
 
-        <b-card header-tag="header" style="margin-bottom: 20px; text-align: left; display: inline-flex;">
+        <b-card header-tag="header" style="width:60%; margin-bottom: 20px; text-align: left; display: inline-flex;">
             <div slot="header" class="mb-0">
                 {{card_header}}
                 <b-btn type="success" @click="applyOperator" style="float: right;">Apply</b-btn>
@@ -17,10 +17,10 @@
                     <b-form-input type="text" v-model="operator_title"></b-form-input>
                 </b-form-group>
                 <b-form-group label="Regex">
-                    <b-form-textarea rows="8" cols="80" v-model="regex_str"></b-form-textarea>
+                    <b-form-textarea style="font-size: 12px;" rows="20" cols="80" v-model="regex_str"></b-form-textarea>
                 </b-form-group>
                 <b-form-group v-if="mode && mode == 'studio'" label="Sample Text">
-                    <b-form-textarea rows="8" cols="80" v-model="sample_str"></b-form-textarea>
+                    <b-form-textarea  style="font-size: 12px;" rows="20" cols="80" v-model="sample_str"></b-form-textarea>
                 </b-form-group>
             </form>
         </b-card>
