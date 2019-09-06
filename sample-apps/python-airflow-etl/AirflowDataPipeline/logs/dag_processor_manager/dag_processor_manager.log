@@ -272,3 +272,223 @@ File Path                                                                       
 /Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_latest_only_with_trigger.py                           1.12s           2019-09-04T09:00:09
 ================================================================================
 [2019-09-04 14:30:50,923] {dag_processing.py:790} INFO - Exiting gracefully upon receiving signal 15
+[2019-09-04 14:34:19,684] {dag_processing.py:804} INFO - Processing files using up to 1 processes at a time 
+[2019-09-04 14:34:19,684] {dag_processing.py:805} INFO - Process each file at most once every 0 seconds
+[2019-09-04 14:34:19,685] {dag_processing.py:807} INFO - Checking for new files in /Users/neeraj/Projects/Webapps/document-analyzer/sample-apps/python-airflow-etl/AirflowDataPipeline/dags every 300 seconds
+[2019-09-04 14:34:19,795] {dag_processing.py:1004} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                                                                                                                                             PID    Runtime    Last Runtime    Last Run
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------  -----  ---------  --------------  -------------------
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_latest_only.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_python_operator.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/test_utils.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_short_circuit_operator.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_branch_operator.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_docker_operator.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/tutorial.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/docker_copy_data.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_pig_operator.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_passing_params_via_test_command.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_latest_only_with_trigger.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_xcom.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_http_operator.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_skip_dag.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_trigger_target_dag.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_branch_python_dop_operator_3.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_subdag_operator.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_trigger_controller_dag.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/subdags/subdag.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_bash_operator.py                                      0.10s           2019-09-04T09:04:19
+================================================================================
+[2019-09-04 14:34:49,870] {dag_processing.py:1004} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                                                                                                                                             PID    Runtime    Last Runtime    Last Run
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------  -----  ---------  --------------  -------------------
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_short_circuit_operator.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_branch_operator.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_http_operator.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_subdag_operator.py
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_trigger_target_dag.py                                 0.10s           2019-09-04T09:04:47
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_bash_operator.py                                      0.10s           2019-09-04T09:04:19
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_pig_operator.py                                       0.10s           2019-09-04T09:04:49
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/subdags/subdag.py                                             0.10s           2019-09-04T09:04:25
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_passing_params_via_test_command.py                    0.10s           2019-09-04T09:04:23
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_docker_operator.py                                    0.10s           2019-09-04T09:04:45
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_latest_only.py                                        0.10s           2019-09-04T09:04:29
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_xcom.py                                               0.10s           2019-09-04T09:04:41
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_branch_python_dop_operator_3.py                       0.10s           2019-09-04T09:04:35
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_latest_only_with_trigger.py                           0.10s           2019-09-04T09:04:39
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/test_utils.py                                                 0.10s           2019-09-04T09:04:33
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/docker_copy_data.py                                           0.10s           2019-09-04T09:04:27
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_python_operator.py                                    0.10s           2019-09-04T09:04:31
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/tutorial.py                                                   0.10s           2019-09-04T09:04:43
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_trigger_controller_dag.py                             0.11s           2019-09-04T09:04:37
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_skip_dag.py                                           0.11s           2019-09-04T09:04:21
+================================================================================
+[2019-09-04 14:35:19,955] {dag_processing.py:1004} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                                                                                                                                             PID    Runtime    Last Runtime    Last Run
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------  -----  ---------  --------------  -------------------
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_subdag_operator.py                                    0.10s           2019-09-04T09:04:57
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_branch_python_dop_operator_3.py                       0.10s           2019-09-04T09:05:15
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_latest_only.py                                        0.10s           2019-09-04T09:05:09
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_trigger_controller_dag.py                             0.10s           2019-09-04T09:05:17
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_trigger_target_dag.py                                 0.10s           2019-09-04T09:04:47
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_short_circuit_operator.py                             0.10s           2019-09-04T09:04:55
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_pig_operator.py                                       0.10s           2019-09-04T09:04:49
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/subdags/subdag.py                                             0.10s           2019-09-04T09:05:05
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_docker_operator.py                                    0.10s           2019-09-04T09:04:45
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_xcom.py                                               0.10s           2019-09-04T09:04:41
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_passing_params_via_test_command.py                    0.10s           2019-09-04T09:05:03
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_http_operator.py                                      0.10s           2019-09-04T09:04:53
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/tutorial.py                                                   0.10s           2019-09-04T09:04:43
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_python_operator.py                                    0.10s           2019-09-04T09:05:11
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/docker_copy_data.py                                           0.10s           2019-09-04T09:05:07
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_skip_dag.py                                           0.10s           2019-09-04T09:05:01
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_bash_operator.py                                      0.11s           2019-09-04T09:04:59
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/test_utils.py                                                 0.11s           2019-09-04T09:05:13
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_latest_only_with_trigger.py                           0.11s           2019-09-04T09:05:19
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_branch_operator.py                                    0.11s           2019-09-04T09:04:51
+================================================================================
+[2019-09-04 14:35:50,045] {dag_processing.py:1004} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                                                                                                                                             PID    Runtime    Last Runtime    Last Run
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------  -----  ---------  --------------  -------------------
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_docker_operator.py                                    0.10s           2019-09-04T09:05:25
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_branch_python_dop_operator_3.py                       0.10s           2019-09-04T09:05:15
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/tutorial.py                                                   0.10s           2019-09-04T09:05:23
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_trigger_controller_dag.py                             0.10s           2019-09-04T09:05:17
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_passing_params_via_test_command.py                    0.10s           2019-09-04T09:05:44
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_short_circuit_operator.py                             0.10s           2019-09-04T09:05:35
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/subdags/subdag.py                                             0.10s           2019-09-04T09:05:46
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_bash_operator.py                                      0.10s           2019-09-04T09:05:40
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_skip_dag.py                                           0.10s           2019-09-04T09:05:42
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_branch_operator.py                                    0.10s           2019-09-04T09:05:31
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_http_operator.py                                      0.10s           2019-09-04T09:05:33
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_trigger_target_dag.py                                 0.10s           2019-09-04T09:05:27
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_pig_operator.py                                       0.10s           2019-09-04T09:05:29
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_python_operator.py                                    0.10s           2019-09-04T09:05:11
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/test_utils.py                                                 0.11s           2019-09-04T09:05:13
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_latest_only.py                                        0.11s           2019-09-04T09:05:50
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_latest_only_with_trigger.py                           0.11s           2019-09-04T09:05:19
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_subdag_operator.py                                    0.21s           2019-09-04T09:05:38
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_xcom.py                                               0.51s           2019-09-04T09:05:22
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/docker_copy_data.py                                           0.61s           2019-09-04T09:05:48
+================================================================================
+[2019-09-04 14:36:20,102] {dag_processing.py:1004} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                                                                                                                                             PID    Runtime    Last Runtime    Last Run
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------  -----  ---------  --------------  -------------------
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_subdag_operator.py                                    0.10s           2019-09-04T09:06:18
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_trigger_target_dag.py                                 0.10s           2019-09-04T09:06:08
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_latest_only_with_trigger.py                           0.10s           2019-09-04T09:06:00
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_passing_params_via_test_command.py                    0.10s           2019-09-04T09:05:44
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_branch_python_dop_operator_3.py                       0.10s           2019-09-04T09:05:56
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_docker_operator.py                                    0.10s           2019-09-04T09:06:06
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/subdags/subdag.py                                             0.10s           2019-09-04T09:05:46
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_branch_operator.py                                    0.10s           2019-09-04T09:06:12
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/test_utils.py                                                 0.10s           2019-09-04T09:05:54
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_skip_dag.py                                           0.10s           2019-09-04T09:05:42
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_xcom.py                                               0.10s           2019-09-04T09:06:02
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_pig_operator.py                                       0.10s           2019-09-04T09:06:10
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_short_circuit_operator.py                             0.10s           2019-09-04T09:06:16
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_trigger_controller_dag.py                             0.10s           2019-09-04T09:05:58
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_bash_operator.py                                      0.10s           2019-09-04T09:06:20
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/tutorial.py                                                   0.11s           2019-09-04T09:06:04
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_latest_only.py                                        0.11s           2019-09-04T09:05:50
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_python_operator.py                                    0.11s           2019-09-04T09:05:52
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_http_operator.py                                      0.21s           2019-09-04T09:06:14
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/docker_copy_data.py                                           0.61s           2019-09-04T09:05:48
+================================================================================
+[2019-09-04 14:36:50,189] {dag_processing.py:1004} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                                                                                                                                             PID    Runtime    Last Runtime    Last Run
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------  -----  ---------  --------------  -------------------
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_subdag_operator.py                                    0.10s           2019-09-04T09:06:18
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_latest_only.py                                        0.10s           2019-09-04T09:06:30
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_passing_params_via_test_command.py                    0.10s           2019-09-04T09:06:24
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_trigger_target_dag.py                                 0.10s           2019-09-04T09:06:48
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_python_operator.py                                    0.10s           2019-09-04T09:06:32
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_trigger_controller_dag.py                             0.10s           2019-09-04T09:06:38
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_branch_operator.py                                    0.10s           2019-09-04T09:06:12
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_pig_operator.py                                       0.10s           2019-09-04T09:06:50
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/docker_copy_data.py                                           0.10s           2019-09-04T09:06:28
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_skip_dag.py                                           0.10s           2019-09-04T09:06:22
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_short_circuit_operator.py                             0.10s           2019-09-04T09:06:16
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_xcom.py                                               0.10s           2019-09-04T09:06:42
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_bash_operator.py                                      0.10s           2019-09-04T09:06:20
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/tutorial.py                                                   0.10s           2019-09-04T09:06:44
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_latest_only_with_trigger.py                           0.11s           2019-09-04T09:06:40
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_branch_python_dop_operator_3.py                       0.11s           2019-09-04T09:06:36
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_docker_operator.py                                    0.11s           2019-09-04T09:06:46
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/test_utils.py                                                 0.11s           2019-09-04T09:06:34
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/subdags/subdag.py                                             0.11s           2019-09-04T09:06:26
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_http_operator.py                                      0.21s           2019-09-04T09:06:14
+================================================================================
+[2019-09-04 14:37:20,271] {dag_processing.py:1004} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                                                                                                                                             PID    Runtime    Last Runtime    Last Run
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------  -----  ---------  --------------  -------------------
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_python_operator.py                                    0.10s           2019-09-04T09:07:12
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_subdag_operator.py                                    0.10s           2019-09-04T09:06:58
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_bash_operator.py                                      0.10s           2019-09-04T09:07:00
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_trigger_target_dag.py                                 0.10s           2019-09-04T09:06:48
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_latest_only.py                                        0.10s           2019-09-04T09:07:10
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_pig_operator.py                                       0.10s           2019-09-04T09:06:50
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/docker_copy_data.py                                           0.10s           2019-09-04T09:07:08
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_branch_python_dop_operator_3.py                       0.10s           2019-09-04T09:07:16
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/test_utils.py                                                 0.10s           2019-09-04T09:07:14
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_http_operator.py                                      0.10s           2019-09-04T09:06:54
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_trigger_controller_dag.py                             0.10s           2019-09-04T09:07:18
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_xcom.py                                               0.10s           2019-09-04T09:06:42
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_latest_only_with_trigger.py                           0.10s           2019-09-04T09:07:20
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/tutorial.py                                                   0.10s           2019-09-04T09:06:44
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_short_circuit_operator.py                             0.11s           2019-09-04T09:06:56
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/subdags/subdag.py                                             0.11s           2019-09-04T09:07:06
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_docker_operator.py                                    0.11s           2019-09-04T09:06:46
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_branch_operator.py                                    0.11s           2019-09-04T09:06:52
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_skip_dag.py                                           0.11s           2019-09-04T09:07:02
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_passing_params_via_test_command.py                    0.11s           2019-09-04T09:07:04
+================================================================================
+[2019-09-04 14:37:50,360] {dag_processing.py:1004} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                                                                                                                                             PID    Runtime    Last Runtime    Last Run
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------  -----  ---------  --------------  -------------------
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_python_operator.py                                    0.10s           2019-09-04T09:07:12
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/subdags/subdag.py                                             0.10s           2019-09-04T09:07:46
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_subdag_operator.py                                    0.10s           2019-09-04T09:07:38
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_xcom.py                                               0.10s           2019-09-04T09:07:22
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_bash_operator.py                                      0.10s           2019-09-04T09:07:40
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_short_circuit_operator.py                             0.10s           2019-09-04T09:07:36
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_branch_python_dop_operator_3.py                       0.10s           2019-09-04T09:07:16
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/test_utils.py                                                 0.10s           2019-09-04T09:07:14
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_pig_operator.py                                       0.10s           2019-09-04T09:07:30
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_branch_operator.py                                    0.10s           2019-09-04T09:07:32
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_skip_dag.py                                           0.10s           2019-09-04T09:07:42
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_trigger_controller_dag.py                             0.10s           2019-09-04T09:07:18
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_docker_operator.py                                    0.10s           2019-09-04T09:07:26
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/tutorial.py                                                   0.10s           2019-09-04T09:07:24
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_http_operator.py                                      0.10s           2019-09-04T09:07:34
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_latest_only_with_trigger.py                           0.10s           2019-09-04T09:07:20
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_passing_params_via_test_command.py                    0.10s           2019-09-04T09:07:44
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_latest_only.py                                        0.11s           2019-09-04T09:07:50
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/example_trigger_target_dag.py                                 0.11s           2019-09-04T09:07:28
+/Users/neeraj/Projects/Webapps/Document-Analyzer/sample-apps/python-venv/lib/python3.7/site-packages/airflow/example_dags/docker_copy_data.py                                           0.81s           2019-09-04T09:07:49
+================================================================================
+[2019-09-04 14:38:03,570] {dag_processing.py:790} INFO - Exiting gracefully upon receiving signal 15
