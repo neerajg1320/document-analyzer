@@ -3,13 +3,13 @@ import Router from 'vue-router'
 
 import Profile from '../components/profile/Profile'
 import Login from '../components/login/Login'
-import Dashboard from '../components/dashboard/resource/ResouceDashboard'
+import ResouceManager from '../components/dashboard/resource/ResouceManager'
 
 import Extractor from '../components/dashboard/pipeline/DataExtractorRegex'
 import Transformer from '../components/dashboard/pipeline/DataTransformer'
 import Loader from '../components/dashboard/pipeline/DataLoader'
 
-import store from '../store'
+import store from '../store/Store'
 
 Vue.use(Router)
 
@@ -36,7 +36,7 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      component: Dashboard,
+      component: ResouceManager,
       beforeEnter: ifAuthenticated,
     },
 
@@ -57,8 +57,8 @@ export default new Router({
     // ResourceDashboard
     {
       path: '/resource/*',
-      name: 'Dashboard',
-      component: Dashboard,
+      name: 'ResouceManager',
+      component: ResouceManager,
       beforeEnter: ifAuthenticated,
     },
 

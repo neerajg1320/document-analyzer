@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import App from './App';
-import router from './router';
-import store from './store';
+import router from './router/Router';
+import store from './store/Store';
 
 import Loading from './components/lib/loading'
 import CenterContainer from './components/lib/center-container'
