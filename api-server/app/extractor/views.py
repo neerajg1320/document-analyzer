@@ -376,17 +376,11 @@ def convert_to_regex(text):
     float_regex_str = r"(?P<Float>(?:[,\d]+)?(?:[.][\d]+))"
     amount_float_regex_str = (currency + optional_separator + float_regex_str).replace("Float", "AmountFloat")
 
-    # \b is for the word boundary
-    integer_regex_str = r"(?P<Integer>\b[,\d]+\b)"
+    integer_regex_str = r"(?P<Integer>[,\d]+)"
     amount_integer_regex_str = (currency + optional_separator + integer_regex_str).replace("Integer", "AmountInteger")
 
-    # - is not working for TDAmeritrade. But it is needed for some strings
-    # r"(?P<String>[\w]+(?:<mandatory_separator>[\w]+)*)"
-
-    # string_chars = "\w\&\/\:\*-"
     string_chars = "\S"
 
-    # (?P<String0>[\w\&\/\:\*]+(?:[\s]{1,2}[\w\&\/\:\*]+){0,1})
     string_regex_str = r"(?P<String>[" + string_chars + "]+(?:" + mandatory_separator + "[" + string_chars + "]+){0,99999})"
 
     # set value to 1 to revert to the previous behaviour
@@ -839,8 +833,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
         selected_text = request.data.get("selected_text", None)
         complete_text = request.data.get("complete_text", None)
 
-        # print(complete_text)
-
         regex_str = ""
         if selected_text is not None:
             regex_str = convert_to_regex(selected_text)
@@ -848,14 +840,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
         match_queue = []
         regex_str_dict = {"Transaction": regex_str}
         new_str = replace_regex_with_chars(match_queue, regex_str_dict, complete_text, "Transaction", "-")
-        # print(new_str)
-
-        # frameinfo = getframeinfo(currentframe())
-        # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), '\n'.join(map(str, match_queue)))
-        #
-        # transactions_dict_array = create_transactions_dict_array_from_text(regex_str, complete_text)
-        # document.transactions_json = json.dumps(transactions_dict_array)
-        # super(Document, document).save()
 
         response_dict = {
             "regex": regex_str,
