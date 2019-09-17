@@ -362,7 +362,43 @@ def replace_regex_with_chars(match_queue, regex_str_dict, input_str, token_name,
     return new_str
 
 
+space_separator = r"\s{1,2}"
+
+
+def get_group_regex_for_token(token, index):
+    return r"(?P<String" + str(index) + ">\S+)"
+
+
+def convert_to_regex_new(text, separator, flag_comment=False):
+    # Create tokens from the string using regex
+    tokens = re.split(separator, text)
+
+    # Get the regex expression from the tokens
+    regex_tokens_array = []
+    index = 0
+    for token in tokens:
+        # print(token)
+        index += 1
+        regex_for_token = get_group_regex_for_token(token, index)
+        regex_tokens_array.append(regex_for_token)
+
+    # Create a regex out of the regex expressions from individual tokens
+    if not flag_comment:
+        new_complete_regex = separator.join(regex_tokens_array)
+    else:
+        new_complete_regex = r"(?#"
+        for regex_token in regex_tokens_array:
+            new_complete_regex += "\n" + r")" + regex_token + separator + r"(?#"
+        new_complete_regex += "\n" + r")"
+
+    # print(new_complete_regex)
+
+    return new_complete_regex
+
+
 def convert_to_regex(text):
+    return convert_to_regex_new(text, space_separator, flag_comment=True)
+
     # frameinfo = getframeinfo(currentframe())
     # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), text)
 
