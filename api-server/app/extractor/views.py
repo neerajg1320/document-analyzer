@@ -316,21 +316,28 @@ def replace_substr(input_str, start_offset, end_offset, replace_substr):
     # print(new_str)
     return new_str
 
-def replace_regex_with_chars(match_queue, regex_str_dict, input_str, token_name, replace_char):
+REGEX_DEBUG = False
+
+def replace_regex_with_chars(match_queue, regex_str_dict, input_str, token_name, replace_char, regex_debug=REGEX_DEBUG):
     regex_str = regex_str_dict[token_name]
+
     pattern = re.compile(regex_str, re.MULTILINE)
     matches = pattern.finditer(input_str)
+
+    if regex_debug:
+        frameinfo = getframeinfo(currentframe())
+        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), pattern.findall(input_str))
+
+        print("input_str: " + input_str)
+        print("regex_str: " + regex_str)
 
     new_str = input_str
     fields = sorted(pattern.groupindex.items(), key=lambda x: x[1])
 
-    if len(fields) < 1:
-        return new_str
-
-    field_name = fields[0][0]
+    # if len(fields) < 1:
+    #     return new_str
 
     field_name = token_name
-    # print(fields)
 
     for match_num, match in enumerate(matches):
         match_num = match_num + 1
@@ -339,9 +346,9 @@ def replace_regex_with_chars(match_queue, regex_str_dict, input_str, token_name,
         end = match.end()
         new_str = replace_chars(new_str, start, end, replace_char)
         # new_str = replace_substr(new_str, start, end, field_name)
-        match_queue.append((field_name, start, end, match.group()))
+        match_queue.append((field_name, start, end, match.group(), regex_str))
 
-        if False:
+        if regex_debug:
             print("")
             print("Match {match_num} was found at {start}-{end}:"
                   .format(match_num = match_num,
@@ -351,14 +358,18 @@ def replace_regex_with_chars(match_queue, regex_str_dict, input_str, token_name,
 
         for group_num in range(0, len(match.groups())):
             group_num = group_num + 1
-            if False:
+            if regex_debug:
                 print("Group {group_num} found at {start}-{end}: {group}"
                       .format(group_num = group_num,
                               start = match.start(group_num),
                               end = match.end(group_num),
                               group = match.group(group_num)))
 
-    # print(new_str)
+    if regex_debug:
+        frameinfo = getframeinfo(currentframe())
+        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), '\n'.join(map(str, match_queue)))
+        print("new_str: " + new_str)
+
     return new_str
 
 
@@ -366,7 +377,18 @@ space_separator = r"\s{1,2}"
 
 
 def get_group_regex_for_token(token, index):
-    return r"(?P<String" + str(index) + ">\S+)"
+    # regex = r"\S+"
+
+    # Check here if we have more than one
+    regex_token_tuple = regexize_text(token)[0]
+
+    # frameinfo = getframeinfo(currentframe())
+    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), regex_token_tuple)
+
+    regex_token_name = regex_token_tuple[0]
+    regex_token_str = regex_token_tuple[4]
+
+    return r"(?P<" + regex_token_name + str(index) + ">" + regex_token_str + ")"
 
 
 def convert_to_regex_new(text, separator, flag_comment=False):
@@ -386,21 +408,65 @@ def convert_to_regex_new(text, separator, flag_comment=False):
     if not flag_comment:
         new_complete_regex = separator.join(regex_tokens_array)
     else:
-        new_complete_regex = r"(?#"
-        for regex_token in regex_tokens_array:
-            new_complete_regex += "\n" + r")" + regex_token + separator + r"(?#"
-        new_complete_regex += "\n" + r")"
-
-    # print(new_complete_regex)
+        new_complete_regex = "(?#"
+        for regex_token in regex_tokens_array[:-1]:
+            new_complete_regex += "\n" + ")" + regex_token + separator + "(?#"
+        # We don't need to put the separator in the last one
+        regex_token = regex_tokens_array[-1]
+        new_complete_regex += "\n" + ")" + regex_token + "(?#"
+        new_complete_regex += "\n" + ")"
 
     return new_complete_regex
 
 
 def convert_to_regex(text):
-    return convert_to_regex_new(text, space_separator, flag_comment=True)
+    # return convert_to_regex_new(text, space_separator, flag_comment=True)
+    return convert_to_regex_old(text)
 
+
+# This will return a dataframe
+def regexize_text(text):
+    frameinfo = getframeinfo(currentframe())
+    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), text)
+
+    mandatory_separator = r"[\s]{1,2}"
+
+    date_regex_str_slash_separator = r"\d{2}\/\d{2}\/\d{2,4}"
+    date_regex_str_hyphen_separator = r"\d{2}-\d{2}-\d{2,4}"
+    float_regex_str = r"[$]?(?:[,\d]+)?(?:[.][\d]+)"
+    integer_regex_str = r"[$]?[,\d]+"
+    string_regex_str = r"\S+"
+
+    regex_str_dict = {}
+
+    regex_str_dict["DateSlash"] = date_regex_str_slash_separator
+    regex_str_dict["DateHyphen"] = date_regex_str_hyphen_separator
+    regex_str_dict["Float"] = float_regex_str
+    regex_str_dict["Integer"] = integer_regex_str
+    regex_str_dict["String"] = string_regex_str
+
+    replace_char = ' '
+    new_str = text
+    match_queue = []
+    new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "DateSlash", replace_char, regex_debug=True)
+    new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "DateHyphen", replace_char)
+    new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "Float", replace_char)
+    new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "Integer", replace_char)
+    new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "String", replace_char)
+
+    match_queue = sorted(match_queue, key=lambda x: x[1])
+
+    frameinfo = getframeinfo(currentframe())
+    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), '\n'.join(map(str, match_queue)))
+
+    return match_queue
+
+
+def convert_to_regex_old(text):
     # frameinfo = getframeinfo(currentframe())
     # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), text)
+    frameinfo = getframeinfo(currentframe())
+    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), text)
 
     optional_separator = r"[\s]{0,2}"
     mandatory_separator = r"[\s]{1,2}"
@@ -451,8 +517,8 @@ def convert_to_regex(text):
 
     new_str = replace_regex_with_chars(match_queue, regex_str_dict, new_str, "String", replace_char)
 
-    # frameinfo = getframeinfo(currentframe())
-    # print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), new_str)
+    frameinfo = getframeinfo(currentframe())
+    print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), '\n'.join(map(str, match_queue)))
 
     match_queue = sorted(match_queue, key=lambda x: x[1])
 
