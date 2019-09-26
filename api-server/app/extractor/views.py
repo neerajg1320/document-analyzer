@@ -316,12 +316,25 @@ def replace_substr(input_str, start_offset, end_offset, replace_substr):
     # print(new_str)
     return new_str
 
-REGEX_DEBUG = False
 
-def replace_regex_with_chars(match_queue, regex_str_dict, input_str, token_name, replace_char, regex_debug=REGEX_DEBUG):
+REGEX_DEBUG = False
+REGEX_MULTILINE_FLAGS = re.MULTILINE
+REGEX_FLAGS = None
+
+def replace_regex_with_chars(match_queue,
+                             regex_str_dict,
+                             input_str,
+                             token_name,
+                             replace_char,
+                             regex_debug=REGEX_DEBUG,
+                             regex_multiline=True):
     regex_str = regex_str_dict[token_name]
 
-    pattern = re.compile(regex_str, re.MULTILINE)
+    regex_flags = []
+    # if regex_multiline:
+    #     regex_flags = REGEX_MULTILINE_FLAGS
+
+    pattern = re.compile(regex_str)
     matches = pattern.finditer(input_str)
 
     if regex_debug:
@@ -420,8 +433,8 @@ def convert_to_regex_new(text, separator, flag_comment=False):
 
 
 def convert_to_regex(text):
-    # return convert_to_regex_new(text, space_separator, flag_comment=True)
-    return convert_to_regex_old(text)
+    return convert_to_regex_new(text, space_separator, flag_comment=True)
+    # return convert_to_regex_old(text)
 
 
 # This will return a dataframe
@@ -1297,7 +1310,9 @@ class FileViewSet(viewsets.ModelViewSet):
             elif excel_routines.is_file_extn_excel(file_extn):
                 file.text = excel_routines.excel_to_text(file_path)
 
-                # file_transactions_json = excel_routines.excel_to_json(file_path)
+                #  Need to check if this needs to be enabled
+                file_transactions_json = excel_routines.excel_to_json(file_path)
+                # print(file.text)
 
                 g_flag_process_data = False
             elif image_routines.is_file_extn_image(file_extn):
@@ -1709,7 +1724,7 @@ class PipelineViewSet(viewsets.ModelViewSet):
                 # TBD: File to Text part to be made part of pipeline
                 file = File.objects.get(user=request.user, pk=file_id)
                 file_path = get_file_path(file)
-                file_text = file_to_text(file_path)
+                file_text = file_to_text(file_path, password="neer0306")  # Hardcoded fix at sight
 
                 pipeline = Pipeline.objects.get(user=request.user, pk=pipeline_id)
 

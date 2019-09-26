@@ -78,7 +78,7 @@ PDF_COMMAND = 'pdftotext'
 
 def pdftotext_read_pdf_using_subprocess(file_path, password=None, flag_replace_newline=False):
     if password is not None:
-        command = [PDF_COMMAND, '-raw', file_path, '-upw', password, '-']
+        command = [PDF_COMMAND, '-raw', file_path, '-upw', password, '-opw', password, '-']
     else:
         command = [PDF_COMMAND, '-raw', file_path, '-']
 
