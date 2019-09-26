@@ -1296,6 +1296,8 @@ class FileViewSet(viewsets.ModelViewSet):
 
             file_transactions_json = "Format {} not supported".format(file_extn)
             if file_extn.lower() == '.pdf':
+                pd.set_option('display.max_columns', None)
+
                 # We first read the pdf, the password is used in case pdf is encrypted
                 file.text = pdftotext_read_pdf_using_subprocess(file_path, file.password)
                 # The we extract the transactions from the text
@@ -1308,10 +1310,10 @@ class FileViewSet(viewsets.ModelViewSet):
 
                 g_flag_process_data = True
             elif excel_routines.is_file_extn_excel(file_extn):
-                file.text = excel_routines.excel_to_text(file_path)
+                file.text = excel_routines.excel_to_text(file_path, header=0)
 
                 #  Need to check if this needs to be enabled
-                file_transactions_json = excel_routines.excel_to_json(file_path)
+                file_transactions_json = excel_routines.excel_to_json(file_path, header=0)
                 # print(file.text)
 
                 g_flag_process_data = False
@@ -1440,7 +1442,9 @@ class OperationViewSet(viewsets.ModelViewSet):
             # df = df_columns_datetime_iso_date_format(df, date_cols)
             # table_dict = json.loads(df.to_json(orient='records'))
 
-            pd.options.display.max_colwidth = 100
+            # pd.options.display.max_colwidth = 100
+            pd.set_option('display.max_columns', None)
+
             response_dict = {
                 "new_str": new_str,
                 # "dataframe": str(schema_df),
@@ -1550,7 +1554,7 @@ def file_to_text(file_path, password=None):
         # We first read the pdf, the password is used in case pdf is encrypted
         text = pdftotext_read_pdf_using_subprocess(file_path, password)
     elif excel_routines.is_file_extn_excel(file_extn):
-        text = excel_routines.excel_to_text(file_path)
+        text = excel_routines.excel_to_text(file_path, header=0)
     elif image_routines.is_file_extn_image(file_extn):
         text = image_routines.image_to_text(file_path)
     else:
@@ -1585,7 +1589,17 @@ def apply_extractor_on_dataframe(parameters, df):
         text = df['text'].iloc[0]
         input_csv = StringIO(text)
 
-        new_df = pd.read_csv(input_csv)
+        frameinfo = getframeinfo(currentframe())
+        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), text)
+
+        new_df = pd.read_csv(input_csv, sep=",", header=0)
+
+        # Replace the NaN with zero
+        new_df.fillna(0, inplace=True)
+
+        frameinfo = getframeinfo(currentframe())
+        print("[{}:{}]:\n".format(frameinfo.filename, frameinfo.lineno), new_df)
+
         table_dict = json.loads(new_df.to_json(orient='records'))
 
     elif extractor_type == "database":
