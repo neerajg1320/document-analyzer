@@ -1511,8 +1511,11 @@ $("#btn_save_pipeline").click(function () {
         "title": pipeline_name,
         "institute_name": g_file_info.institute_name,
         "document_type": g_file_info.document_type,
-        "operations": g_operation_pipeline_array
+        "operations": g_operation_pipeline_array,
+        "operations_json": JSON.stringify(g_operation_pipeline_array),
     });
+
+    console.log("json_data:" + json_data);
 
     $.ajax({
         type: 'POST',
