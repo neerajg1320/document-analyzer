@@ -104,6 +104,10 @@ $("#btn_apply_pipeline").click(function() {
 });
 
 
+$("#btn_download_customer_excel").click(function () {
+  g_customer_transactions_table.download("csv", "trades.csv");
+});
+
 $(document).ready(function() {
     get_pipelines();
 });
