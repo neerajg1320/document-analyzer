@@ -32,7 +32,7 @@ def df_clean_float_columns(df, amount_cols):
 
 def df_clean_date_columns(df, date_cols):
 
-    df[date_cols] = df[date_cols].apply(pd.to_datetime)
+    df[date_cols] = df[date_cols].apply(pd.to_datetime, dayfirst=True, infer_datetime_format=True)
 
     return df
 
