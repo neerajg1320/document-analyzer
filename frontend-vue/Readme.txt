@@ -1,3 +1,5 @@
+brew install node
+
 npm install
 npm run serve
 

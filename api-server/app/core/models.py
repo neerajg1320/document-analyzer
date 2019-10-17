@@ -148,7 +148,7 @@ class Transaction(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         blank=True,
-        default="alice@abc.com",
+        default=1,
     )
 
     # https://medium.com/@krishnaregmi/handling-model-relationships-in-django-rest-framework-e0dfbcf1d83e
@@ -186,7 +186,7 @@ class Operation(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         blank=True,
-        default="alice@abc.com",
+        default=1,
     )
     title = models.CharField(max_length=128, blank=False)
     type = models.CharField(max_length=32, choices=OPERATIONS_CHOICES, blank=False)
@@ -202,7 +202,7 @@ class DatastoreType(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         blank=True,
-        default="alice@abc.com",
+        default=1,
     )
     title = models.CharField(max_length=128, blank=False)
     parameters = models.CharField(max_length=2048)
@@ -217,7 +217,7 @@ class DatastoreInfo(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         blank=True,
-        default="alice@abc.com",
+        default=1,
     )
     title = models.CharField(max_length=128, blank=False)
     type = models.ForeignKey(DatastoreType, on_delete=models.CASCADE)
@@ -230,7 +230,7 @@ class Pipeline(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         blank=True,
-        default="alice@abc.com",
+        default=1,
     )
     institute_name = models.CharField(max_length=255, blank=False)
     document_type = models.CharField(max_length=255, blank=False)
