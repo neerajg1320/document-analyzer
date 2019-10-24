@@ -11,7 +11,8 @@ psql postgres
 create user postgres with encrypted password 'Postgres123';
 create database app;
 grant all privileges on database app to postgres;
-
+create database docminer;
+grant all privileges on database docminer to postgres;
 
 cd app/
 python manage.py runserver
