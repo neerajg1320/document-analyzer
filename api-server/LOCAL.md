@@ -1,4 +1,17 @@
 # Localhost Installation
+# Run following command if venv is not created yet
+# https://www.chrisjmendez.com/2017/08/03/installing-multiple-versions-of-python-on-your-mac-using-homebrew/
+# We need python version 3.7
+# python3 -m venv venv
+# pip install -r requirements.txt
+# brew install postgresql
+
+# Incase we had to upgrade postfresql
+# brew upgrade postgresql
+# brew postgresql-upgrade-database
+# createdb postgres
+# psql postgres
+
 source venv/bin/activate
 
 # https://github.com/daler/pybedtools/issues/259
