@@ -1,0 +1,7 @@
+[
+{"name":"username", "mandatory":"True","type":"String"},
+{"name":"password", "mandatory":"True","type":"String"},
+{"name":"host", "mandatory":"True","type":"String"},
+{"name":"port", "mandatory":"True","type":"String"},
+{"name":"database", "mandatory":"True","type":"String"}
+]
