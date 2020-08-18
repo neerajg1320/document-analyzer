@@ -29,7 +29,8 @@ mccabe==0.6.1
 numpy==1.17.2
 pandas==0.25.1
 pdf2image==1.5.4
-pdftotext==2.1.2
+# 2.1.2 works with poppler 0.81.0, 2.1.5 works with poppler 0.90.1
+pdftotext==2.1.5
 Pillow==6.2.0
 protobuf==3.10.0
 psycopg2==2.7.7
