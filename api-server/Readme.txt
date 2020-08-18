@@ -15,4 +15,8 @@ create database docminer;
 grant all privileges on database docminer to postgres;
 
 cd app/
+# If running for first time
+python manage.py makemigrations core
+python manage.py migrate
+
 python manage.py runserver

@@ -5,3 +5,11 @@
 5) Get the token and put it in the other calls. 
 6) Use the frontend-vue to manage the resources i.e. Add/Delete/Modify.
 7) To run the pipeline use frontend-jquery
+
+Create Pipeline:
+1) Add DatastoreType in frontend-vue. We have the json stored in test-files/Etrade/etrade_datastore_type.json
+2) To use frontend-jquery, we have to copy the user token retrieved from postman and copy it into frontend-jquery/common_auth.js as shown below:
+let g_user_auth_token_local = '92147124584234cfbf6186f46a766c7eebe7e91c';
+3) We now upload datastore for Etrade from test-files/Etrade/etrade_datastore.json
+4) Get the etrade_mapper.json and etrade_newfields.json from test-files/Etrade directory.
+5) Get the extractor from front-vue --> PipelineStudio --> Extractor
