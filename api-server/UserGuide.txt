@@ -1,0 +1,7 @@
+1) Install the applications using Readme.txt
+2) Run the server using Readme.txt
+3) Create user alice@abc.com using postman. The collection is stored in user login neeraj76@yahoo.com on Postman. It is also stored as a collection
+4) Login usser alice using postman.
+5) Get the token and put it in the other calls. 
+6) Use the frontend-vue to manage the resources i.e. Add/Delete/Modify.
+7) To run the pipeline use frontend-jquery
