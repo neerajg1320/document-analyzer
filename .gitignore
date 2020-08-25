@@ -1,5 +1,6 @@
 .idea
 .DS_Store
+*.swp
 sample-apps/venv
 api-server/libpostal
 third-party-tools
