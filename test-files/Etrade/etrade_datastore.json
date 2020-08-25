@@ -9,7 +9,7 @@
 	},
 	{
 		"parameter": "host",
-		"value": "localhost"
+		"value": "db"
 	},
 	{
 		"parameter": "port",
