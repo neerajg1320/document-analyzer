@@ -1,7 +1,7 @@
 import axios from 'axios'
 import apiAxios from './apiBaseAxios'
 
-const API_HOST='192.168.1.106'
+const API_HOST='localhost'
 const API_PORT=8000
 const API_URL='http://' + API_HOST + ':' + API_PORT + '/'
 
