@@ -3,12 +3,12 @@ MAINTAINER Neeraj Gupta
 
 ENV PYTHONUNBUFFERED 1
 
-COPY ./requirements.txt /requirements.txt
+COPY ./requirements_working.txt /requirements_working.txt
 
 RUN apk update
 RUN apk add --update --no-cache postgresql-client jpeg-dev
 RUN apk add --update --no-cache --virtual .tmp-build-deps \
-        gcc libc-dev linux-headers postgresql-dev musl-dev \
+        linux-headers postgresql-dev  \
         zlib zlib-dev
 
 # For python pdftotext library
@@ -18,7 +18,7 @@ RUN apk add --update poppler-dev
 # Needed if we want command pdftotext to be available
 RUN apk add --update poppler-utils
 
-RUN pip install -r /requirements.txt
+RUN pip install -r /requirements_working.txt
 RUN apk del .tmp-build-deps
 
 

@@ -1,9 +1,12 @@
 import axios from "axios";
 import apiAxios from './apiBaseAxios';
 
+const API_HOST='localhost'
+const API_PORT=8000
+const API_URL='http://' + API_HOST + ':' + API_PORT + '/api/docminer/'
 
 const baseRequest = {
-  baseURL: 'http://localhost:8000/api/docminer/',
+  baseURL: API_URL,
   json: true
 };
 
