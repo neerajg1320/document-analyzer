@@ -29,7 +29,7 @@ import json
 import hjson
 from io import StringIO
 
-from snowflake.sqlalchemy import URL
+#from snowflake.sqlalchemy import URL
 from sqlalchemy import create_engine
 
 
@@ -182,9 +182,9 @@ snowflake_properties_json = """{
 }"""
 
 
-def get_snowflake_db_url(snowflake_properties_dict):
-    db_url = URL(**snowflake_properties_dict)
-    return db_url
+# def get_snowflake_db_url(snowflake_properties_dict):
+#     db_url = URL(**snowflake_properties_dict)
+#     return db_url
 
 
 def get_postgres_db_url(postgres_parameters):
@@ -289,10 +289,10 @@ def load_from_sql(db_url, table_name):
     return df
 
 
-def load_from_snowflake(table_name, snowflake_parameters):
-    db_url = URL(**snowflake_parameters)
-
-    return load_from_sql(db_url, table_name)
+# def load_from_snowflake(table_name, snowflake_parameters):
+#     db_url = URL(**snowflake_parameters)
+#
+#     return load_from_sql(db_url, table_name)
 
 
 def load_from_postgres(table_name, postgres_parameters):
@@ -886,17 +886,7 @@ def load_frame_from_datastore_table(table_name, datastore_type, datastore_creden
 
 
 def load_frame_into_datastore_table(datastore_type, datastore_credentials, table_name, dataframe):
-    if str(datastore_type).lower() == 'snowflake':
-        #  This is the mapping according to the hardcoded regex extractor
-        #
-        # flag_process_data = g_flag_process_data
-        # if flag_process_data:
-        #     # Need to be lookup based
-        #     groupby_dict = self.get_groupby_dict(document)
-        #     df = transform_df_using_dict(df, groupby_dict)
-        save_to_snowflake(dataframe, table_name, datastore_credentials)
-        # df = load_from_snowflake(datastore_parameters)
-    elif str(datastore_type).lower() == 'postgres':
+   if str(datastore_type).lower() == 'postgres':
         save_to_postgres(dataframe, table_name, datastore_credentials)
 
 

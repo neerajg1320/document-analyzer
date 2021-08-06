@@ -13,10 +13,12 @@ pyPDF2>=1.26.0,<1.27.0
 pandas>=0.24.0,<1.0.0
 hjson>=3.0.1,<3.1.0
 xlrd>=1.2.0,<1.3.0
-snowflake-connector-python>=1.8.3,<1.9.0
-snowflake-sqlalchemy>=1.1.13,<1.2.0
+#snowflake-connector-python>=1.8.3,<1.9.0
+#snowflake-sqlalchemy>=1.1.13,<1.2.0
 pdf2image>=1.5.4,<1.6.0
 pyap>=0.2.0,<0.3.0
 google-cloud-vision>=0.38.1,<0.38.2
+asn1crypto
+sqlalchemy
 
 flake8>=3.6.0,<3.7.0
