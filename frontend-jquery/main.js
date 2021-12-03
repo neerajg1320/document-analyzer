@@ -281,17 +281,22 @@ let g_document_mapped_dataframe_box = $("#document-mapped-dataframe");
 var g_current_document = null;
 var g_current_document_local_cache = {};
 
+// var api_host = "localhost";
+// var api_port = "9000";
 
 var g_file_info = {};
 
 $("#fileinfo").submit(function(e) {
     e.preventDefault();
 
+    // http://' + api_host + ':' + api_port + '/api/docminer/files/
+    let files_url = 'http://' + api_host + ':' + api_port + '/api/docminer/files/';
+
     var formData = new FormData($(this)[0]);
     console.log(formData);
 
     $.ajax({
-        url: $(this).attr('action'),
+        url: files_url,
         type: $(this).attr('method'),
         data: formData,
         headers: {'Authorization': 'Token ' + g_user_auth_token},
@@ -305,6 +310,7 @@ $("#fileinfo").submit(function(e) {
             // alert('File upload successful (id = ' + response.id + ')');
             $("#input_file_id").val(response.id);
             if (g_config_automate_flow) {
+                console.log("Simulating documentize click");
                 $("#btn_documentize").click();
             }
         },
@@ -340,8 +346,8 @@ function download_document_transactions(user_auth_token, document_id, tabulator_
         return;
     }
 
-    // http://localhost:8000/api/docminer/documents/<document_id>/
-    let document_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/';
+    // http://' + api_host + ':' + api_port + '/api/docminer/documents/<document_id>/
+    let document_url = 'http://' + api_host + ':' + api_port + '/api/docminer/documents/' + document_id + '/';
     g_current_document_local_cache['document_url'] = document_url;
 
     $.ajax({
@@ -358,8 +364,8 @@ function download_document_transactions(user_auth_token, document_id, tabulator_
         }
     });
 
-    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
-    let document_transactions_json_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/transactions/json/';
+    // http://' + api_host + ':' + api_port + '/api/docminer/documents/<document_id>/transactions/json/
+    let document_transactions_json_url = 'http://' + api_host + ':' + api_port + '/api/docminer/documents/' + document_id + '/transactions/json/';
 
     $.ajax({
         url: document_transactions_json_url,
@@ -376,8 +382,8 @@ function download_document_transactions(user_auth_token, document_id, tabulator_
         }
     });
 
-    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/dataframe/
-    let document_transactions_dataframe_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/transactions/dataframe/';
+    // http://' + api_host + ':' + api_port + '/api/docminer/documents/<document_id>/transactions/dataframe/
+    let document_transactions_dataframe_url = 'http://' + api_host + ':' + api_port + '/api/docminer/documents/' + document_id + '/transactions/dataframe/';
 
     $.ajax({
         url: document_transactions_dataframe_url,
@@ -405,9 +411,11 @@ function download_document_using_input(tabulator_table, user_auth_token) {
 }
 
 function documentize_file(user_auth_token, file_id, result_elm) {
-    // http://localhost:8000/api/docminer/files/<document_id>/documentize/
-    let file_documentize_url = 'http://localhost:8000/api/docminer/files/' + file_id + '/documentize/';
+    // http://' + api_host + ':' + api_port + '/api/docminer/files/<document_id>/documentize/
+    let file_documentize_url = 'http://' + api_host + ':' + api_port + '/api/docminer/files/' + file_id + '/documentize/';
 
+    console.log("file_documentize_url:", file_documentize_url);
+    
     $.ajax({
         url: file_documentize_url,
         headers : {
@@ -464,8 +472,8 @@ $("#btn_create_regex").click(function() {
     // Get document id
     let document_id = $("#input_document_id").val();
 
-    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
-    let document_row_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/regex/create/';
+    // http://' + api_host + ':' + api_port + '/api/docminer/documents/<document_id>/transactions/json/
+    let document_row_url = 'http://' + api_host + ':' + api_port + '/api/docminer/documents/' + document_id + '/regex/create/';
     document.getElementById("document-create_regex-url").innerHTML = document_row_url;
 
     var complete_text = g_document_text_box.val();
@@ -509,7 +517,7 @@ $("#btn_apply_regex").click(function() {
     // Get document id
     let document_id = $("#input_document_id").val();
 
-    let document_apply_regex_url = 'http://localhost:8000/api/docminer/documents/' + document_id + '/regex/apply/';
+    let document_apply_regex_url = 'http://' + api_host + ':' + api_port + '/api/docminer/documents/' + document_id + '/regex/apply/';
 
     console.log(document_apply_regex_url);
 
@@ -545,7 +553,7 @@ $("#btn_apply_regex").click(function() {
 let g_operation_pipeline_array = [];
 
 function save_operation(title, type, parameters) {
-    let operation_save_url = 'http://localhost:8000/api/docminer/operations/';
+    let operation_save_url = 'http://' + api_host + ':' + api_port + '/api/docminer/operations/';
 
     console.log(operation_save_url);
 
@@ -791,8 +799,8 @@ $("#btn_mapper_newfields_add_row").click(function() {
 
 $("#btn_get_schema_list").click(function () {
 
-    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
-    let schema_get_url = 'http://localhost:8000/api/docminer/schemas/';
+    // http://' + api_host + ':' + api_port + '/api/docminer/documents/<document_id>/transactions/json/
+    let schema_get_url = 'http://' + api_host + ':' + api_port + '/api/docminer/schemas/';
 
     console.log(schema_get_url);
 
@@ -834,7 +842,7 @@ $("#btn_get_schema_list").click(function () {
 
 $("#btn_save_schema").click(function() {
     let schema_id = $("#sel-destination-schema").val();
-    var schemas_url = 'http://localhost:8000/api/docminer/schemas/';
+    var schemas_url = 'http://' + api_host + ':' + api_port + '/api/docminer/schemas/';
     var request_type = "POST";
 
     let schema_name = $("#input_new_schema").val();
@@ -874,7 +882,7 @@ $("#btn_save_schema").click(function() {
 
 $("#btn_get_datastore_type_list").click(function () {
 
-    let datastoretype_get_url = 'http://localhost:8000/api/docminer/datastoretypes/';
+    let datastoretype_get_url = 'http://' + api_host + ':' + api_port + '/api/docminer/datastoretypes/';
 
     console.log(datastoretype_get_url);
 
@@ -992,7 +1000,7 @@ function handle_get_extractors_response(response) {
 }
 
 function fetch_operations(type, response_handler) {
-    let loader_get_parameters_url = 'http://localhost:8000/api/docminer/operations/';
+    let loader_get_parameters_url = 'http://' + api_host + ':' + api_port + '/api/docminer/operations/';
     let data_params = jQuery.param({type: type});
 
     console.log(loader_get_parameters_url, data_params);
@@ -1033,7 +1041,7 @@ $("#btn_get_datastores").click(function () {
     // First get the dependency
     $("#btn_get_datastore_type_list").click();
 
-    let loader_get_datastores_url = 'http://localhost:8000/api/docminer/datastores/';
+    let loader_get_datastores_url = 'http://' + api_host + ':' + api_port + '/api/docminer/datastores/';
     console.log(loader_get_datastores_url);
 
     $.ajax({
@@ -1105,7 +1113,7 @@ $("#btn_save_loader").click(function() {
 function fill_datastore_from_id(datastore_id) {
     console.log(datastore_id);
 
-    let loader_get_datastores_url = 'http://localhost:8000/api/docminer/datastores/' + datastore_id + '/';
+    let loader_get_datastores_url = 'http://' + api_host + ':' + api_port + '/api/docminer/datastores/' + datastore_id + '/';
     $.ajax({
         url: loader_get_datastores_url,
         headers : {
@@ -1233,7 +1241,7 @@ $("#btn_save_datastore").click(function() {
 
     };
 
-    let datastores_url = 'http://localhost:8000/api/docminer/datastores/';
+    let datastores_url = 'http://' + api_host + ':' + api_port + '/api/docminer/datastores/';
 
     $.ajax({
         type: 'POST',
@@ -1308,7 +1316,7 @@ $("#btn_download_datastore").click(function () {
 
 
 function apply_operation(operation, dataframe_json, success_callback) {
-    let operation_apply_url = 'http://localhost:8000/api/docminer/operations/apply/';
+    let operation_apply_url = 'http://' + api_host + ':' + api_port + '/api/docminer/operations/apply/';
 
     console.log(operation_apply_url, operation, dataframe_json);
 
@@ -1360,7 +1368,7 @@ $("#btn_get_pipelines").click(function () {
     $("#btn_get_mappers").click();
     $("#btn_get_loaders").click();
 
-    let pipeline_get_url = 'http://localhost:8000/api/docminer/pipelines/';
+    let pipeline_get_url = 'http://' + api_host + ':' + api_port + '/api/docminer/pipelines/';
 
     console.log(pipeline_get_url);
 
@@ -1463,7 +1471,7 @@ function operation_response_handler(response) {
 function fetch_operation_by_id(id, response_handler) {
     console.log(g_operation_array_current_index);
 
-    let loader_get_parameters_url = 'http://localhost:8000/api/docminer/operations/' + id + '/';
+    let loader_get_parameters_url = 'http://' + api_host + ':' + api_port + '/api/docminer/operations/' + id + '/';
     console.log(loader_get_parameters_url);
 
     $.ajax({
@@ -1496,8 +1504,8 @@ $("#btn_save_pipeline").click(function () {
     // Get document id
     let pipeline_name = $("#input_new_pipeline").val();
 
-    // http://localhost:8000/api/docminer/documents/<document_id>/transactions/json/
-    let pipeline_save_url = 'http://localhost:8000/api/docminer/pipelines/';
+    // http://' + api_host + ':' + api_port + '/api/docminer/documents/<document_id>/transactions/json/
+    let pipeline_save_url = 'http://' + api_host + ':' + api_port + '/api/docminer/pipelines/';
     console.log(pipeline_save_url);
 
     // g_operation_pipeline_array = [19,20,21];

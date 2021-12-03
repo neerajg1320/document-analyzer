@@ -1,4 +1,6 @@
 
+var api_host = "127.0.0.1";
+var api_port = "9000";
 
 var flag_server_local = true;
 
